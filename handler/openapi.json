@@ -1,0 +1,2271 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Portfolio Report API",
+    "description": "RESTful API to Portfolio Report",
+    "version": "0.0.1",
+    "contact": {
+      "name": "Contact the developer",
+      "url": "https://www.portfolio-report.net/contact"
+    }
+  },
+  "servers": [],
+  "tags": [
+    {
+      "name": "auth"
+    },
+    {
+      "name": "contact"
+    },
+    {
+      "name": "securities"
+    },
+    {
+      "name": "stats"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Registers user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Logs in user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Logs out user",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/auth/users/me": {
+      "get": {
+        "summary": "Gets current user",
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Deletes current user",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/auth/users/me/password": {
+      "post": {
+        "summary": "Changes password of current user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Password changed"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Password has not been changed. Existing password was wrong."
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/auth/sessions": {
+      "get": {
+        "summary": "Gets all sessions of user",
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/contact": {
+      "post": {
+        "summary": "Sends an email to the configured contact person",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "contact"
+        ]
+      }
+    },
+    "/currencies": {
+      "get": {
+        "summary": "Gets all available currencies and their exchange rates",
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "currencies"
+        ]
+      }
+    },
+    "/currencies/{baseCurrencyCode}/{quoteCurrencyCode}": {
+      "get": {
+        "summary": "Gets exchange rate incl. list of prices",
+        "parameters": [
+          {
+            "name": "baseCurrencyCode",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quoteCurrencyCode",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "example": "YYYY-MM-DD",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Exchange rate not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "currencies"
+        ]
+      }
+    },
+    "/currencies/convert": {
+      "post": {
+        "summary": "Converts amount between currencies",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConvertCurrenciesRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "currencies"
+        ]
+      }
+    },
+    "/portfolios": {
+      "post": {
+        "summary": "Creates portfolio",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUpdatePortfolioRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Gets all portfolios of user",
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/portfolios/{portfolioId}": {
+      "get": {
+        "summary": "Gets single portfolio",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Updates portfolio",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUpdatePortfolioRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Deletes portfolio",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/portfolios/{portfolioId}/securities": {
+      "get": {
+        "summary": "Gets all securities of portfolio",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio or security not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios/securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/portfolios/{portfolioId}/securities/{securityUuid}": {
+      "get": {
+        "summary": "Gets security",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          },
+          {
+            "$ref": "#/components/parameters/securityUuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio or security not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios/securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Creates or updates security in portfolio",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          },
+          {
+            "$ref": "#/components/parameters/securityUuid"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutPortfolioSecurityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio or security not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios/securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delets security",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          },
+          {
+            "$ref": "#/components/parameters/securityUuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio or security not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios/securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/portfolios/{portfolioId}/accounts": {
+      "get": {
+        "summary": "Gets all accounts of portfolio",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio or account not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios/accounts"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/portfolios/{portfolioId}/accounts/{accountUuid}": {
+      "get": {
+        "summary": "Gets account",
+        "parameters": [
+          {
+            "name": "portfolioId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "accountUuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio or account not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios/accounts"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Creates or updates account",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          },
+          {
+            "name": "accountUuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutAccountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio or account not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios/accounts"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Deletes account",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          },
+          {
+            "name": "accountUuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio or account not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios/accounts"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/portfolios/{portfolioId}/transactions": {
+      "get": {
+        "summary": "Gets all transactions of portfolio",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio or transaction not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios/transactions"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/portfolios/{portfolioId}/transactions/{transactionUuid}": {
+      "get": {
+        "summary": "Gets transaction",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          },
+          {
+            "name": "transactionUuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio or transaction not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios/transactions"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Creates or updates transaction",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          },
+          {
+            "name": "transactionUuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutTransactionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio or transaction not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios/transactions"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Deletes transaction",
+        "description": "",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          },
+          {
+            "name": "transactionUuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio or transaction not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios/transactions"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/portfolios/{portfolioId}/securities/{securityUuid}/prices": {
+      "patch": {
+        "summary": "Creates or updates prices of security",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          },
+          {
+            "$ref": "#/components/parameters/securityUuid"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PatchPortfolioSecurityPriceRequest"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio or security not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios/securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Gets prices of security",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/portfolioId"
+          },
+          {
+            "$ref": "#/components/parameters/securityUuid"
+          },
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "example": "YYYY-MM-DD",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "example": "YYYY-MM-DD",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Portfolio or security not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "portfolios/securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/securities": {
+      "get": {
+        "summary": "Gets list of securities",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "desc",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "securityType",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Creates security",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUpdateSecurityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/securities/{uuid}": {
+      "get": {
+        "summary": "Gets security",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "patch": {
+        "summary": "Updates security",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUpdateSecurityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Deletes security",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/securities/uuid/{uuid}/markets/{marketCode}": {
+      "patch": {
+        "summary": "Creates/updates market and prices",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          },
+          {
+            "$ref": "#/components/parameters/marketCode"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchSecurityMarketRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Deletes market (and prices)",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          },
+          {
+            "$ref": "#/components/parameters/marketCode"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Get security prices (public)",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          },
+          {
+            "$ref": "#/components/parameters/marketCode"
+          },
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "securities"
+        ]
+      }
+    },
+    "/securities/uuid/{uuid}/taxonomies/{rootUuid}": {
+      "put": {
+        "summary": "Create/update/delete taxonomies",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          },
+          {
+            "name": "rootUuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SecurityTaxonomyRequest"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/securities/search/{query}": {
+      "get": {
+        "summary": "Searches for securities (public)",
+        "parameters": [
+          {
+            "name": "query",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "securityType",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "securities"
+        ]
+      }
+    },
+    "/securities/uuid/{uuid}": {
+      "get": {
+        "summary": "Gets security (public)",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "securities"
+        ]
+      }
+    },
+    "/stats/updates": {
+      "get": {
+        "summary": "Gets statistics on updates of all versions",
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "stats"
+        ]
+      }
+    },
+    "/stats/updates/{version}": {
+      "get": {
+        "summary": "Gets statistics on updates to a certain version",
+        "parameters": [
+          {
+            "name": "version",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "stats"
+        ]
+      }
+    },
+    "/stats": {
+      "get": {
+        "summary": "Gets all updates",
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "stats"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/stats/{id}": {
+      "delete": {
+        "summary": "Delete single entry",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "stats"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/taxonomies": {
+      "get": {
+        "summary": "Gets all taxonomies",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "taxonomies"
+        ]
+      },
+      "post": {
+        "summary": "Creates taxonomy",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "taxonomies"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/taxonomies/{uuid}": {
+      "get": {
+        "summary": "Gets single taxonomy with all descendants",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "taxonomies"
+        ]
+      },
+      "patch": {
+        "summary": "Update taxonomy",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "taxonomies"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Deletes taxonomy",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "taxonomies"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    },
+    "parameters": {
+      "marketCode": {
+        "name": "marketCode",
+        "required": true,
+        "in": "path",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "portfolioId": {
+        "name": "portfolioId",
+        "required": true,
+        "in": "path",
+        "schema": {
+          "type": "number"
+        }
+      },
+      "securityUuid": {
+        "name": "securityUuid",
+        "required": true,
+        "in": "path",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "uuid": {
+        "name": "uuid",
+        "required": true,
+        "in": "path",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "schemas": {
+      "RegisterUserRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 100
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
+      "LoginUserRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
+      "UpdatePasswordRequest": {
+        "type": "object",
+        "properties": {
+          "oldPassword": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "oldPassword",
+          "newPassword"
+        ]
+      },
+      "SendMailRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "subject",
+          "message"
+        ]
+      },
+      "ConvertCurrenciesRequest": {
+        "type": "object",
+        "properties": {
+          "sourceAmount": {
+            "type": "string",
+            "example": "1.0"
+          },
+          "date": {
+            "type": "string",
+            "example": "YYYY-MM-DD"
+          },
+          "sourceCurrencyCode": {
+            "type": "string"
+          },
+          "targetCurrencyCode": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "sourceAmount",
+          "sourceCurrencyCode",
+          "targetCurrencyCode"
+        ]
+      },
+      "CreateUpdatePortfolioRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "baseCurrencyCode": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "note",
+          "baseCurrencyCode"
+        ]
+      },
+      "PutPortfolioSecurityRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "currencyCode": {
+            "type": "string"
+          },
+          "isin": {
+            "type": "string"
+          },
+          "wkn": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true
+          },
+          "note": {
+            "type": "string"
+          },
+          "securityUuid": {
+            "type": "string",
+            "default": null
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "default": "2022-01-21T06:51:56.393Z"
+          },
+          "calendar": {
+            "type": "string"
+          },
+          "feed": {
+            "type": "string"
+          },
+          "feedUrl": {
+            "type": "string"
+          },
+          "latestFeed": {
+            "type": "string"
+          },
+          "latestFeedUrl": {
+            "type": "string"
+          },
+          "properties": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "currencyCode",
+          "active"
+        ]
+      },
+      "PutAccountRequest": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "deposit",
+              "securities"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "currencyCode": {
+            "type": "string"
+          },
+          "referenceAccountUuid": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true
+          },
+          "note": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "default": "2022-01-21T06:51:56.408Z"
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "currencyCode",
+          "referenceAccountUuid",
+          "active"
+        ]
+      },
+      "TransactionUnitRequest": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "example": "1.0"
+          },
+          "originalAmount": {
+            "type": "string",
+            "default": null,
+            "example": "1.0"
+          },
+          "exchangeRate": {
+            "type": "string",
+            "default": null,
+            "example": "1.0"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "base",
+              "tax",
+              "fee"
+            ]
+          },
+          "currencyCode": {
+            "type": "string"
+          },
+          "originalCurrencyCode": {
+            "type": "string",
+            "default": null
+          }
+        },
+        "required": [
+          "amount",
+          "type",
+          "currencyCode"
+        ]
+      },
+      "PutTransactionRequest": {
+        "type": "object",
+        "properties": {
+          "shares": {
+            "type": "string",
+            "example": "1.0"
+          },
+          "accountUuid": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "Payment",
+              "CurrencyTransfer",
+              "DepositInterest",
+              "DepositFee",
+              "DepositTax",
+              "SecuritiesOrder",
+              "SecuritiesDividend",
+              "SecuritiesFee",
+              "SecuritiesTax",
+              "SecuritiesTransfer"
+            ],
+            "type": "string"
+          },
+          "datetime": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "partnerTransactionUuid": {
+            "type": "string"
+          },
+          "units": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransactionUnitRequest"
+            }
+          },
+          "portfolioSecurityUuid": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "default": "2022-01-21T06:51:56.435Z"
+          }
+        },
+        "required": [
+          "accountUuid",
+          "type",
+          "datetime",
+          "units"
+        ]
+      },
+      "PatchPortfolioSecurityPriceRequest": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "example": "YYYY-MM-DD"
+          },
+          "value": {
+            "type": "string",
+            "example": "1.0"
+          }
+        },
+        "required": [
+          "date",
+          "value"
+        ]
+      },
+      "CreateUpdateSecurityRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "isin": {
+            "type": "string"
+          },
+          "wkn": {
+            "type": "string"
+          },
+          "securityType": {
+            "type": "string"
+          },
+          "symbolXfra": {
+            "type": "string"
+          },
+          "symbolXnas": {
+            "type": "string"
+          },
+          "symbolXnys": {
+            "type": "string"
+          }
+        }
+      },
+      "PatchSecurityMarketPriceRequest": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "close": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "date",
+          "close"
+        ]
+      },
+      "PatchSecurityMarketRequest": {
+        "type": "object",
+        "properties": {
+          "currencyCode": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "updatePrices": {
+            "type": "boolean"
+          },
+          "prices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PatchSecurityMarketPriceRequest"
+            }
+          }
+        },
+        "required": [
+          "updatePrices"
+        ]
+      },
+      "SecurityTaxonomyRequest": {
+        "type": "object",
+        "properties": {
+          "weight": {
+            "type": "string",
+            "example": "1.0"
+          },
+          "taxonomyUuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "weight",
+          "taxonomyUuid"
+        ]
+      }
+    }
+  }
+}

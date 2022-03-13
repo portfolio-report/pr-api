@@ -1,0 +1,144 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+scalar Time
+
+type Event {
+  date: String!
+  type: String!
+  amount: String
+  currencyCode: String
+  ratio: String
+}
+
+type Portfolio {
+  id: Int!
+  name: String!
+  note: String!
+  baseCurrencyCode: String!
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+input PortfolioInput {
+  name: String!
+  note: String!
+  baseCurrencyCode: String!
+}
+
+type PortfolioAccount {
+  uuid: String!
+  type: String!
+  name: String!
+  currencyCode: String
+  referenceAccountUuid: String
+  active: Boolean!
+  note: String!
+  updatedAt: Time!
+
+  balance: String!
+  value(currencyCode: String): String!
+}
+
+type PortfolioSecurity {
+  uuid: String!
+  name: String!
+  currencyCode: String!
+  isin: String!
+  wkn: String!
+  symbol: String!
+  active: Boolean!
+  note: String!
+  securityUuid: String
+  updatedAt: Time!
+  calendar: String
+  feed: String
+  feedUrl: String
+  latestFeed: String
+  latestFeedUrl: String
+
+  # computed:
+  shares: String!
+  quote(currenyCode: String): String!
+}
+
+type Security {
+  uuid: String!
+  name: String
+  isin: String
+  wkn: String
+  securityType: String
+  symbolXfra: String
+  symbolXnas: String
+  symbolXnys: String
+
+  securityMarkets: [SecurityMarket!]!
+  securityTaxonomies: [SecurityTaxonomy!]!
+  events: [Event!]!
+}
+
+type SecurityMarket {
+  securityUuid: String!
+  marketCode: String!
+  currencyCode: String!
+  firstPriceDate: String
+  lastPriceDate: String
+  symbol: String
+  updatePrices: Boolean
+}
+
+type SecurityTaxonomy {
+  securityUuid: String!
+  taxonomyUuid: String!
+  weight: String!
+  taxonomy: Taxonomy!
+}
+
+type Session {
+  token: ID!
+  note: String!
+  user: User!
+  createdAt: Time!
+  lastActivityAt: Time!
+}
+
+type Taxonomy {
+  uuid: String!
+  parentUuid: String
+  rootUuid: String
+  name: String!
+  code: String
+}
+
+type User {
+  id: Int!
+  username: String!
+  isAdmin: Boolean!
+  lastSeenAt: String!
+}
+
+type Query {
+  portfolios: [Portfolio!]!
+  portfolio(id: Int!): Portfolio
+
+  portfolioAccounts(portfolioId: Int!): [PortfolioAccount!]!
+  portfolioSecurities(portfolioId: Int!): [PortfolioSecurity!]!
+  portfolioSecurity(portfolioId: Int!, uuid: String!): PortfolioSecurity
+
+  security(uuid: String!): Security
+
+  sessions: [Session!]!
+}
+
+type Mutation {
+  register(username: String!, password: String!): Session!
+  login(username: String!, password: String!): Session!
+  createSession(note: String!): Session!
+  deleteSession(token: String!): Session!
+
+  createPortfolio(portfolio: PortfolioInput!): Portfolio!
+  updatePortfolio(id: Int!, portfolio: PortfolioInput!): Portfolio!
+  deletePortfolio(id: Int!): Portfolio!
+}
+
