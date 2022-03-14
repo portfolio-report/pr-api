@@ -17,7 +17,6 @@ import (
 	"github.com/portfolio-report/pr-api/models"
 	"github.com/portfolio-report/pr-api/service"
 
-	"github.com/gin-contrib/cors"
 	_ "github.com/joho/godotenv/autoload"
 
 	"github.com/go-playground/validator/v10"
@@ -105,10 +104,7 @@ func main() {
 	}))
 
 	// Use CORS middleware
-	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowAllOrigins = true
-	corsConfig.AddAllowHeaders("Authorization")
-	router.Use(cors.New(corsConfig))
+	router.Use(libs.Cors)
 
 	handler.NewHandler(&handler.Config{
 		R:                 router,
