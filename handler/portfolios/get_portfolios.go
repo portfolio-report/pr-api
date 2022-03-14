@@ -9,6 +9,9 @@ import (
 
 func (h *PortfoliosHandler) GetPortfolios(c *gin.Context) {
 	user := middleware.UserFromContext(c.Request.Context())
-	portfolios := h.PortfolioService.GetAllOfUser(user)
+	portfolios, err := h.PortfolioService.GetAllOfUser(user)
+	if err != nil {
+		panic(err)
+	}
 	c.JSON(http.StatusOK, portfolios)
 }

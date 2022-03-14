@@ -9,6 +9,9 @@ import (
 
 func (h *AuthHandler) GetSessions(c *gin.Context) {
 	user := middleware.UserFromContext(c.Request.Context())
-	sessions := h.SessionService.GetAllOfUser(user)
+	sessions, err := h.SessionService.GetAllOfUser(user)
+	if err != nil {
+		panic(err)
+	}
 	c.JSON(http.StatusOK, sessions)
 }

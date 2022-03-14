@@ -28,14 +28,20 @@ func AuthUser(s models.SessionService, u models.UserService) gin.HandlerFunc {
 			return
 		}
 
-		session := s.ValidateToken(token)
+		session, err := s.ValidateToken(token)
+		if err != nil {
+			panic(err)
+		}
 
 		if session == nil {
 			c.Next()
 			return
 		}
 
-		user := u.GetUserFromSession(session)
+		user, err := u.GetUserFromSession(session)
+		if err != nil {
+			panic(err)
+		}
 
 		go func() {
 			err := u.UpdateLastSeen(user)

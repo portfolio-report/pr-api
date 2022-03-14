@@ -41,7 +41,7 @@ func (*sessionService) ModelFromDb(s db.Session) *model.Session {
 	}
 }
 
-func (s *sessionService) GetAllOfUser(user *model.User) []*model.Session {
+func (s *sessionService) GetAllOfUser(user *model.User) ([]*model.Session, error) {
 	var sessions []db.Session
 	err := s.DB.Find(&sessions, "user_id = ?", user.ID).Error
 	if err != nil {
@@ -52,7 +52,7 @@ func (s *sessionService) GetAllOfUser(user *model.User) []*model.Session {
 	for _, session := range sessions {
 		response = append(response, s.ModelFromDb(session))
 	}
-	return response
+	return response, nil
 }
 
 func (s *sessionService) CreateSession(user *model.User, note string) (*model.Session, error) {
@@ -102,11 +102,11 @@ func (s *sessionService) GetSessionToken(c *gin.Context) string {
 	return idTokenHeader[1]
 }
 
-func (s *sessionService) ValidateToken(token string) *model.Session {
+func (s *sessionService) ValidateToken(token string) (*model.Session, error) {
 	var session db.Session
 
 	if err := s.Validate.Var(token, "uuid"); err != nil {
-		return nil
+		return nil, nil
 	}
 
 	err := s.DB.
@@ -116,7 +116,7 @@ func (s *sessionService) ValidateToken(token string) *model.Session {
 		Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil
+			return nil, nil
 		}
 
 		panic(err)
@@ -129,7 +129,7 @@ func (s *sessionService) ValidateToken(token string) *model.Session {
 		}
 	}()
 
-	return s.ModelFromDb(session)
+	return s.ModelFromDb(session), nil
 }
 
 func (s *sessionService) updateLastActivity(session *db.Session) error {

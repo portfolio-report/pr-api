@@ -59,13 +59,13 @@ func (s *userService) GetUserByUsername(ctx context.Context, username string) (*
 	return s.ModelFromDb(user), err
 }
 
-func (s *userService) GetUserFromSession(session *model.Session) *model.User {
+func (s *userService) GetUserFromSession(session *model.Session) (*model.User, error) {
 	var user db.User
 	err := s.DB.Take(&user, session.UserID).Error
 	if err != nil {
 		panic(err)
 	}
-	return s.ModelFromDb(user)
+	return s.ModelFromDb(user), nil
 }
 
 func (s *userService) UpdatePassword(ctx context.Context, user *model.User, password string) error {

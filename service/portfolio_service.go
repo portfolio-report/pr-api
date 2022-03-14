@@ -34,7 +34,7 @@ func (*portfolioService) ModelFromDb(p db.Portfolio) *model.Portfolio {
 	}
 }
 
-func (s *portfolioService) GetAllOfUser(user *model.User) []*model.Portfolio {
+func (s *portfolioService) GetAllOfUser(user *model.User) ([]*model.Portfolio, error) {
 	var portfolios []db.Portfolio
 	err := s.DB.Find(&portfolios, "user_id = ?", user.ID).Error
 	if err != nil {
@@ -45,7 +45,7 @@ func (s *portfolioService) GetAllOfUser(user *model.User) []*model.Portfolio {
 	for _, p := range portfolios {
 		response = append(response, s.ModelFromDb(p))
 	}
-	return response
+	return response, nil
 }
 
 func (s *portfolioService) GetPortfolioOfUserByID(user *model.User, ID uint) (*model.Portfolio, error) {
@@ -112,7 +112,7 @@ func (s *portfolioService) UpdatePortfolio(ID uint, req *model.PortfolioInput) (
 	return s.ModelFromDb(portfolio), nil
 }
 
-func (s *portfolioService) DeletePortfolio(ID uint) *model.Portfolio {
+func (s *portfolioService) DeletePortfolio(ID uint) (*model.Portfolio, error) {
 	portfolio := db.Portfolio{
 		ID: ID,
 	}
@@ -120,5 +120,5 @@ func (s *portfolioService) DeletePortfolio(ID uint) *model.Portfolio {
 	if err != nil {
 		panic(err)
 	}
-	return s.ModelFromDb(portfolio)
+	return s.ModelFromDb(portfolio), nil
 }

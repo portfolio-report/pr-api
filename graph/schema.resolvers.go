@@ -128,7 +128,7 @@ func (r *mutationResolver) DeletePortfolio(ctx context.Context, id int) (*model.
 		panic(err)
 	}
 
-	return r.PortfolioService.DeletePortfolio(uint(id)), nil
+	return r.PortfolioService.DeletePortfolio(uint(id))
 }
 
 func (r *portfolioAccountResolver) Value(ctx context.Context, obj *model.PortfolioAccount, currencyCode *string) (string, error) {
@@ -145,7 +145,7 @@ func (r *queryResolver) Portfolios(ctx context.Context) ([]*model.Portfolio, err
 		return nil, fmt.Errorf("Access denied")
 	}
 
-	return r.PortfolioService.GetAllOfUser(user), nil
+	return r.PortfolioService.GetAllOfUser(user)
 }
 
 func (r *queryResolver) Portfolio(ctx context.Context, id int) (*model.Portfolio, error) {
@@ -191,7 +191,7 @@ func (r *queryResolver) Sessions(ctx context.Context) ([]*model.Session, error) 
 		return nil, fmt.Errorf("Access denied")
 	}
 
-	return r.SessionService.GetAllOfUser(user), nil
+	return r.SessionService.GetAllOfUser(user)
 }
 
 func (r *securityResolver) SecurityTaxonomies(ctx context.Context, obj *model.Security) ([]*model.SecurityTaxonomy, error) {
@@ -199,7 +199,7 @@ func (r *securityResolver) SecurityTaxonomies(ctx context.Context, obj *model.Se
 }
 
 func (r *securityResolver) Events(ctx context.Context, obj *model.Security) ([]*model.Event, error) {
-	return r.SecurityService.GetEventsOfSecurity(obj), nil
+	return r.SecurityService.GetEventsOfSecurity(obj)
 }
 
 func (r *securityTaxonomyResolver) Taxonomy(ctx context.Context, obj *model.SecurityTaxonomy) (*model.Taxonomy, error) {
@@ -207,7 +207,7 @@ func (r *securityTaxonomyResolver) Taxonomy(ctx context.Context, obj *model.Secu
 }
 
 func (r *sessionResolver) User(ctx context.Context, obj *model.Session) (*model.User, error) {
-	return r.UserService.GetUserFromSession(obj), nil
+	return r.UserService.GetUserFromSession(obj)
 }
 
 // Mutation returns generated.MutationResolver implementation.
