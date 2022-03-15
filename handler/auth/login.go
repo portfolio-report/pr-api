@@ -11,8 +11,8 @@ import (
 )
 
 type loginUserRequest struct {
-	Username string `json:"username" binding:"required,min=6,max=100,ValidUsername"`
-	Password string `json:"password" binding:"required,min=8,max=255"`
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 func (h *AuthHandler) LoginUser(c *gin.Context) {
