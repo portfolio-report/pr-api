@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"path"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/portfolio-report/pr-api/handler/auth"
@@ -64,7 +66,7 @@ func NewHandler(c *Config) {
 
 	// /graphql
 	g.POST("/graphql", middleware.Useragent, h.GraphqlHandler())
-	g.GET("/graphql", h.PlaygroundHandler("/graphql"))
+	g.GET("/graphql", h.PlaygroundHandler(path.Join(g.BasePath(), "graphql")))
 
 	// /doc
 	h.RegisterSwaggerUi(g, "/doc")

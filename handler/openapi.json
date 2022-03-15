@@ -9,7 +9,7 @@
       "url": "https://www.portfolio-report.net/contact"
     }
   },
-  "servers": [],
+  "servers": [{"url": "../"} ],
   "tags": [
     {
       "name": "auth"

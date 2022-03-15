@@ -3,6 +3,7 @@ package handler
 import (
 	_ "embed"
 	"net/http"
+	"path"
 
 	"github.com/gin-gonic/gin"
 	"github.com/portfolio-report/swaggerui"
@@ -12,5 +13,8 @@ import (
 var openApiSpec []byte
 
 func (h *Handler) RegisterSwaggerUi(g *gin.RouterGroup, prefix string) {
-	g.GET(prefix+"/*w", gin.WrapH(http.StripPrefix(prefix, swaggerui.Handler(openApiSpec))))
+	ginHandler := gin.WrapH(
+		http.StripPrefix(path.Join(g.BasePath(), prefix), swaggerui.Handler(openApiSpec)),
+	)
+	g.GET(prefix+"/*w", ginHandler)
 }
