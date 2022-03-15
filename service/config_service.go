@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/portfolio-report/pr-api/db"
 )
@@ -12,7 +13,7 @@ type configService struct {
 	Db                    db.Config
 	MailerTransport       string
 	ContactRecipientEmail string
-	SessionTimeout        int
+	SessionTimeout        time.Duration
 	Ip2locToken           string
 	SearchMaxResults      int
 }
@@ -38,9 +39,13 @@ func ReadConfig() *configService {
 	}
 	c.Db.MaxOpenConn = DefaultAtoi(os.Getenv("DATABASE_MAX_OPEN_CONN"), 25)
 	c.Db.MaxIdleConn = DefaultAtoi(os.Getenv("DATABASE_MAX_IDLE_CONN"), 25)
-	c.Db.ConnMaxLife = DefaultAtoi(os.Getenv("DATABASE_CONN_MAX_LIFE"), 5*60) // 5mins
+	c.Db.ConnMaxLife = time.Duration(
+		DefaultAtoi(os.Getenv("DATABASE_CONN_MAX_LIFE"), 5*60), // 5mins
+	) * time.Second
 
-	c.SessionTimeout = DefaultAtoi(os.Getenv("SESSION_TIMEOUT"), 15*60) // 15min
+	c.SessionTimeout = time.Duration(
+		DefaultAtoi(os.Getenv("SESSION_TIMEOUT"), 15*60), // 15min
+	) * time.Second
 
 	c.Ip2locToken = os.Getenv("IP2LOCATION_TOKEN")
 	c.SearchMaxResults = DefaultAtoi(os.Getenv("SECURITIES_SEARCH_MAX_RESULTS"), 10)

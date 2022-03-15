@@ -16,9 +16,7 @@ type Config struct {
 	Url         string
 	MaxOpenConn int
 	MaxIdleConn int
-
-	// maximum lifetime of database connection in seconds
-	ConnMaxLife int
+	ConnMaxLife time.Duration
 }
 
 func InitDb(cfg Config) (*gorm.DB, error) {
@@ -34,8 +32,7 @@ func InitDb(cfg Config) (*gorm.DB, error) {
 
 	sqlDb.SetMaxOpenConns(cfg.MaxOpenConn)
 	sqlDb.SetMaxIdleConns(cfg.MaxIdleConn)
-	sqlDb.SetConnMaxLifetime(
-		time.Duration(cfg.ConnMaxLife) * time.Second)
+	sqlDb.SetConnMaxLifetime(cfg.ConnMaxLife)
 
 	gormDb, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: sqlDb,

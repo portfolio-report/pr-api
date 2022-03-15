@@ -20,10 +20,10 @@ import (
 type sessionService struct {
 	DB       *gorm.DB
 	Validate *validator.Validate
-	Timeout  int
+	Timeout  time.Duration
 }
 
-func NewSessionService(db *gorm.DB, validate *validator.Validate, timeout int) models.SessionService {
+func NewSessionService(db *gorm.DB, validate *validator.Validate, timeout time.Duration) models.SessionService {
 	return &sessionService{
 		DB:       db,
 		Validate: validate,
@@ -79,7 +79,7 @@ func (s *sessionService) DeleteSession(token string) (*model.Session, error) {
 }
 
 func (s *sessionService) sessionLastActivityLimit() time.Time {
-	return time.Now().Add(-1 * time.Duration(s.Timeout) * time.Second)
+	return time.Now().Add(-1 * s.Timeout)
 }
 
 type authHeader struct {
