@@ -34,7 +34,7 @@ func NewHandler(
 
 	g := R.Group("/taxonomies")
 
-	g.GET("", h.GetTaxonomies)
+	g.GET("/", h.GetTaxonomies)
 	g.GET("/:uuid", h.GetTaxonomy)
 	g.POST("/",
 		middleware.RequireUser(SessionService, UserService),

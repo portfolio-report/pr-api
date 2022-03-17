@@ -55,7 +55,7 @@ func NewHandler(
 		h.DeletePortfolio)
 
 	// securities
-	g.GET("/:portfolioId/securities",
+	g.GET("/:portfolioId/securities/",
 		middleware.RequireUser(SessionService, UserService),
 		middleware.RequirePortfolioPerm(PortfolioService),
 		h.GetSecurities)
@@ -69,7 +69,7 @@ func NewHandler(
 		h.DeleteSecurity)
 
 	// accounts
-	g.GET("/:portfolioId/accounts",
+	g.GET("/:portfolioId/accounts/",
 		middleware.RequireUser(SessionService, UserService),
 		middleware.RequirePortfolioPerm(PortfolioService),
 		h.GetAccounts)
@@ -83,7 +83,7 @@ func NewHandler(
 		h.DeleteAccount)
 
 	// transactions
-	g.GET("/:portfolioId/transactions",
+	g.GET("/:portfolioId/transactions/",
 		middleware.RequireUser(SessionService, UserService),
 		middleware.RequirePortfolioPerm(PortfolioService),
 		h.GetTransactions)

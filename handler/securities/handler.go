@@ -37,7 +37,7 @@ func NewHandler(
 	g.GET("/uuid/:uuid/markets/XETR", h.GetSecurityPrices)
 
 	// admin:
-	g.GET("",
+	g.GET("/",
 		middleware.RequireUser(SessionService, UserService),
 		middleware.RequireAdmin(),
 		h.GetSecurities)
