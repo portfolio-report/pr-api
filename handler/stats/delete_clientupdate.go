@@ -10,7 +10,7 @@ import (
 )
 
 // DeleteClientupdate removes update entry
-func (h *StatsHandler) DeleteClientupdate(c *gin.Context) {
+func (h *statsHandler) DeleteClientupdate(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		libs.HandleNotFoundError(c)

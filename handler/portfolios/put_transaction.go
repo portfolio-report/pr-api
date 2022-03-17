@@ -36,7 +36,7 @@ type putTransactionRequest struct {
 }
 
 // PutTransaction creates or updates transaction in portfolio
-func (h *PortfoliosHandler) PutTransaction(c *gin.Context) {
+func (h *portfoliosHandler) PutTransaction(c *gin.Context) {
 	portfolioId := uint(middleware.PortfolioFromContext(c).ID)
 	uuid, err := uuid.Parse(c.Param("uuid"))
 	if err != nil {
@@ -89,8 +89,8 @@ func (h *PortfoliosHandler) PutTransaction(c *gin.Context) {
 	c.JSON(http.StatusOK, models.PortfolioTransactionResponseFromDB(&transaction))
 }
 
-// Create/update/delete units in database to match units in request
-func (h *PortfoliosHandler) createUpdateDeleteTransactionUnits(
+// createUpdateDeleteTransactionUnits creates/updates/deletes units in database to match units in request
+func (h *portfoliosHandler) createUpdateDeleteTransactionUnits(
 	portfolioId uint,
 	transactionUuid uuid.UUID,
 	req []putTransactionUnitRequest,

@@ -16,6 +16,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Config holds configuration for all handlers
 type Config struct {
 	R                 *gin.Engine
 	UserService       models.UserService
@@ -31,7 +32,7 @@ type Config struct {
 	Validate          *validator.Validate
 }
 
-type Handler struct {
+type rootHandler struct {
 	UserService       models.UserService
 	SessionService    models.SessionService
 	CurrenciesService models.CurrenciesService
@@ -44,8 +45,9 @@ type Handler struct {
 	validate          *validator.Validate
 }
 
+// NewHandler creates new root handler and registers routes
 func NewHandler(c *Config) {
-	h := &Handler{
+	h := &rootHandler{
 		UserService:       c.UserService,
 		SessionService:    c.SessionService,
 		CurrenciesService: c.CurrenciesService,

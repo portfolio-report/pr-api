@@ -7,14 +7,14 @@ import (
 	"gorm.io/gorm"
 )
 
-type StatsHandler struct {
+type statsHandler struct {
 	DB             *gorm.DB
 	SessionService models.SessionService
 	UserService    models.UserService
 	GeoipService   models.GeoipService
 }
 
-// NewHandler creates new StatsHandler and registers routes
+// NewHandler creates new stats handler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
 	DB *gorm.DB,
@@ -22,7 +22,7 @@ func NewHandler(
 	SessionService models.SessionService,
 	GeoipService models.GeoipService,
 ) {
-	h := &StatsHandler{
+	h := &statsHandler{
 		DB:             DB,
 		SessionService: SessionService,
 		UserService:    UserService,

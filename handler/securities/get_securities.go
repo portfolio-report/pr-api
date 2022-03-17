@@ -9,7 +9,7 @@ import (
 )
 
 // GetSecurities lists securities
-func (h *SecuritiesHandler) GetSecurities(c *gin.Context) {
+func (h *securitiesHandler) GetSecurities(c *gin.Context) {
 	type Query struct {
 		Limit        int    `form:"limit"`
 		Skip         int    `form:"skip"`

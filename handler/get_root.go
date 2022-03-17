@@ -7,6 +7,6 @@ import (
 )
 
 // GetRoot returns static ok message
-func (h *Handler) GetRoot(c *gin.Context) {
+func (h *rootHandler) GetRoot(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"statusCode": http.StatusOK, "message": "ok"})
 }

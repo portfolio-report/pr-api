@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type PortfoliosHandler struct {
+type portfoliosHandler struct {
 	DB               *gorm.DB
 	SessionService   models.SessionService
 	UserService      models.UserService
@@ -16,7 +16,7 @@ type PortfoliosHandler struct {
 	Validate         *validator.Validate
 }
 
-// NewHandler creates new PortfoliosHandler and registers routes
+// NewHandler creates new portfolios handler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
 	DB *gorm.DB,
@@ -25,7 +25,7 @@ func NewHandler(
 	UserService models.UserService,
 	PortfolioService models.PortfolioService,
 ) {
-	h := &PortfoliosHandler{
+	h := &portfoliosHandler{
 		DB:               DB,
 		SessionService:   SessionService,
 		UserService:      UserService,

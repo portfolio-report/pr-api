@@ -17,7 +17,7 @@ type patchTaxonomyRequest struct {
 }
 
 // PatchTaxonomy updates taxonomy
-func (h *TaxonomiesHandler) PatchTaxonomy(c *gin.Context) {
+func (h *taxonomiesHandler) PatchTaxonomy(c *gin.Context) {
 	uuid := c.Param("uuid")
 	if err := h.Validate.Var(uuid, "uuid"); err != nil {
 		libs.HandleNotFoundError(c)

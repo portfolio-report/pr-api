@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type TaxonomiesHandler struct {
+type taxonomiesHandler struct {
 	UserService     models.UserService
 	SessionService  models.SessionService
 	TaxonomyService models.TaxonomyService
@@ -16,7 +16,7 @@ type TaxonomiesHandler struct {
 	Validate        *validator.Validate
 }
 
-// NewHandler creates new TaxonomiesHandler and registers routes
+// NewHandler creates new taxonomies handler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
 	DB *gorm.DB,
@@ -25,7 +25,7 @@ func NewHandler(
 	SessionService models.SessionService,
 	TaxonomyService models.TaxonomyService,
 ) {
-	h := &TaxonomiesHandler{
+	h := &taxonomiesHandler{
 		UserService:     UserService,
 		SessionService:  SessionService,
 		TaxonomyService: TaxonomyService,

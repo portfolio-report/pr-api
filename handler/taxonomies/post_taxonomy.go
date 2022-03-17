@@ -15,7 +15,7 @@ type postTaxonomyRequest struct {
 }
 
 // PostTaxonomy creates taxonomy
-func (h *TaxonomiesHandler) PostTaxonomy(c *gin.Context) {
+func (h *taxonomiesHandler) PostTaxonomy(c *gin.Context) {
 	var request postTaxonomyRequest
 	if err := c.BindJSON(&request); err != nil {
 		libs.HandleBadRequestError(c, err.Error())

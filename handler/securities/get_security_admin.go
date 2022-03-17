@@ -11,7 +11,7 @@ import (
 )
 
 // GetSecurityAdmin returns security for user with admin privileges
-func (h *SecuritiesHandler) GetSecurityAdmin(c *gin.Context) {
+func (h *securitiesHandler) GetSecurityAdmin(c *gin.Context) {
 	uuid := c.Param("uuid")
 
 	if err := h.validate.Var(uuid, "required,uuid"); err != nil {

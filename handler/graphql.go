@@ -9,7 +9,7 @@ import (
 )
 
 // GraphHandler serves GraphQL endpoint
-func (h *Handler) GraphqlHandler() gin.HandlerFunc {
+func (h *rootHandler) GraphqlHandler() gin.HandlerFunc {
 	graphHandler := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
 		Resolvers: &graph.Resolver{
 			DB:               h.DB,
@@ -27,7 +27,7 @@ func (h *Handler) GraphqlHandler() gin.HandlerFunc {
 }
 
 // PlaygroundHandler serves playground UI for GraphQL
-func (*Handler) PlaygroundHandler(graphqlUrl string) gin.HandlerFunc {
+func (*rootHandler) PlaygroundHandler(graphqlUrl string) gin.HandlerFunc {
 	playgroundHandler := playground.Handler("GraphQL", graphqlUrl)
 
 	return func(c *gin.Context) {

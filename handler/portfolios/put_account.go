@@ -24,7 +24,7 @@ type putAccountRequest struct {
 }
 
 // PutAccount creates or updates account in portfolio
-func (h *PortfoliosHandler) PutAccount(c *gin.Context) {
+func (h *portfoliosHandler) PutAccount(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
 	uuid := c.Param("uuid")
 	if err := h.Validate.Var(uuid, "uuid"); err != nil {

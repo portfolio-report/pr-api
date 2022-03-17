@@ -8,7 +8,7 @@ import (
 )
 
 // GetPortfolio returns single portfolio
-func (h *PortfoliosHandler) GetPortfolio(c *gin.Context) {
+func (h *portfoliosHandler) GetPortfolio(c *gin.Context) {
 	portfolio := middleware.PortfolioFromContext(c)
 	c.JSON(http.StatusOK, portfolio)
 }

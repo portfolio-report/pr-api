@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-type PatchSecurityMarketRequest struct {
+type patchSecurityMarketRequest struct {
 	CurrencyCode *string `json:"currencyCode"`
 	Symbol       *string `json:"symbol"`
 	UpdatePrices *bool   `json:"updatePrices"`
@@ -22,7 +22,7 @@ type PatchSecurityMarketRequest struct {
 }
 
 // PatchSecurityMarket creates or updates market of security and its prices
-func (h *SecuritiesHandler) PatchSecurityMarket(c *gin.Context) {
+func (h *securitiesHandler) PatchSecurityMarket(c *gin.Context) {
 	uuid := c.Param("uuid")
 	if err := h.validate.Var(uuid, "uuid"); err != nil {
 		libs.HandleNotFoundError(c)
@@ -30,7 +30,7 @@ func (h *SecuritiesHandler) PatchSecurityMarket(c *gin.Context) {
 	}
 	marketCode := c.Param("marketCode")
 
-	var req PatchSecurityMarketRequest
+	var req patchSecurityMarketRequest
 	if err := c.BindJSON(&req); err != nil {
 		libs.HandleBadRequestError(c, err.Error())
 		return

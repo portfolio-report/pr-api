@@ -8,7 +8,7 @@ import (
 )
 
 // DeleteTaxonomy removes taxonomy
-func (h *TaxonomiesHandler) DeleteTaxonomy(c *gin.Context) {
+func (h *taxonomiesHandler) DeleteTaxonomy(c *gin.Context) {
 	uuid := c.Param("uuid")
 	if err := h.Validate.Var(uuid, "uuid"); err != nil {
 		libs.HandleNotFoundError(c)

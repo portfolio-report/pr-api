@@ -12,14 +12,14 @@ import (
 )
 
 // PatchSecurity updates security
-func (h *SecuritiesHandler) PatchSecurity(c *gin.Context) {
+func (h *securitiesHandler) PatchSecurity(c *gin.Context) {
 	uuid := c.Param("uuid")
 	if err := h.validate.Var(uuid, "uuid"); err != nil {
 		libs.HandleNotFoundError(c)
 		return
 	}
 
-	var request CreateUpdateSecurityRequest
+	var request createUpdateSecurityRequest
 	if err := c.BindJSON(&request); err != nil {
 		libs.HandleBadRequestError(c, err.Error())
 		return

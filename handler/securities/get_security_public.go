@@ -14,7 +14,7 @@ import (
 )
 
 // GetSecurityPublic returns security with its public attributes
-func (h *SecuritiesHandler) GetSecurityPublic(c *gin.Context) {
+func (h *securitiesHandler) GetSecurityPublic(c *gin.Context) {
 	uuid := c.Param("uuid")
 
 	if err := h.validate.Var(uuid, "required,LaxUuid"); err != nil {

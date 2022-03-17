@@ -8,7 +8,7 @@ import (
 )
 
 // GetTaxonomy returns single taxonomy with all descendants
-func (h *TaxonomiesHandler) GetTaxonomy(c *gin.Context) {
+func (h *taxonomiesHandler) GetTaxonomy(c *gin.Context) {
 	uuid := c.Param("uuid")
 	if err := h.Validate.Var(uuid, "uuid"); err != nil {
 		libs.HandleNotFoundError(c)

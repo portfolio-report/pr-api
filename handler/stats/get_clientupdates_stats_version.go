@@ -8,7 +8,7 @@ import (
 )
 
 // GetClientupdatesStatsVersion returns statistics for updates to a certain version
-func (h *StatsHandler) GetClientupdatesStatsVersion(c *gin.Context) {
+func (h *statsHandler) GetClientupdatesStatsVersion(c *gin.Context) {
 	version := c.Param("version")
 
 	type ByDate struct {

@@ -10,7 +10,7 @@ import (
 )
 
 // PutPortfolio updates portfolio
-func (h *PortfoliosHandler) PutPortfolio(c *gin.Context) {
+func (h *portfoliosHandler) PutPortfolio(c *gin.Context) {
 	portfolio := middleware.PortfolioFromContext(c)
 
 	var input model.PortfolioInput

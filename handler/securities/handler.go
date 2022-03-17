@@ -8,14 +8,14 @@ import (
 	"gorm.io/gorm"
 )
 
-type SecuritiesHandler struct {
+type securitiesHandler struct {
 	DB             *gorm.DB
 	SessionService models.SessionService
 	UserService    models.UserService
 	validate       *validator.Validate
 }
 
-// NewHandler creates new SecuritiesHandler and registers routes
+// NewHandler creates new securities handler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
 	DB *gorm.DB,
@@ -23,7 +23,7 @@ func NewHandler(
 	UserService models.UserService,
 	SessionService models.SessionService,
 ) {
-	h := &SecuritiesHandler{
+	h := &securitiesHandler{
 		DB:             DB,
 		SessionService: SessionService,
 		UserService:    UserService,

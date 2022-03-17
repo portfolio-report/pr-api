@@ -10,7 +10,7 @@ import (
 	"github.com/portfolio-report/pr-api/models"
 )
 
-type CreateUpdateSecurityRequest struct {
+type createUpdateSecurityRequest struct {
 	Name         *string `json:"name"`
 	Isin         *string `json:"isin"`
 	Wkn          *string `json:"wkn"`
@@ -21,8 +21,8 @@ type CreateUpdateSecurityRequest struct {
 }
 
 // PostSecurity creates new security
-func (h *SecuritiesHandler) PostSecurity(c *gin.Context) {
-	var request CreateUpdateSecurityRequest
+func (h *securitiesHandler) PostSecurity(c *gin.Context) {
+	var request createUpdateSecurityRequest
 	if err := c.BindJSON(&request); err != nil {
 		libs.HandleBadRequestError(c, err.Error())
 		return

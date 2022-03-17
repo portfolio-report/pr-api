@@ -12,7 +12,7 @@ import (
 )
 
 // DeleteAccount removes account from portfolio and links to it
-func (h *PortfoliosHandler) DeleteAccount(c *gin.Context) {
+func (h *portfoliosHandler) DeleteAccount(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
 	uuid := c.Param("uuid")
 	if err := h.Validate.Var(uuid, "uuid"); err != nil {

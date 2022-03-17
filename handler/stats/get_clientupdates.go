@@ -9,7 +9,7 @@ import (
 )
 
 // GetClientupdates lists updates
-func (h *StatsHandler) GetClientupdates(c *gin.Context) {
+func (h *statsHandler) GetClientupdates(c *gin.Context) {
 	type Query struct {
 		Limit      int    `form:"limit"`
 		Skip       int    `form:"skip"`

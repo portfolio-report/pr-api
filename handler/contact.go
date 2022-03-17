@@ -9,7 +9,7 @@ import (
 	"github.com/portfolio-report/pr-api/libs"
 )
 
-type ContactRequest struct {
+type contactRequest struct {
 	Name    string `json:"name" binding:"required"`
 	Email   string `json:"email" binding:"required,email"`
 	Subject string `json:"subject" binding:"required"`
@@ -17,8 +17,8 @@ type ContactRequest struct {
 }
 
 // Contact sends an email to the configured contact address
-func (h *Handler) Contact(c *gin.Context) {
-	var request ContactRequest
+func (h *rootHandler) Contact(c *gin.Context) {
+	var request contactRequest
 
 	if err := c.BindJSON(&request); err != nil {
 		libs.HandleBadRequestError(c, err.Error())

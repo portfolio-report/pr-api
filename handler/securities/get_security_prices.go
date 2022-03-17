@@ -13,7 +13,7 @@ import (
 )
 
 // GetSecurityPrices returns the market and prices of security
-func (h *SecuritiesHandler) GetSecurityPrices(c *gin.Context) {
+func (h *securitiesHandler) GetSecurityPrices(c *gin.Context) {
 	uuid := c.Param("uuid")
 	if err := h.validate.Var(uuid, "LaxUuid"); err != nil {
 		libs.HandleNotFoundError(c)

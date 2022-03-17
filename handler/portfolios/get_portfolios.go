@@ -8,7 +8,7 @@ import (
 )
 
 // GetPortfolios lists all portfolios of current user
-func (h *PortfoliosHandler) GetPortfolios(c *gin.Context) {
+func (h *portfoliosHandler) GetPortfolios(c *gin.Context) {
 	user := middleware.UserFromContext(c.Request.Context())
 	portfolios, err := h.PortfolioService.GetAllOfUser(user)
 	if err != nil {

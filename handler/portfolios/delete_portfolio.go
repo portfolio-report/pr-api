@@ -8,7 +8,7 @@ import (
 )
 
 // DeletePortfolio removes portfolio
-func (h *PortfoliosHandler) DeletePortfolio(c *gin.Context) {
+func (h *portfoliosHandler) DeletePortfolio(c *gin.Context) {
 	portfolio := middleware.PortfolioFromContext(c)
 	h.PortfolioService.DeletePortfolio(uint(portfolio.ID))
 	c.JSON(http.StatusOK, portfolio)

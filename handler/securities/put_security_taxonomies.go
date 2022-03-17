@@ -11,13 +11,13 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-type SecurityTaxonomyRequest struct {
+type securityTaxonomyRequest struct {
 	TaxonomyUuid string          `json:"taxonomyUuid" binding:"uuid"`
 	Weight       decimal.Decimal `json:"weight"`
 }
 
 // PutSecurityTaxonomies creates, updates and deletes taxonomies of security
-func (h *SecuritiesHandler) PutSecurityTaxonomies(c *gin.Context) {
+func (h *securitiesHandler) PutSecurityTaxonomies(c *gin.Context) {
 	securityUuid := c.Param("uuid")
 	if err := h.validate.Var(securityUuid, "uuid"); err != nil {
 		libs.HandleNotFoundError(c)
@@ -29,7 +29,7 @@ func (h *SecuritiesHandler) PutSecurityTaxonomies(c *gin.Context) {
 		return
 	}
 
-	var req []SecurityTaxonomyRequest
+	var req []securityTaxonomyRequest
 	if err := c.BindJSON(&req); err != nil {
 		libs.HandleBadRequestError(c, err.Error())
 		return

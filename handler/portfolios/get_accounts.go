@@ -10,7 +10,7 @@ import (
 )
 
 // GetAccounts lists all accounts in portfolio
-func (h *PortfoliosHandler) GetAccounts(c *gin.Context) {
+func (h *portfoliosHandler) GetAccounts(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
 
 	var accounts []db.PortfolioAccount

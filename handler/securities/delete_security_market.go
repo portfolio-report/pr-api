@@ -11,7 +11,7 @@ import (
 )
 
 // DeleteSecurityMarket removes market of security
-func (h *SecuritiesHandler) DeleteSecurityMarket(c *gin.Context) {
+func (h *securitiesHandler) DeleteSecurityMarket(c *gin.Context) {
 
 	uuid := c.Param("uuid")
 	if err := h.validate.Var(uuid, "uuid"); err != nil {

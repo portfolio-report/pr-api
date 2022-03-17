@@ -42,7 +42,7 @@ type putSecurityRequest struct {
 }
 
 // PutSecurity creates or updates security in portfolio
-func (h *PortfoliosHandler) PutSecurity(c *gin.Context) {
+func (h *portfoliosHandler) PutSecurity(c *gin.Context) {
 	portfolioId := uint(middleware.PortfolioFromContext(c).ID)
 	uuid := c.Param("uuid")
 	if err := h.Validate.Var(uuid, "uuid"); err != nil {

@@ -10,7 +10,7 @@ import (
 )
 
 // GetSecurities lists all securities in portfolio
-func (h *PortfoliosHandler) GetSecurities(c *gin.Context) {
+func (h *portfoliosHandler) GetSecurities(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
 
 	var securities []db.PortfolioSecurity

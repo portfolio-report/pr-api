@@ -8,7 +8,7 @@ import (
 )
 
 // CountClientupdate counts each request as an update of Portfolio Performance
-func (h *StatsHandler) CountClientupdate(c *gin.Context) {
+func (h *statsHandler) CountClientupdate(c *gin.Context) {
 	c.Header("Cache-Control", "no-cache")
 
 	timestamp := time.Now()

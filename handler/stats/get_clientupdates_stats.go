@@ -15,7 +15,7 @@ type GetClientupdatesResponse struct {
 }
 
 // GetClientupdatesStats returns statistics on updates
-func (h *StatsHandler) GetClientupdatesStats(c *gin.Context) {
+func (h *statsHandler) GetClientupdatesStats(c *gin.Context) {
 	var results []GetClientupdatesResponse
 
 	err := h.DB.Raw(`

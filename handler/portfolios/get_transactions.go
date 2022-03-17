@@ -10,7 +10,7 @@ import (
 )
 
 // GetTransactions lists all transactions in portfolio
-func (h *PortfoliosHandler) GetTransactions(c *gin.Context) {
+func (h *portfoliosHandler) GetTransactions(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
 
 	var transactions []db.PortfolioTransaction

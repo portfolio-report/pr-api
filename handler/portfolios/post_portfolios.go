@@ -10,7 +10,7 @@ import (
 )
 
 // PostPortfolios create new portfolio
-func (h *PortfoliosHandler) PostPortfolios(c *gin.Context) {
+func (h *portfoliosHandler) PostPortfolios(c *gin.Context) {
 	user := middleware.UserFromContext(c.Request.Context())
 
 	var input model.PortfolioInput

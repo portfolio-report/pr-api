@@ -61,7 +61,7 @@ func searchSecuritiesResponseMarketFromDB(s db.SecurityMarket) searchSecuritiesR
 }
 
 // SearchSecurities lists securities matching the search query
-func (h *SecuritiesHandler) SearchSecurities(c *gin.Context) {
+func (h *securitiesHandler) SearchSecurities(c *gin.Context) {
 	searchTerm := strings.ToUpper(c.Param("searchTerm"))
 	securityType := c.Query("securityType")
 
