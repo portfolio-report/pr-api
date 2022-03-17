@@ -27,6 +27,7 @@ type currenciesService struct {
 	nextCurrencyIndex [][]int
 }
 
+// NewCurrenciesService creates and returns currencies service
 func NewCurrenciesService(db *gorm.DB) models.CurrenciesService {
 	s := &currenciesService{
 		DB: db,
@@ -37,6 +38,7 @@ func NewCurrenciesService(db *gorm.DB) models.CurrenciesService {
 	return s
 }
 
+// UpdateExchangeRates retrieves new prices for all exchange rates
 func (s *currenciesService) UpdateExchangeRates() error {
 	log.Println("Updating exchange rates...")
 
@@ -101,7 +103,7 @@ type timeDecimal struct {
 	Value decimal.Decimal
 }
 
-// downloads and parses exchange rates from ECB
+// getExchangeRatePricesEcb downloads and parses exchange rates from ECB
 func (s *currenciesService) getExchangeRatePricesEcb(baseCurrencyCode string, quoteCurrencyCode string) ([]timeDecimal, error) {
 	if baseCurrencyCode != "EUR" {
 		panic("unknown exchange rate")
@@ -137,6 +139,7 @@ func (s *currenciesService) getExchangeRatePricesEcb(baseCurrencyCode string, qu
 	return series, nil
 }
 
+// calculateCurrencyConversionRoutes calculates all conversion routes between all currencies
 func (s *currenciesService) calculateCurrencyConversionRoutes() {
 	log.Println("Calculating currency conversion routes")
 
@@ -165,7 +168,7 @@ func (s *currenciesService) calculateCurrencyConversionRoutes() {
 	log.Println("Calculating currency conversion routes finished.")
 }
 
-// Gets list of currency codes in the conversion path between two currencies
+// getConversionRoute returns list of currency codes in the conversion path between two currencies
 func (s *currenciesService) getConversionRoute(
 	sourceCurrencyCode string,
 	targetCurrencyCode string,
@@ -194,7 +197,7 @@ func (s *currenciesService) getConversionRoute(
 	return conversionRoute, nil
 }
 
-// Gets the value of the exchange rate at (or before) the given date
+// getOneExchangerateValue gets the value of the exchange rate at (or before) the given date
 func (s *currenciesService) getOneExchangerateValue(baseCurrencyCode string, quoteCurrencyCode string, date time.Time) *decimal.Decimal {
 	var price decimal.Decimal
 	result := s.DB.Raw(`SELECT p.value `+
@@ -213,7 +216,7 @@ func (s *currenciesService) getOneExchangerateValue(baseCurrencyCode string, quo
 	return nil
 }
 
-// Converts amount between two currencies
+// ConvertCurrencyAmount converts amount between two currencies
 func (s *currenciesService) ConvertCurrencyAmount(
 	amount decimal.Decimal,
 	sourceCurrencyCode string,

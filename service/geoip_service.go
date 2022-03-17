@@ -24,6 +24,7 @@ const ip2locationDirectory = "ip2location"
 const ip2locationFilename = "IP2LOCATION-LITE-DB1.IPV6.BIN"
 const ip2locationApiFile = "DB1LITEBINIPV6"
 
+// NewGeoipService creates and returns new GeoIP service
 func NewGeoipService(ip2locToken string) models.GeoipService {
 	s := &geoipService{
 		Token: ip2locToken,

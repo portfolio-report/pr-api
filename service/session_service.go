@@ -23,6 +23,7 @@ type sessionService struct {
 	Timeout  time.Duration
 }
 
+// NewSessionService creates and returns new session service
 func NewSessionService(db *gorm.DB, validate *validator.Validate, timeout time.Duration) models.SessionService {
 	return &sessionService{
 		DB:       db,
@@ -31,7 +32,8 @@ func NewSessionService(db *gorm.DB, validate *validator.Validate, timeout time.D
 	}
 }
 
-func (*sessionService) ModelFromDb(s db.Session) *model.Session {
+// modelFromDb converts session from database into model
+func (*sessionService) modelFromDb(s db.Session) *model.Session {
 	return &model.Session{
 		Token:          s.Token,
 		Note:           s.Note,
@@ -41,6 +43,7 @@ func (*sessionService) ModelFromDb(s db.Session) *model.Session {
 	}
 }
 
+// GetAllOfUser returns all sessions of user
 func (s *sessionService) GetAllOfUser(user *model.User) ([]*model.Session, error) {
 	var sessions []db.Session
 	err := s.DB.Find(&sessions, "user_id = ?", user.ID).Error
@@ -50,11 +53,12 @@ func (s *sessionService) GetAllOfUser(user *model.User) ([]*model.Session, error
 
 	response := []*model.Session{}
 	for _, session := range sessions {
-		response = append(response, s.ModelFromDb(session))
+		response = append(response, s.modelFromDb(session))
 	}
 	return response, nil
 }
 
+// CreateSession creates new session for user
 func (s *sessionService) CreateSession(user *model.User, note string) (*model.Session, error) {
 	token := uuid.New().String()
 
@@ -69,15 +73,18 @@ func (s *sessionService) CreateSession(user *model.User, note string) (*model.Se
 		Create(&session).
 		Error
 
-	return s.ModelFromDb(session), err
+	return s.modelFromDb(session), err
 }
 
+// DeleteSession removes session
 func (s *sessionService) DeleteSession(token string) (*model.Session, error) {
 	var session db.Session
 	err := s.DB.Clauses(clause.Returning{}).Where("token = ?", token).Delete(&session).Error
-	return s.ModelFromDb(session), err
+	return s.modelFromDb(session), err
 }
 
+// sessionLastActivityLimit returns the limit for last activitiy of a session
+// to be still considered valid
 func (s *sessionService) sessionLastActivityLimit() time.Time {
 	return time.Now().Add(-1 * s.Timeout)
 }
@@ -86,6 +93,7 @@ type authHeader struct {
 	IDToken string `header:"Authorization"`
 }
 
+// GetSessionToken returns session token from HTTP headers
 func (s *sessionService) GetSessionToken(c *gin.Context) string {
 	h := authHeader{}
 
@@ -102,6 +110,8 @@ func (s *sessionService) GetSessionToken(c *gin.Context) string {
 	return idTokenHeader[1]
 }
 
+// ValidateToken checks if session token is valid.
+// Returns session for of valid tokens, nil for invalid session tokens.
 func (s *sessionService) ValidateToken(token string) (*model.Session, error) {
 	var session db.Session
 
@@ -129,9 +139,10 @@ func (s *sessionService) ValidateToken(token string) (*model.Session, error) {
 		}
 	}()
 
-	return s.ModelFromDb(session), nil
+	return s.modelFromDb(session), nil
 }
 
+// updateLastActivity sets last activitiy session to now
 func (s *sessionService) updateLastActivity(session *db.Session) error {
 	now := time.Now()
 	if now.Sub(session.LastActivityAt).Seconds() > 60 {
@@ -143,6 +154,7 @@ func (s *sessionService) updateLastActivity(session *db.Session) error {
 	return nil
 }
 
+// CleanupExpiredSessions removes expired sessions from database
 func (s *sessionService) CleanupExpiredSessions() error {
 	result := s.DB.
 		Where("last_activity_at < ?", s.sessionLastActivityLimit()).

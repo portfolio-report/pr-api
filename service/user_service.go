@@ -19,15 +19,19 @@ type userService struct {
 	DB *gorm.DB
 }
 
+// NewUserService creates and returns new user service
 func NewUserService(db *gorm.DB) models.UserService {
 	return &userService{
 		DB: db,
 	}
 }
 
+// UserExistsAlreadyError indicates a user could not be created,
+// because the username is used already
 var UserExistsAlreadyError = errors.New("user exists already")
 
-func (*userService) ModelFromDb(u db.User) *model.User {
+// modelFromDb converts user from database into model
+func (*userService) modelFromDb(u db.User) *model.User {
 	return &model.User{
 		ID:         int(u.ID),
 		Username:   u.Username,
@@ -36,6 +40,7 @@ func (*userService) ModelFromDb(u db.User) *model.User {
 	}
 }
 
+// Create creates user (without password)
 func (s *userService) Create(username string) (*model.User, error) {
 	user := db.User{
 		Username: strings.ToLower(username),
@@ -49,25 +54,28 @@ func (s *userService) Create(username string) (*model.User, error) {
 		panic(err)
 	}
 
-	return s.ModelFromDb(user), nil
+	return s.modelFromDb(user), nil
 }
 
+// GetUserByUsername return user identified by username
 func (s *userService) GetUserByUsername(ctx context.Context, username string) (*model.User, error) {
 	username = strings.ToLower(username)
 	var user db.User
 	err := s.DB.Take(&user, "username = ?", username).Error
-	return s.ModelFromDb(user), err
+	return s.modelFromDb(user), err
 }
 
+// GetUserFromSession returns user that owns session
 func (s *userService) GetUserFromSession(session *model.Session) (*model.User, error) {
 	var user db.User
 	err := s.DB.Take(&user, session.UserID).Error
 	if err != nil {
 		panic(err)
 	}
-	return s.ModelFromDb(user), nil
+	return s.modelFromDb(user), nil
 }
 
+// UpdatePassword changes the user's password
 func (s *userService) UpdatePassword(ctx context.Context, user *model.User, password string) error {
 	hash, err := argon2.HashPasswordDefault(password)
 	if err != nil {
@@ -81,6 +89,7 @@ func (s *userService) UpdatePassword(ctx context.Context, user *model.User, pass
 	return nil
 }
 
+// VerifyPassword checks if password matches the hash stored in database
 func (s *userService) VerifyPassword(ctx context.Context, user *model.User, password string) (bool, error) {
 	var dbUser db.User
 	err := s.DB.Take(&dbUser, user.ID).Error
@@ -90,10 +99,12 @@ func (s *userService) VerifyPassword(ctx context.Context, user *model.User, pass
 	return argon2.VerifyPassword(password, *dbUser.Password)
 }
 
+// Delete removes user
 func (s *userService) Delete(user *model.User) error {
 	return s.DB.Delete(db.User{}, "id = ?", user.ID).Error
 }
 
+// UpdateLastSeen updates the date a user was seen last
 func (s *userService) UpdateLastSeen(user *model.User) error {
 	now := time.Now().Format("2006-01-02")
 

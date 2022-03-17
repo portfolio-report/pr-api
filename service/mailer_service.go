@@ -18,6 +18,7 @@ type mailerService struct {
 	RecipientEmail string
 }
 
+// NewMailerService creates and returns new mailer service
 func NewMailerService(config string, recipientEmail string, validate *validator.Validate) (models.MailerService, error) {
 	if err := validate.Var(recipientEmail, "required,email"); err != nil {
 		return nil, errors.New("no valid email address for recipient")
@@ -42,6 +43,7 @@ func NewMailerService(config string, recipientEmail string, validate *validator.
 	return ret, nil
 }
 
+// SendContactMail sends an email to the default contact email address
 func (s *mailerService) SendContactMail(senderEmail string, senderName string, subject string, message string, ip string) error {
 	var auth smtp.Auth
 	if s.User != "" {

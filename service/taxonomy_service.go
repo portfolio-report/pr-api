@@ -17,13 +17,15 @@ type taxonomyService struct {
 	DB *gorm.DB
 }
 
+// NewTaxonomyService creates and returns new taxonomy service
 func NewTaxonomyService(db *gorm.DB) models.TaxonomyService {
 	return &taxonomyService{
 		DB: db,
 	}
 }
 
-func (*taxonomyService) ModelFromDb(t db.Taxonomy) *model.Taxonomy {
+// modelFromDb converts taxonomy from database to model
+func (*taxonomyService) modelFromDb(t db.Taxonomy) *model.Taxonomy {
 	return &model.Taxonomy{
 		UUID:       t.UUID,
 		ParentUUID: t.ParentUUID,
@@ -33,6 +35,7 @@ func (*taxonomyService) ModelFromDb(t db.Taxonomy) *model.Taxonomy {
 	}
 }
 
+// GetAllTaxonomies returns all taxonomies
 func (s *taxonomyService) GetAllTaxonomies() ([]*model.Taxonomy, error) {
 	var taxonomies []db.Taxonomy
 	if err := s.DB.Find(&taxonomies).Error; err != nil {
@@ -41,18 +44,21 @@ func (s *taxonomyService) GetAllTaxonomies() ([]*model.Taxonomy, error) {
 
 	ret := []*model.Taxonomy{}
 	for _, t := range taxonomies {
-		ret = append(ret, s.ModelFromDb(t))
+		ret = append(ret, s.modelFromDb(t))
 	}
 
 	return ret, nil
 }
 
+// GetTaxonomyByUUID returns taxonomy identified by UUID
 func (s *taxonomyService) GetTaxonomyByUUID(uuid string) (*model.Taxonomy, error) {
 	var t db.Taxonomy
 	err := s.DB.Take(&t, "uuid = ?", uuid).Error
-	return s.ModelFromDb(t), err
+	return s.modelFromDb(t), err
 }
 
+// GetDescendantsOfTaxonomy returns all descendants of taxonomy,
+// i.e. children, children of children, etc.
 func (s *taxonomyService) GetDescendantsOfTaxonomy(taxonomy *model.Taxonomy) ([]*model.Taxonomy, error) {
 	var taxonomies []db.Taxonomy
 	err := s.DB.Find(&taxonomies, "root_uuid = ?", taxonomy.UUID).Error
@@ -62,12 +68,13 @@ func (s *taxonomyService) GetDescendantsOfTaxonomy(taxonomy *model.Taxonomy) ([]
 
 	ret := []*model.Taxonomy{}
 	for _, t := range taxonomies {
-		ret = append(ret, s.ModelFromDb(t))
+		ret = append(ret, s.modelFromDb(t))
 	}
 
 	return ret, nil
 }
 
+// CreateTaxonomy creates new taxonomy
 func (s *taxonomyService) CreateTaxonomy(input *model.Taxonomy) (*model.Taxonomy, error) {
 	taxonomy := db.Taxonomy{
 		UUID: uuid.New().String(),
@@ -98,9 +105,10 @@ func (s *taxonomyService) CreateTaxonomy(input *model.Taxonomy) (*model.Taxonomy
 		panic(err)
 	}
 
-	return s.ModelFromDb(taxonomy), nil
+	return s.modelFromDb(taxonomy), nil
 }
 
+// UpdateTaxonomy updates taxonomy
 func (s *taxonomyService) UpdateTaxonomy(uuid string, input *model.Taxonomy) (*model.Taxonomy, error) {
 
 	var taxonomy db.Taxonomy
@@ -157,9 +165,10 @@ func (s *taxonomyService) UpdateTaxonomy(uuid string, input *model.Taxonomy) (*m
 		panic(err)
 	}
 
-	return s.ModelFromDb(taxonomy), nil
+	return s.modelFromDb(taxonomy), nil
 }
 
+// DeleteTaxonomy deletes taxonomy
 func (s *taxonomyService) DeleteTaxonomy(uuid string) (*model.Taxonomy, error) {
 	taxonomy := db.Taxonomy{}
 	result := s.DB.Clauses(clause.Returning{}).Delete(&taxonomy, "uuid = ?", uuid)
@@ -170,5 +179,5 @@ func (s *taxonomyService) DeleteTaxonomy(uuid string) (*model.Taxonomy, error) {
 		return nil, fmt.Errorf("Not found")
 	}
 
-	return s.ModelFromDb(taxonomy), nil
+	return s.modelFromDb(taxonomy), nil
 }

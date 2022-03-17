@@ -17,13 +17,15 @@ type portfolioService struct {
 	DB *gorm.DB
 }
 
+// NewPortfolioService creates and returns new portfolio service
 func NewPortfolioService(db *gorm.DB) models.PortfolioService {
 	return &portfolioService{
 		DB: db,
 	}
 }
 
-func (*portfolioService) ModelFromDb(p db.Portfolio) *model.Portfolio {
+// modelFromDb converts portfolio from database into model
+func (*portfolioService) modelFromDb(p db.Portfolio) *model.Portfolio {
 	return &model.Portfolio{
 		ID:               int(p.ID),
 		Name:             p.Name,
@@ -34,6 +36,7 @@ func (*portfolioService) ModelFromDb(p db.Portfolio) *model.Portfolio {
 	}
 }
 
+// GetAllOfUser returns all portfolios of user
 func (s *portfolioService) GetAllOfUser(user *model.User) ([]*model.Portfolio, error) {
 	var portfolios []db.Portfolio
 	err := s.DB.Find(&portfolios, "user_id = ?", user.ID).Error
@@ -43,11 +46,12 @@ func (s *portfolioService) GetAllOfUser(user *model.User) ([]*model.Portfolio, e
 
 	response := []*model.Portfolio{}
 	for _, p := range portfolios {
-		response = append(response, s.ModelFromDb(p))
+		response = append(response, s.modelFromDb(p))
 	}
 	return response, nil
 }
 
+// GetPortfolioOfUserByID returns single portfolio of user
 func (s *portfolioService) GetPortfolioOfUserByID(user *model.User, ID uint) (*model.Portfolio, error) {
 	var portfolio db.Portfolio
 	if err := s.DB.Take(&portfolio, "user_id = ? AND id = ?", user.ID, ID).Error; err != nil {
@@ -56,9 +60,10 @@ func (s *portfolioService) GetPortfolioOfUserByID(user *model.User, ID uint) (*m
 		}
 		panic(err)
 	}
-	return s.ModelFromDb(portfolio), nil
+	return s.modelFromDb(portfolio), nil
 }
 
+// GetPortfolioByID returns single portfolio
 func (s *portfolioService) GetPortfolioByID(ID uint) (*model.Portfolio, error) {
 
 	var portfolio db.Portfolio
@@ -68,9 +73,10 @@ func (s *portfolioService) GetPortfolioByID(ID uint) (*model.Portfolio, error) {
 		}
 		panic(err)
 	}
-	return s.ModelFromDb(portfolio), nil
+	return s.modelFromDb(portfolio), nil
 }
 
+// CreatePortfolio creates new portfolio
 func (s *portfolioService) CreatePortfolio(user *model.User, req *model.PortfolioInput) (*model.Portfolio, error) {
 	portfolio := db.Portfolio{
 		Name:             req.Name,
@@ -88,9 +94,10 @@ func (s *portfolioService) CreatePortfolio(user *model.User, req *model.Portfoli
 		panic(err)
 	}
 
-	return s.ModelFromDb(portfolio), nil
+	return s.modelFromDb(portfolio), nil
 }
 
+// UpdatePortfolio updates portfolio
 func (s *portfolioService) UpdatePortfolio(ID uint, req *model.PortfolioInput) (*model.Portfolio, error) {
 	portfolio := db.Portfolio{
 		ID:               ID,
@@ -109,9 +116,10 @@ func (s *portfolioService) UpdatePortfolio(ID uint, req *model.PortfolioInput) (
 		panic(err)
 	}
 
-	return s.ModelFromDb(portfolio), nil
+	return s.modelFromDb(portfolio), nil
 }
 
+// DeletePortfolio removes portfolio
 func (s *portfolioService) DeletePortfolio(ID uint) (*model.Portfolio, error) {
 	portfolio := db.Portfolio{
 		ID: ID,
@@ -120,5 +128,5 @@ func (s *portfolioService) DeletePortfolio(ID uint) (*model.Portfolio, error) {
 	if err != nil {
 		panic(err)
 	}
-	return s.ModelFromDb(portfolio), nil
+	return s.modelFromDb(portfolio), nil
 }

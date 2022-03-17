@@ -26,6 +26,8 @@ func DefaultAtoi(s string, def int) int {
 	return v
 }
 
+// ReadConfig reads and parses configuration from environment variables.
+// It also sets default values where applicable.
 func ReadConfig() *configService {
 	c := configService{}
 	c.Db = db.Config{}
