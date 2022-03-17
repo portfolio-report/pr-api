@@ -8,7 +8,7 @@ import (
 )
 
 // GetSessions returns all sessions of current user
-func (h *AuthHandler) GetSessions(c *gin.Context) {
+func (h *authHandler) GetSessions(c *gin.Context) {
 	user := middleware.UserFromContext(c.Request.Context())
 	sessions, err := h.SessionService.GetAllOfUser(user)
 	if err != nil {

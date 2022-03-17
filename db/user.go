@@ -6,6 +6,7 @@ import (
 	"gorm.io/datatypes"
 )
 
+// User in database
 type User struct {
 	ID         uint
 	Username   string
@@ -15,6 +16,7 @@ type User struct {
 	IsAdmin    bool
 }
 
+// TableName defines name of table in database
 func (User) TableName() string {
 	return "users"
 }

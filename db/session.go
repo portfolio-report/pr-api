@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Session in database
 type Session struct {
 	Token          string
 	CreatedAt      time.Time
@@ -13,6 +14,7 @@ type Session struct {
 	User           User `gorm:"foreignKey:user_id"`
 }
 
+// TableName defines name of table in database
 func (Session) TableName() string {
 	return "sessions"
 }

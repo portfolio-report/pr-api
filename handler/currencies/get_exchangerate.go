@@ -17,7 +17,7 @@ type getExchangerateQuery struct {
 }
 
 // GetExchangerate returns a single exchange rate and its prices
-func (h *CurrenciesHandler) GetExchangerate(c *gin.Context) {
+func (h *currenciesHandler) GetExchangerate(c *gin.Context) {
 	baseCurrencyCode := c.Param("baseCurrencyCode")
 	quoteCurrencyCode := c.Param("quoteCurrencyCode")
 

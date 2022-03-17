@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Adds CORS header to all responses and handles CORS preflight checks
+// Cors adds CORS header to all responses and handles CORS preflight checks
 //
 // Behaviour is independent of request headers (Origin or Access-Control-*) to allow caching
 func Cors(c *gin.Context) {

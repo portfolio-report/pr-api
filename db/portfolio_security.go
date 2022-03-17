@@ -6,6 +6,7 @@ import (
 	"gorm.io/datatypes"
 )
 
+// PortfolioSecurity in database
 type PortfolioSecurity struct {
 	PortfolioID   uint   `gorm:"primaryKey"`
 	UUID          string `gorm:"primaryKey"`
@@ -28,6 +29,7 @@ type PortfolioSecurity struct {
 	Properties    datatypes.JSON
 }
 
+// TableName defines name of table in database
 func (PortfolioSecurity) TableName() string {
 	return "portfolios_securities"
 }

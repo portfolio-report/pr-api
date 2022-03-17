@@ -9,19 +9,23 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+// CurrenciesService describes the interface of currencies service
 type CurrenciesService interface {
 	ConvertCurrencyAmount(decimal.Decimal, string, string, time.Time) (decimal.Decimal, error)
 	UpdateExchangeRates() error
 }
 
+// GeoipService describes the interface of GeoIP service
 type GeoipService interface {
 	GetCountryFromIp(string) string
 }
 
+// MailerService describes the interface of mailer service
 type MailerService interface {
 	SendContactMail(senderEmail string, senderName string, subject string, message string, ip string) error
 }
 
+// PortfolioService describes the interface of portfolio service
 type PortfolioService interface {
 	GetPortfolioByID(ID uint) (*model.Portfolio, error)
 	GetPortfolioOfUserByID(user *model.User, ID uint) (*model.Portfolio, error)
@@ -31,11 +35,13 @@ type PortfolioService interface {
 	DeletePortfolio(ID uint) (*model.Portfolio, error)
 }
 
+// SecurityService describes the interface of security service
 type SecurityService interface {
 	GetSecurityByUUID(uuid string) (*model.Security, error)
 	GetEventsOfSecurity(security *model.Security) ([]*model.Event, error)
 }
 
+// SessionService describes the interface of session service
 type SessionService interface {
 	GetAllOfUser(user *model.User) ([]*model.Session, error)
 	CreateSession(user *model.User, note string) (*model.Session, error)
@@ -45,6 +51,7 @@ type SessionService interface {
 	CleanupExpiredSessions() error
 }
 
+// TaxonomyService describes the interface of taxonomy service
 type TaxonomyService interface {
 	GetAllTaxonomies() ([]*model.Taxonomy, error)
 	GetTaxonomyByUUID(uuid string) (*model.Taxonomy, error)
@@ -54,6 +61,7 @@ type TaxonomyService interface {
 	DeleteTaxonomy(uuid string) (*model.Taxonomy, error)
 }
 
+// UserService describes the interface of user service
 type UserService interface {
 	Create(username string) (*model.User, error)
 	GetUserByUsername(ctx context.Context, username string) (*model.User, error)

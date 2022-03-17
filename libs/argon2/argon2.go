@@ -13,12 +13,12 @@ import (
 
 // Inspired by https://www.alexedwards.net/blog/how-to-hash-and-verify-passwords-with-argon2-in-go
 
-// returns hash using argon2id and default parameters
+// HashPasswordDefault returns hash using argon2id and default parameters
 func HashPasswordDefault(password string) (string, error) {
 	return HashPassword(password, 32, 16, 1, 65536, 2)
 }
 
-// returns hash using argon2id and the provided parameters
+// HashPassword returns hash using argon2id and the provided parameters
 func HashPassword(password string, keyLength, saltLength, iterations, memory uint32, parallelism uint8) (string, error) {
 	salt := make([]byte, saltLength)
 	_, err := rand.Read(salt)
@@ -40,7 +40,7 @@ func HashPassword(password string, keyLength, saltLength, iterations, memory uin
 	return hash, nil
 }
 
-// checks if password matches the hash, supports argon2id and argon2i
+// VerifyPassword checks if password matches the hash, supports argon2id and argon2i
 func VerifyPassword(password, hash string) (match bool, err error) {
 	hashParts := strings.Split(hash, "$")
 	if len(hashParts) != 6 {

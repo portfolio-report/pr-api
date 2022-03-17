@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type AuthHandler struct {
+type authHandler struct {
 	DB             *gorm.DB
 	SessionService models.SessionService
 	UserService    models.UserService
@@ -23,7 +23,7 @@ func NewHandler(
 	SessionService models.SessionService,
 	UserService models.UserService,
 ) {
-	h := &AuthHandler{
+	h := &authHandler{
 		DB:             DB,
 		SessionService: SessionService,
 		UserService:    UserService,

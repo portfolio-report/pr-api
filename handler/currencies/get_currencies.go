@@ -9,7 +9,7 @@ import (
 )
 
 // GetCurrencies returns all currencies with their exchange rates
-func (h *CurrenciesHandler) GetCurrencies(c *gin.Context) {
+func (h *currenciesHandler) GetCurrencies(c *gin.Context) {
 	var currencies []db.Currency
 
 	err := h.DB.

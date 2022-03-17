@@ -26,9 +26,9 @@ func NewUserService(db *gorm.DB) models.UserService {
 	}
 }
 
-// UserExistsAlreadyError indicates a user could not be created,
+// ErrUserExistsAlready indicates a user could not be created,
 // because the username is used already
-var UserExistsAlreadyError = errors.New("user exists already")
+var ErrUserExistsAlready = errors.New("user exists already")
 
 // modelFromDb converts user from database into model
 func (*userService) modelFromDb(u db.User) *model.User {
@@ -48,7 +48,7 @@ func (s *userService) Create(username string) (*model.User, error) {
 
 	if err := s.DB.Clauses(clause.Returning{}).Create(&user).Error; err != nil {
 		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23505" {
-			return nil, UserExistsAlreadyError
+			return nil, ErrUserExistsAlready
 		}
 
 		panic(err)

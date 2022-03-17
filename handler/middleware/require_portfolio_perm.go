@@ -13,7 +13,7 @@ import (
 )
 
 // RequirePortfolioPerm returns middleware which checks if URL parameter porfolioId
-// belongs to the current user
+// belongs to the current user and stores the portfolio in Gin context
 func RequirePortfolioPerm(PortfolioService models.PortfolioService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := UserFromContext(c.Request.Context())
@@ -39,6 +39,7 @@ func RequirePortfolioPerm(PortfolioService models.PortfolioService) gin.HandlerF
 	}
 }
 
+// PortfolioFromContext gets portfolio from Gin context
 func PortfolioFromContext(c *gin.Context) *model.Portfolio {
 	return c.MustGet("portfolio").(*model.Portfolio)
 }

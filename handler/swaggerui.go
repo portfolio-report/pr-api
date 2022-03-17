@@ -1,7 +1,7 @@
 package handler
 
 import (
-	_ "embed"
+	_ "embed" // required to embed file
 	"net/http"
 	"path"
 

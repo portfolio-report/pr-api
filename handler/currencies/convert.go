@@ -18,7 +18,7 @@ type convertRequest struct {
 }
 
 // Convert converts amount between currencies
-func (h *CurrenciesHandler) Convert(c *gin.Context) {
+func (h *currenciesHandler) Convert(c *gin.Context) {
 	var r convertRequest
 	if err := c.BindJSON(&r); err != nil {
 		libs.HandleBadRequestError(c, err.Error())

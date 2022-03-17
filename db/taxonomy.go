@@ -1,5 +1,6 @@
 package db
 
+// Taxonomy in database
 type Taxonomy struct {
 	UUID        string `gorm:"primaryKey"`
 	ParentUUID  *string
@@ -9,6 +10,7 @@ type Taxonomy struct {
 	Descendants []Taxonomy `gorm:"foreignKey:root_uuid;references:uuid"`
 }
 
+// TableName defines name of table in database
 func (Taxonomy) TableName() string {
 	return "taxonomies"
 }

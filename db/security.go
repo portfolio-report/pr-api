@@ -1,5 +1,6 @@
 package db
 
+// Security in database
 type Security struct {
 	UUID               string `gorm:"primaryKey"`
 	Name               *string
@@ -14,6 +15,7 @@ type Security struct {
 	SecurityTaxonomies []SecurityTaxonomy `gorm:"foreignKey:security_uuid;references:uuid"`
 }
 
+// TableName defines name of table in database
 func (Security) TableName() string {
 	return "securities"
 }

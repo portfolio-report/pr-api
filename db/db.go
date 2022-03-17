@@ -7,11 +7,12 @@ import (
 	"log"
 	"time"
 
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" // driver for PostgreSQL
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
+// Config holds database parameters
 type Config struct {
 	Url         string
 	MaxOpenConn int
@@ -19,6 +20,7 @@ type Config struct {
 	ConnMaxLife time.Duration
 }
 
+// InitDb connects to database
 func InitDb(cfg Config) (*gorm.DB, error) {
 	sqlDb, err := sql.Open("postgres", cfg.Url)
 	if err != nil {

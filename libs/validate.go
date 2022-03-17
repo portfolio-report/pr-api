@@ -26,6 +26,7 @@ func isValidDecimalString(fl validator.FieldLevel) bool {
 	return ValidDecimalStringRegex.MatchString(fl.Field().String())
 }
 
+// RegisterCustomValidations registers custom validators
 func RegisterCustomValidations(v *validator.Validate) {
 	v.RegisterValidation("DateYYYY-MM-DD", isDateYYYYMMDD)
 	v.RegisterValidation("LaxUuid", isLaxUuid)
@@ -34,6 +35,7 @@ func RegisterCustomValidations(v *validator.Validate) {
 
 }
 
+// GetValidator creates and returns validator with custom validations
 func GetValidator() *validator.Validate {
 	v := validator.New()
 	RegisterCustomValidations(v)

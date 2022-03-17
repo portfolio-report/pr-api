@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type GetClientupdatesResponse struct {
+type getClientupdatesResponse struct {
 	Version     string    `json:"version"`
 	Count       uint      `json:"count"`
 	FirstUpdate time.Time `json:"firstUpdate"`
@@ -16,7 +16,7 @@ type GetClientupdatesResponse struct {
 
 // GetClientupdatesStats returns statistics on updates
 func (h *statsHandler) GetClientupdatesStats(c *gin.Context) {
-	var results []GetClientupdatesResponse
+	var results []getClientupdatesResponse
 
 	err := h.DB.Raw(`
 		SELECT

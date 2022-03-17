@@ -8,7 +8,7 @@ import (
 )
 
 // DeleteMe removes current user
-func (h *AuthHandler) DeleteMe(c *gin.Context) {
+func (h *authHandler) DeleteMe(c *gin.Context) {
 	user := middleware.UserFromContext(c.Request.Context())
 
 	if err := h.UserService.Delete(user); err != nil {

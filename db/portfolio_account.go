@@ -2,6 +2,7 @@ package db
 
 import "time"
 
+// PortfolioAccount in database
 type PortfolioAccount struct {
 	PortfolioID          uint   `gorm:"primaryKey"`
 	UUID                 string `gorm:"primaryKey"`
@@ -14,6 +15,7 @@ type PortfolioAccount struct {
 	UpdatedAt            time.Time
 }
 
+// TableName defines name of table in database
 func (PortfolioAccount) TableName() string {
 	return "portfolios_accounts"
 }

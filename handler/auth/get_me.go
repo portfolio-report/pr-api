@@ -8,7 +8,7 @@ import (
 )
 
 // GetMe returns current user
-func (h *AuthHandler) GetMe(c *gin.Context) {
+func (h *authHandler) GetMe(c *gin.Context) {
 	user := middleware.UserFromContext(c.Request.Context())
 	c.JSON(http.StatusOK, user)
 }

@@ -16,7 +16,7 @@ type loginUserRequest struct {
 }
 
 // LoginUser logs in user based on username/password
-func (h *AuthHandler) LoginUser(c *gin.Context) {
+func (h *authHandler) LoginUser(c *gin.Context) {
 	var request loginUserRequest
 
 	if err := c.BindJSON(&request); err != nil {

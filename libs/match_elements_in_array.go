@@ -1,5 +1,8 @@
 package libs
 
+// MatchElementsInArrays matches elements from two slices pairwise using a matcher function
+//
+// Returns unmatched elements from both slices and matched elements
 func MatchElementsInArrays[L any, R any](lefts []L, rights []R, matcher func(L, R) bool) ([]L, []R, []R) {
 	unmatchedLefts := []L{}
 	unmatchedRights := rights
@@ -10,7 +13,7 @@ func MatchElementsInArrays[L any, R any](lefts []L, rights []R, matcher func(L, 
 			return matcher(left, right)
 		}
 
-		found, posRight, elementRight := FindElementInSlice(unmatchedRights, innerMatcher)
+		found, posRight, elementRight := findElementInSlice(unmatchedRights, innerMatcher)
 
 		if found {
 			unmatchedRights = remove(unmatchedRights, posRight)
@@ -23,7 +26,7 @@ func MatchElementsInArrays[L any, R any](lefts []L, rights []R, matcher func(L, 
 	return unmatchedLefts, unmatchedRights, matchedRights
 }
 
-func FindElementInSlice[T any](arr []T, matcher func(T) bool) (found bool, pos int, element T) {
+func findElementInSlice[T any](arr []T, matcher func(T) bool) (found bool, pos int, element T) {
 	pos = -1
 	for pos, element = range arr {
 		if matcher(element) {

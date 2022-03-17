@@ -14,7 +14,7 @@ type updatePasswordRequest struct {
 }
 
 // UpdatePassword changes the password for the current user
-func (h *AuthHandler) UpdatePassword(c *gin.Context) {
+func (h *authHandler) UpdatePassword(c *gin.Context) {
 	user := middleware.UserFromContext(c.Request.Context())
 
 	var request updatePasswordRequest

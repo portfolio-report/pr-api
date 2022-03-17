@@ -14,7 +14,7 @@ type registerUserRequest struct {
 }
 
 // RegisterUser registers a new user and logs in
-func (h *AuthHandler) RegisterUser(c *gin.Context) {
+func (h *authHandler) RegisterUser(c *gin.Context) {
 	var request registerUserRequest
 
 	if err := c.BindJSON(&request); err != nil {
@@ -26,7 +26,7 @@ func (h *AuthHandler) RegisterUser(c *gin.Context) {
 
 	user, err := h.UserService.Create(request.Username)
 	if err != nil {
-		if err == service.UserExistsAlreadyError {
+		if err == service.ErrUserExistsAlready {
 			libs.HandleBadRequestError(c, err.Error())
 			return
 		}

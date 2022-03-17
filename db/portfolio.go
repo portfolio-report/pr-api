@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Portfolio in database
 type Portfolio struct {
 	ID               uint `gorm:"primaryKey"`
 	Name             string
@@ -14,6 +15,7 @@ type Portfolio struct {
 	UserID           uint
 }
 
+// TableName defines name of table in database
 func (Portfolio) TableName() string {
 	return "portfolios"
 }

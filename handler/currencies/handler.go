@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type CurrenciesHandler struct {
+type currenciesHandler struct {
 	DB                *gorm.DB
 	CurrenciesService models.CurrenciesService
 }
@@ -19,7 +19,7 @@ func NewHandler(
 	SessionService models.SessionService,
 	CurrenciesService models.CurrenciesService,
 ) {
-	h := &CurrenciesHandler{
+	h := &currenciesHandler{
 		DB:                DB,
 		CurrenciesService: CurrenciesService,
 	}

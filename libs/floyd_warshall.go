@@ -4,13 +4,15 @@ import (
 	"math"
 )
 
+// Edge represents directed and weighted edge in graph
 type Edge struct {
 	From   int
 	To     int
 	Weight float64
 }
 
-// Finds shortest path between all pairs of vertices (all-pairs shortest path, APSP) using Floyd-Warshall algorithm
+// FloydWarshall finds shortest path between all pairs of vertices (all-pairs shortest path, APSP)
+// using Floyd-Warshall algorithm
 func FloydWarshall(
 	n int,
 	edges []Edge,

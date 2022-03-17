@@ -4,14 +4,16 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+// DecimalString represents a decimal value stored as string
 type DecimalString string
 
-// DecimalString is marshalled to JSON without enclosing quotes
-// e.g. 1.234 instead of "1.234"
+// MarshalJSON marshals DecimalString into JSON number,
+// i.e. without enclosing quotes, e.g. 1.234 instead of "1.234"
 func (d DecimalString) MarshalJSON() ([]byte, error) {
 	return []byte(d), nil
 }
 
+// String returns underlying string
 func (d *DecimalString) String() *string {
 	if d == nil {
 		return nil
@@ -19,6 +21,7 @@ func (d *DecimalString) String() *string {
 	return (*string)(d)
 }
 
+// NullDecimal converts DecimalString to NullDecimal
 func (d *DecimalString) NullDecimal() decimal.NullDecimal {
 	if d == nil {
 		return decimal.NullDecimal{Valid: false}
@@ -29,16 +32,4 @@ func (d *DecimalString) NullDecimal() decimal.NullDecimal {
 		panic(err)
 	}
 	return decimal.NewNullDecimal(dec)
-}
-
-func (d *DecimalString) Decimal() *decimal.Decimal {
-	if d == nil {
-		return nil
-	}
-
-	ret, err := decimal.NewFromString((string)(*d))
-	if err != nil {
-		panic(err)
-	}
-	return &ret
 }
