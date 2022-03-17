@@ -9,7 +9,7 @@ import (
 // Private key for context to prevent possible collisions
 var useragentCtxKey = &contextKey{name: "useragent"}
 
-// Stores user agent in context
+// Useragent stores user agent in request context
 func Useragent(c *gin.Context) {
 	ctx := context.WithValue(c.Request.Context(), useragentCtxKey, c.GetHeader("User-Agent"))
 	c.Request = c.Request.WithContext(ctx)
@@ -17,7 +17,7 @@ func Useragent(c *gin.Context) {
 	c.Next()
 }
 
-// Gets user agent from request context,
+// UseragentFromContext retrieves user agent from request context,
 // panics if context entry does not exists (middleware not run).
 func UseragentFromContext(ctx context.Context) string {
 	return ctx.Value(useragentCtxKey).(string)

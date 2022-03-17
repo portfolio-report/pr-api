@@ -16,6 +16,7 @@ type getExchangerateQuery struct {
 	StartDate string `form:"startDate" binding:"omitempty,DateYYYY-MM-DD"`
 }
 
+// GetExchangerate returns a single exchange rate and its prices
 func (h *CurrenciesHandler) GetExchangerate(c *gin.Context) {
 	baseCurrencyCode := c.Param("baseCurrencyCode")
 	quoteCurrencyCode := c.Param("quoteCurrencyCode")

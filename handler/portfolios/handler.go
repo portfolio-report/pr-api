@@ -16,6 +16,7 @@ type PortfoliosHandler struct {
 	Validate         *validator.Validate
 }
 
+// NewHandler creates new PortfoliosHandler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
 	DB *gorm.DB,

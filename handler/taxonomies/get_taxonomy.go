@@ -7,7 +7,7 @@ import (
 	"github.com/portfolio-report/pr-api/libs"
 )
 
-// Gets single taxonomy with all descendants
+// GetTaxonomy returns single taxonomy with all descendants
 func (h *TaxonomiesHandler) GetTaxonomy(c *gin.Context) {
 	uuid := c.Param("uuid")
 	if err := h.Validate.Var(uuid, "uuid"); err != nil {

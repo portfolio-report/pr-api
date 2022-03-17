@@ -23,6 +23,7 @@ type putAccountRequest struct {
 	UpdatedAt            time.Time `json:"updatedAt"`
 }
 
+// PutAccount creates or updates account in portfolio
 func (h *PortfoliosHandler) PutAccount(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
 	uuid := c.Param("uuid")

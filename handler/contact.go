@@ -16,6 +16,7 @@ type ContactRequest struct {
 	Message string `json:"message" binding:"required"`
 }
 
+// Contact sends an email to the configured contact address
 func (h *Handler) Contact(c *gin.Context) {
 	var request ContactRequest
 

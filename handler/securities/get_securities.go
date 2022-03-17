@@ -8,6 +8,7 @@ import (
 	"github.com/portfolio-report/pr-api/libs"
 )
 
+// GetSecurities lists securities
 func (h *SecuritiesHandler) GetSecurities(c *gin.Context) {
 	type Query struct {
 		Limit        int    `form:"limit"`

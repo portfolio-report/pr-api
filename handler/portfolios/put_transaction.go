@@ -35,6 +35,7 @@ type putTransactionRequest struct {
 	UpdatedAt              time.Time                   `json:"updatedAt"`
 }
 
+// PutTransaction creates or updates transaction in portfolio
 func (h *PortfoliosHandler) PutTransaction(c *gin.Context) {
 	portfolioId := uint(middleware.PortfolioFromContext(c).ID)
 	uuid, err := uuid.Parse(c.Param("uuid"))

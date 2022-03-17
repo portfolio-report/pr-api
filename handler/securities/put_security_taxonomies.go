@@ -16,7 +16,7 @@ type SecurityTaxonomyRequest struct {
 	Weight       decimal.Decimal `json:"weight"`
 }
 
-// Create/update/delete taxonomies
+// PutSecurityTaxonomies creates, updates and deletes taxonomies of security
 func (h *SecuritiesHandler) PutSecurityTaxonomies(c *gin.Context) {
 	securityUuid := c.Param("uuid")
 	if err := h.validate.Var(securityUuid, "uuid"); err != nil {

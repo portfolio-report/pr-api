@@ -11,6 +11,7 @@ type CurrenciesHandler struct {
 	CurrenciesService models.CurrenciesService
 }
 
+// NewHandler creates new CurrenciesHandler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
 	DB *gorm.DB,

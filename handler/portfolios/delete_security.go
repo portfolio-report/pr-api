@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
+// DeleteSecurity removes security from portfolio and links to it
 func (h *PortfoliosHandler) DeleteSecurity(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
 	uuid := c.Param("uuid")

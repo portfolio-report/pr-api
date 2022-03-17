@@ -15,6 +15,7 @@ type AuthHandler struct {
 	Validate       *validator.Validate
 }
 
+// NewHandler creates new AuthHandler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
 	DB *gorm.DB,

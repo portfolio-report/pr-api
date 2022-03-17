@@ -8,6 +8,7 @@ import (
 	"github.com/portfolio-report/pr-api/libs"
 )
 
+// GetClientupdates lists updates
 func (h *StatsHandler) GetClientupdates(c *gin.Context) {
 	type Query struct {
 		Limit      int    `form:"limit"`

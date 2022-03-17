@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
+// DeleteAccount removes account from portfolio and links to it
 func (h *PortfoliosHandler) DeleteAccount(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
 	uuid := c.Param("uuid")

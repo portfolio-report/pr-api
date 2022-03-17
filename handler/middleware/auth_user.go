@@ -16,7 +16,7 @@ type contextKey struct {
 // Private key for context to prevent possible collisions
 var userCtxKey = &contextKey{name: "user"}
 
-// Reads authorization token from HTTP header (if any),
+// AuthUser reads authorization token from HTTP header (if any),
 // stores user in request context if token corresponds to valid session
 func AuthUser(s models.SessionService, u models.UserService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -57,14 +57,13 @@ func AuthUser(s models.SessionService, u models.UserService) gin.HandlerFunc {
 	}
 }
 
-// Gets logged in user from request context,
+// UserFromContext gets logged in user from request context,
 // may contain nil value, if no user is logged in.
 func UserFromContext(ctx context.Context) *model.User {
 	v := ctx.Value(userCtxKey)
 	user, valid := v.(*model.User)
 	if valid {
 		return user
-	} else {
-		return nil
 	}
+	return nil
 }

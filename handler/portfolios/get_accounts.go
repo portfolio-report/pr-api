@@ -9,6 +9,7 @@ import (
 	"github.com/portfolio-report/pr-api/models"
 )
 
+// GetAccounts lists all accounts in portfolio
 func (h *PortfoliosHandler) GetAccounts(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
 

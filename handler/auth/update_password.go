@@ -13,6 +13,7 @@ type updatePasswordRequest struct {
 	NewPassword string `json:"newPassword" binding:"required,min=8,max=255"`
 }
 
+// UpdatePassword changes the password for the current user
 func (h *AuthHandler) UpdatePassword(c *gin.Context) {
 	user := middleware.UserFromContext(c.Request.Context())
 

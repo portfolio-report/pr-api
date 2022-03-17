@@ -6,9 +6,9 @@ import (
 	"github.com/portfolio-report/pr-api/models"
 )
 
-// returns HTTP error if no user is logged in
+// RequireUser returns middleware which only passes if a user is logged in
 //
-// requires middleware AuthUser to be run
+// Requires middleware AuthUser to be run
 func RequireUser(s models.SessionService, u models.UserService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := UserFromContext(c.Request.Context())

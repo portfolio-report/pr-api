@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// LogoutUser logs out current user by deleting the session
 func (h *AuthHandler) LogoutUser(c *gin.Context) {
 	token := h.SessionService.GetSessionToken(c)
 	if _, err := h.SessionService.DeleteSession(token); err != nil {

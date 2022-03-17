@@ -12,6 +12,7 @@ import (
 //go:embed openapi.json
 var openApiSpec []byte
 
+// RegisterSwaggerUi registers endpoint that serves SwaggerUI and OpenAPI specification
 func (h *Handler) RegisterSwaggerUi(g *gin.RouterGroup, prefix string) {
 	ginHandler := gin.WrapH(
 		http.StripPrefix(path.Join(g.BasePath(), prefix), swaggerui.Handler(openApiSpec)),

@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-// Deletes security
+// DeleteSecurity removes security
 func (h *SecuritiesHandler) DeleteSecurity(c *gin.Context) {
 	uuid := c.Param("uuid")
 	if err := h.validate.Var(uuid, "uuid"); err != nil {

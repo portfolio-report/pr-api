@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// Updates security
+// PatchSecurity updates security
 func (h *SecuritiesHandler) PatchSecurity(c *gin.Context) {
 	uuid := c.Param("uuid")
 	if err := h.validate.Var(uuid, "uuid"); err != nil {

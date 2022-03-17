@@ -20,8 +20,8 @@ type CreateUpdateSecurityRequest struct {
 	SymbolXnys   *string `json:"symbolXnys"`
 }
 
-// Creates security
-func (h *SecuritiesHandler) PostSecurityAdmin(c *gin.Context) {
+// PostSecurity creates new security
+func (h *SecuritiesHandler) PostSecurity(c *gin.Context) {
 	var request CreateUpdateSecurityRequest
 	if err := c.BindJSON(&request); err != nil {
 		libs.HandleBadRequestError(c, err.Error())

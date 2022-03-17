@@ -16,7 +16,7 @@ type patchTaxonomyRequest struct {
 	ParentUuid *string `json:"parentUuid" binding:"omitempty,uuid"`
 }
 
-// Updates taxonomy
+// PatchTaxonomy updates taxonomy
 func (h *TaxonomiesHandler) PatchTaxonomy(c *gin.Context) {
 	uuid := c.Param("uuid")
 	if err := h.Validate.Var(uuid, "uuid"); err != nil {

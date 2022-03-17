@@ -7,6 +7,7 @@ import (
 	"github.com/portfolio-report/pr-api/handler/middleware"
 )
 
+// GetSessions returns all sessions of current user
 func (h *AuthHandler) GetSessions(c *gin.Context) {
 	user := middleware.UserFromContext(c.Request.Context())
 	sessions, err := h.SessionService.GetAllOfUser(user)

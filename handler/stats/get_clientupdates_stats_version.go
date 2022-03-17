@@ -7,6 +7,7 @@ import (
 	"github.com/portfolio-report/pr-api/db"
 )
 
+// GetClientupdatesStatsVersion returns statistics for updates to a certain version
 func (h *StatsHandler) GetClientupdatesStatsVersion(c *gin.Context) {
 	version := c.Param("version")
 

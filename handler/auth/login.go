@@ -15,6 +15,7 @@ type loginUserRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
+// LoginUser logs in user based on username/password
 func (h *AuthHandler) LoginUser(c *gin.Context) {
 	var request loginUserRequest
 

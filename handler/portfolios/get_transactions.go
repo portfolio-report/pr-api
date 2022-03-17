@@ -9,6 +9,7 @@ import (
 	"github.com/portfolio-report/pr-api/models"
 )
 
+// GetTransactions lists all transactions in portfolio
 func (h *PortfoliosHandler) GetTransactions(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
 

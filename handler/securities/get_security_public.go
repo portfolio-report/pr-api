@@ -13,6 +13,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetSecurityPublic returns security with its public attributes
 func (h *SecuritiesHandler) GetSecurityPublic(c *gin.Context) {
 	uuid := c.Param("uuid")
 

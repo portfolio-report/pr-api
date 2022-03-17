@@ -14,7 +14,7 @@ type postTaxonomyRequest struct {
 	ParentUuid *string `json:"parentUuid" binding:"omitempty,uuid"`
 }
 
-// Creates taxonomy
+// PostTaxonomy creates taxonomy
 func (h *TaxonomiesHandler) PostTaxonomy(c *gin.Context) {
 	var request postTaxonomyRequest
 	if err := c.BindJSON(&request); err != nil {

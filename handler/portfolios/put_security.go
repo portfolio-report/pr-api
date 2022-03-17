@@ -41,6 +41,7 @@ type putSecurityRequest struct {
 	} `json:"properties" binding:"dive"`
 }
 
+// PutSecurity creates or updates security in portfolio
 func (h *PortfoliosHandler) PutSecurity(c *gin.Context) {
 	portfolioId := uint(middleware.PortfolioFromContext(c).ID)
 	uuid := c.Param("uuid")

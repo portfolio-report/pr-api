@@ -17,6 +17,7 @@ type convertRequest struct {
 	Date               *db.DbDate      `json:"date" binding:"omitempty,DateYYYY-MM-DD"`
 }
 
+// Convert converts amount between currencies
 func (h *CurrenciesHandler) Convert(c *gin.Context) {
 	var r convertRequest
 	if err := c.BindJSON(&r); err != nil {

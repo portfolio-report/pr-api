@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-// Deletes market of security
+// DeleteSecurityMarket removes market of security
 func (h *SecuritiesHandler) DeleteSecurityMarket(c *gin.Context) {
 
 	uuid := c.Param("uuid")

@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
+// DeleteTransaction removes transaction from portfolio and links to it
 func (h *PortfoliosHandler) DeleteTransaction(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
 	uuid := c.Param("uuid")

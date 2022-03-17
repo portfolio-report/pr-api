@@ -7,6 +7,7 @@ import (
 	"github.com/portfolio-report/pr-api/handler/middleware"
 )
 
+// GetPortfolios lists all portfolios of current user
 func (h *PortfoliosHandler) GetPortfolios(c *gin.Context) {
 	user := middleware.UserFromContext(c.Request.Context())
 	portfolios, err := h.PortfolioService.GetAllOfUser(user)

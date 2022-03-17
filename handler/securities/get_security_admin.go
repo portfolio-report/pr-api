@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetSecurityAdmin returns security for user with admin privileges
 func (h *SecuritiesHandler) GetSecurityAdmin(c *gin.Context) {
 	uuid := c.Param("uuid")
 

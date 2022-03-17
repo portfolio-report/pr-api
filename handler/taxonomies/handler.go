@@ -16,6 +16,7 @@ type TaxonomiesHandler struct {
 	Validate        *validator.Validate
 }
 
+// NewHandler creates new TaxonomiesHandler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
 	DB *gorm.DB,

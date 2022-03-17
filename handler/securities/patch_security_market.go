@@ -21,7 +21,7 @@ type PatchSecurityMarketRequest struct {
 	} `json:"prices"`
 }
 
-// Creates/updates market and prices
+// PatchSecurityMarket creates or updates market of security and its prices
 func (h *SecuritiesHandler) PatchSecurityMarket(c *gin.Context) {
 	uuid := c.Param("uuid")
 	if err := h.validate.Var(uuid, "uuid"); err != nil {

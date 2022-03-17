@@ -9,6 +9,7 @@ import (
 	"github.com/portfolio-report/pr-api/libs"
 )
 
+// PutPortfolio updates portfolio
 func (h *PortfoliosHandler) PutPortfolio(c *gin.Context) {
 	portfolio := middleware.PortfolioFromContext(c)
 

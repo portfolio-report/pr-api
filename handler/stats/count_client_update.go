@@ -7,6 +7,7 @@ import (
 	"github.com/portfolio-report/pr-api/db"
 )
 
+// CountClientupdate counts each request as an update of Portfolio Performance
 func (h *StatsHandler) CountClientupdate(c *gin.Context) {
 	c.Header("Cache-Control", "no-cache")
 

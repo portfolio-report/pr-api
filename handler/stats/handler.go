@@ -14,6 +14,7 @@ type StatsHandler struct {
 	GeoipService   models.GeoipService
 }
 
+// NewHandler creates new StatsHandler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
 	DB *gorm.DB,

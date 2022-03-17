@@ -9,6 +9,7 @@ import (
 	"github.com/portfolio-report/pr-api/models"
 )
 
+// GetSecurities lists all securities in portfolio
 func (h *PortfoliosHandler) GetSecurities(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
 

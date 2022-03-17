@@ -12,6 +12,8 @@ import (
 	"gorm.io/gorm"
 )
 
+// RequirePortfolioPerm returns middleware which checks if URL parameter porfolioId
+// belongs to the current user
 func RequirePortfolioPerm(PortfolioService models.PortfolioService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := UserFromContext(c.Request.Context())

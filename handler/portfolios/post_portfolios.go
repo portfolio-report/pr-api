@@ -9,6 +9,7 @@ import (
 	"github.com/portfolio-report/pr-api/libs"
 )
 
+// PostPortfolios create new portfolio
 func (h *PortfoliosHandler) PostPortfolios(c *gin.Context) {
 	user := middleware.UserFromContext(c.Request.Context())
 

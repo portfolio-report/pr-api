@@ -7,6 +7,7 @@ import (
 	"github.com/portfolio-report/pr-api/handler/middleware"
 )
 
+// DeleteMe removes current user
 func (h *AuthHandler) DeleteMe(c *gin.Context) {
 	user := middleware.UserFromContext(c.Request.Context())
 

@@ -13,6 +13,7 @@ type registerUserRequest struct {
 	Password string `json:"password" binding:"required,min=8,max=255"`
 }
 
+// RegisterUser registers a new user and logs in
 func (h *AuthHandler) RegisterUser(c *gin.Context) {
 	var request registerUserRequest
 

@@ -7,6 +7,7 @@ import (
 	"github.com/portfolio-report/pr-api/handler/middleware"
 )
 
+// GetPortfolio returns single portfolio
 func (h *PortfoliosHandler) GetPortfolio(c *gin.Context) {
 	portfolio := middleware.PortfolioFromContext(c)
 	c.JSON(http.StatusOK, portfolio)

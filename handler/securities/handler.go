@@ -15,6 +15,7 @@ type SecuritiesHandler struct {
 	validate       *validator.Validate
 }
 
+// NewHandler creates new SecuritiesHandler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
 	DB *gorm.DB,
@@ -48,7 +49,7 @@ func NewHandler(
 	g.POST("/",
 		middleware.RequireUser(SessionService, UserService),
 		middleware.RequireAdmin(),
-		h.PostSecurityAdmin)
+		h.PostSecurity)
 	g.PATCH("/:uuid",
 		middleware.RequireUser(SessionService, UserService),
 		middleware.RequireAdmin(),

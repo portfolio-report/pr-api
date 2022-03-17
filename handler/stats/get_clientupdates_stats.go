@@ -14,6 +14,7 @@ type GetClientupdatesResponse struct {
 	LastUpdate  time.Time `json:"lastUpdate"`
 }
 
+// GetClientupdatesStats returns statistics on updates
 func (h *StatsHandler) GetClientupdatesStats(c *gin.Context) {
 	var results []GetClientupdatesResponse
 
