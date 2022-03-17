@@ -52,7 +52,7 @@ func setupCron(cs models.CurrenciesService) {
 	}()
 }
 
-func main() {
+func createApp() http.Handler {
 	// Read config
 	cfg := service.ReadConfig()
 
@@ -120,6 +120,12 @@ func main() {
 		DB:                db,
 		Validate:          validate,
 	})
+
+	return router
+}
+
+func main() {
+	router := createApp()
 
 	address := ":3000"
 
