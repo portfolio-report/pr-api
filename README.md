@@ -1,6 +1,12 @@
 # Portfolio Report API
 
-This repo holds the API of [Portfolio Report](https://www.portfolio-report.net/).
+[![Go version](https://img.shields.io/github/go-mod/go-version/portfolio-report/pr-api?style=flat-square)](https://go.dev/)
+[![Build status](https://img.shields.io/github/workflow/status/portfolio-report/pr-api/CI?style=flat-square)](https://github.com/portfolio-report/pr-api/actions/workflows/ci.yml)
+[![Go report card](https://goreportcard.com/badge/github.com/portfolio-report/pr-api?style=flat-square)](https://goreportcard.com/report/github.com/portfolio-report/pr-api)
+
+This repo holds the API of [Portfolio Report](https://www.portfolio-report.net/). It provides [Portfolio Performance](https://www.portfolio-performance.info/) with master data and historical quotes of securities. In addition it provides beta functionality to synchronize portfolios across devices and make them accessible via different UIs.
+
+Please use the [discussion forum](https://forum.portfolio-performance.info/) to get help and discuss improvements.
 
 ## Getting started for development
 
