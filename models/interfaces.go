@@ -11,6 +11,7 @@ import (
 
 // CurrenciesService describes the interface of currencies service
 type CurrenciesService interface {
+	GetCurrencies() ([]*model.Currency, error)
 	ConvertCurrencyAmount(decimal.Decimal, string, string, time.Time) (decimal.Decimal, error)
 	UpdateExchangeRates() error
 }

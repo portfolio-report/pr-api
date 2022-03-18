@@ -6,12 +6,23 @@ import (
 	"time"
 )
 
+type Currency struct {
+	Code               string          `json:"code"`
+	ExchangeratesBase  []*Exchangerate `json:"exchangeratesBase"`
+	ExchangeratesQuote []*Exchangerate `json:"exchangeratesQuote"`
+}
+
 type Event struct {
 	Date         string  `json:"date"`
 	Type         string  `json:"type"`
 	Amount       *string `json:"amount"`
 	CurrencyCode *string `json:"currencyCode"`
 	Ratio        *string `json:"ratio"`
+}
+
+type Exchangerate struct {
+	BaseCurrencyCode  string `json:"baseCurrencyCode"`
+	QuoteCurrencyCode string `json:"quoteCurrencyCode"`
 }
 
 type Portfolio struct {

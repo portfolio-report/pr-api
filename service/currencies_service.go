@@ -8,6 +8,7 @@ import (
 
 	"github.com/antchfx/xmlquery"
 	"github.com/portfolio-report/pr-api/db"
+	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/libs"
 	"github.com/portfolio-report/pr-api/models"
 	"github.com/shopspring/decimal"
@@ -36,6 +37,50 @@ func NewCurrenciesService(db *gorm.DB) models.CurrenciesService {
 	go s.calculateCurrencyConversionRoutes()
 
 	return s
+}
+
+// modelFromDb converts currency from database into model
+func (s *currenciesService) modelFromDb(c db.Currency) *model.Currency {
+	base := make([]*model.Exchangerate, len(c.ExchangeratesBase))
+	for i := range c.ExchangeratesBase {
+		base[i] = s.exchangerateModelFromDb(c.ExchangeratesBase[i])
+	}
+
+	quote := make([]*model.Exchangerate, len(c.ExchangeratesQuote))
+	for i := range c.ExchangeratesQuote {
+		quote[i] = s.exchangerateModelFromDb(c.ExchangeratesQuote[i])
+	}
+
+	return &model.Currency{
+		Code:               c.Code,
+		ExchangeratesBase:  base,
+		ExchangeratesQuote: quote,
+	}
+}
+
+// exchangerateModelFromDb converts exchange rate from database into model
+func (*currenciesService) exchangerateModelFromDb(e db.Exchangerate) *model.Exchangerate {
+	return &model.Exchangerate{
+		BaseCurrencyCode:  e.BaseCurrencyCode,
+		QuoteCurrencyCode: e.QuoteCurrencyCode,
+	}
+}
+
+// GetCurrencies lists currencies with exchange rates
+func (s *currenciesService) GetCurrencies() ([]*model.Currency, error) {
+	var currencies []db.Currency
+	if err := s.DB.
+		Preload("ExchangeratesBase").Preload("ExchangeratesQuote").
+		Find(&currencies).Error; err != nil {
+		panic(err)
+	}
+
+	response := make([]*model.Currency, len(currencies))
+	for i := range currencies {
+		response[i] = s.modelFromDb(currencies[i])
+	}
+
+	return response, nil
 }
 
 // UpdateExchangeRates retrieves new prices for all exchange rates

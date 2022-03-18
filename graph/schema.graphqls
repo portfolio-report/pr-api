@@ -4,12 +4,23 @@
 
 scalar Time
 
+type Currency {
+  code: String!
+  exchangeratesBase: [Exchangerate!]!
+	exchangeratesQuote: [Exchangerate!]!
+}
+
 type Event {
   date: String!
   type: String!
   amount: String
   currencyCode: String
   ratio: String
+}
+
+type Exchangerate {
+  baseCurrencyCode: String!
+  quoteCurrencyCode: String!
 }
 
 type Portfolio {
