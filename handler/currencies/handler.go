@@ -27,6 +27,5 @@ func NewHandler(
 	g := R.Group("/currencies")
 
 	g.GET("/", h.GetCurrencies)
-	g.GET("/:baseCurrencyCode/:quoteCurrencyCode", h.GetExchangerate)
 	g.POST("/convert", h.Convert)
 }
