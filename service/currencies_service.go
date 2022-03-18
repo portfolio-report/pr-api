@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -61,9 +62,22 @@ func (s *currenciesService) modelFromDb(c db.Currency) *model.Currency {
 // exchangerateModelFromDb converts exchange rate from database into model
 func (*currenciesService) exchangerateModelFromDb(e db.Exchangerate) *model.Exchangerate {
 	return &model.Exchangerate{
+		ID:                e.ID,
 		BaseCurrencyCode:  e.BaseCurrencyCode,
 		QuoteCurrencyCode: e.QuoteCurrencyCode,
 	}
+}
+
+// exchangeratePricesModelFromDb converts prices from database into model
+func (*currenciesService) exchangeratePricesModelFromDb(p []db.ExchangeratePrice) []*model.ExchangeratePrice {
+	prices := make([]*model.ExchangeratePrice, len(p))
+	for i := range p {
+		prices[i] = &model.ExchangeratePrice{
+			Date:  p[i].Date.String(),
+			Value: *p[i].Value.String(),
+		}
+	}
+	return prices
 }
 
 // GetCurrencies lists currencies with exchange rates
@@ -81,6 +95,35 @@ func (s *currenciesService) GetCurrencies() ([]*model.Currency, error) {
 	}
 
 	return response, nil
+}
+
+// GetExchangerate returns exchange rate identified by base and quote currency code
+func (s *currenciesService) GetExchangerate(baseCC, quoteCC string) (*model.Exchangerate, error) {
+	var er db.Exchangerate
+	if err := s.DB.Take(&er, "base_currency_code = ? AND quote_currency_code = ?", baseCC, quoteCC).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, err
+		}
+		panic(err)
+	}
+	return s.exchangerateModelFromDb(er), nil
+}
+
+// GetExchangeratePrices returns prices of exchange rate
+func (s *currenciesService) GetExchangeratePrices(er *model.Exchangerate, from *string) ([]*model.ExchangeratePrice, error) {
+	if from == nil {
+		date := "0001-01-01"
+		from = &date
+	}
+	var prices []db.ExchangeratePrice
+	err := s.DB.
+		Where("date >= ?", *from).
+		Where("exchangerate_id = ?", er.ID).Order("date ASC").Find(&prices).Error
+	if err != nil {
+		panic(err)
+	}
+
+	return s.exchangeratePricesModelFromDb(prices), nil
 }
 
 // UpdateExchangeRates retrieves new prices for all exchange rates

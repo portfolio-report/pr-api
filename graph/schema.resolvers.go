@@ -16,7 +16,7 @@ import (
 )
 
 func (r *exchangerateResolver) Prices(ctx context.Context, obj *model.Exchangerate, from *string) ([]*model.ExchangeratePrice, error) {
-	panic(fmt.Errorf("not implemented"))
+	return r.CurrenciesService.GetExchangeratePrices(obj, from)
 }
 
 func (r *mutationResolver) Register(ctx context.Context, username string, password string) (*model.Session, error) {
@@ -148,7 +148,7 @@ func (r *queryResolver) Currencies(ctx context.Context) ([]*model.Currency, erro
 }
 
 func (r *queryResolver) Exchangerate(ctx context.Context, baseCurrencyCode string, quoteCurrencyCode string) (*model.Exchangerate, error) {
-	panic(fmt.Errorf("not implemented"))
+	return r.CurrenciesService.GetExchangerate(baseCurrencyCode, quoteCurrencyCode)
 }
 
 func (r *queryResolver) Portfolios(ctx context.Context) ([]*model.Portfolio, error) {
