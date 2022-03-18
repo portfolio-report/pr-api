@@ -25,10 +25,9 @@ func TestIsDateYYYYMMDD(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.input, func(t *testing.T) {
 			err := val.Var(tc.input, "DateYYYY-MM-DD")
-			assert.Equalf(t, err == nil, tc.valid, "wrong result")
+			assert.Equal(t, err == nil, tc.valid)
 		})
 	}
-
 }
 
 func TestIsLaxUuid(t *testing.T) {
@@ -50,8 +49,32 @@ func TestIsLaxUuid(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.input, func(t *testing.T) {
 			err := val.Var(tc.input, "LaxUuid")
-			assert.Equalf(t, err == nil, tc.valid, "wrong result")
+			assert.Equal(t, err == nil, tc.valid)
 		})
+	}
+}
 
+func TestIsValidUsername(t *testing.T) {
+	val := GetValidator()
+
+	testCases := []struct {
+		input string
+		valid bool
+	}{
+		{"short", false},
+		{"longenough", true},
+		{"StandarD", true},
+		{"allowed-characters_.", true},
+		{"w1thnumb3rs", true},
+		{"contains space", false},
+		{"mail@example.com", false},
+		{"$pecia/ characters!", false},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.input, func(t *testing.T) {
+			err := val.Var(tc.input, "ValidUsername")
+			assert.Equal(t, err == nil, tc.valid)
+		})
 	}
 }

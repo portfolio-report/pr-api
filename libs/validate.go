@@ -17,13 +17,8 @@ func isLaxUuid(fl validator.FieldLevel) bool {
 }
 
 func isValidUsername(fl validator.FieldLevel) bool {
-	ValidUserNameRegex := regexp.MustCompile(`^([a-zA-Z0-9._-])*$`)
+	ValidUserNameRegex := regexp.MustCompile(`^([a-zA-Z0-9._-]){6,}$`)
 	return ValidUserNameRegex.MatchString(fl.Field().String())
-}
-
-func isValidDecimalString(fl validator.FieldLevel) bool {
-	ValidDecimalStringRegex := regexp.MustCompile(`^[0-9]+\.?[0-9]*$`)
-	return ValidDecimalStringRegex.MatchString(fl.Field().String())
 }
 
 // RegisterCustomValidations registers custom validators
@@ -31,8 +26,6 @@ func RegisterCustomValidations(v *validator.Validate) {
 	v.RegisterValidation("DateYYYY-MM-DD", isDateYYYYMMDD)
 	v.RegisterValidation("LaxUuid", isLaxUuid)
 	v.RegisterValidation("ValidUsername", isValidUsername)
-	v.RegisterValidation("DecimalString", isValidDecimalString)
-
 }
 
 // GetValidator creates and returns validator with custom validations

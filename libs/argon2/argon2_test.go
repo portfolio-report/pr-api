@@ -61,6 +61,18 @@ func TestVerifyPassword(t *testing.T) {
 			assert.Equalf(t, tc.valid, valid, "wrong result")
 		})
 	}
+
+	t.Run("invalid hash", func(t *testing.T) {
+		valid, err := VerifyPassword("secret", "secret")
+		assert.Error(t, err)
+		assert.False(t, valid)
+	})
+
+	t.Run("unknown variant", func(t *testing.T) {
+		valid, err := VerifyPassword("secret", "$argon2d$v=19$m=16,t=2,p=1$NkJBV2RBaUFDaVU2aHRvNQ$eOEVxJRX6Uj7vjT2e4eawA")
+		assert.Error(t, err)
+		assert.False(t, valid)
+	})
 }
 
 func BenchmarkHashPasswordDefault(b *testing.B) {
