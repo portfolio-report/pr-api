@@ -12,12 +12,13 @@ import (
 func (h *rootHandler) GraphqlHandler() gin.HandlerFunc {
 	graphHandler := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
 		Resolvers: &graph.Resolver{
-			DB:               h.DB,
-			Validate:         h.validate,
-			UserService:      h.UserService,
-			SessionService:   h.SessionService,
-			PortfolioService: h.PortfolioService,
-			SecurityService:  h.SecurityService,
+			DB:                h.DB,
+			Validate:          h.validate,
+			UserService:       h.UserService,
+			SessionService:    h.SessionService,
+			PortfolioService:  h.PortfolioService,
+			CurrenciesService: h.CurrenciesService,
+			SecurityService:   h.SecurityService,
 		},
 	}))
 

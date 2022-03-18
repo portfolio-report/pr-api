@@ -139,6 +139,10 @@ func (r *portfolioSecurityResolver) Shares(ctx context.Context, obj *model.Portf
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *queryResolver) Currencies(ctx context.Context) ([]*model.Currency, error) {
+	return r.CurrenciesService.GetCurrencies()
+}
+
 func (r *queryResolver) Portfolios(ctx context.Context) ([]*model.Portfolio, error) {
 	user := middleware.UserFromContext(ctx)
 	if user == nil {

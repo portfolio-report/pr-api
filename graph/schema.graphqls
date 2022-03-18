@@ -23,6 +23,11 @@ type Exchangerate {
   quoteCurrencyCode: String!
 }
 
+type ExchangeratePrice {
+  date: String!
+  value: String!
+}
+
 type Portfolio {
   id: Int!
   name: String!
@@ -130,6 +135,8 @@ type User {
 }
 
 type Query {
+  currencies: [Currency!]!
+
   portfolios: [Portfolio!]!
   portfolio(id: Int!): Portfolio
 

@@ -25,6 +25,11 @@ type Exchangerate struct {
 	QuoteCurrencyCode string `json:"quoteCurrencyCode"`
 }
 
+type ExchangeratePrice struct {
+	Date  string `json:"date"`
+	Value string `json:"value"`
+}
+
 type Portfolio struct {
 	ID               int       `json:"id"`
 	Name             string    `json:"name"`

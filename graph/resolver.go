@@ -18,5 +18,6 @@ type Resolver struct {
 	UserService      models.UserService
 	SessionService   models.SessionService
 	PortfolioService models.PortfolioService
-	SecurityService  models.SecurityService
+	models.CurrenciesService
+	SecurityService models.SecurityService
 }
