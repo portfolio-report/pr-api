@@ -36,6 +36,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Exchangerate() ExchangerateResolver
 	Mutation() MutationResolver
 	PortfolioAccount() PortfolioAccountResolver
 	PortfolioSecurity() PortfolioSecurityResolver
@@ -65,6 +66,7 @@ type ComplexityRoot struct {
 
 	Exchangerate struct {
 		BaseCurrencyCode  func(childComplexity int) int
+		Prices            func(childComplexity int, from *string) int
 		QuoteCurrencyCode func(childComplexity int) int
 	}
 
@@ -127,6 +129,7 @@ type ComplexityRoot struct {
 
 	Query struct {
 		Currencies          func(childComplexity int) int
+		Exchangerate        func(childComplexity int, baseCurrencyCode string, quoteCurrencyCode string) int
 		Portfolio           func(childComplexity int, id int) int
 		PortfolioAccounts   func(childComplexity int, portfolioID int) int
 		PortfolioSecurities func(childComplexity int, portfolioID int) int
@@ -191,6 +194,9 @@ type ComplexityRoot struct {
 	}
 }
 
+type ExchangerateResolver interface {
+	Prices(ctx context.Context, obj *model.Exchangerate, from *string) ([]*model.ExchangeratePrice, error)
+}
 type MutationResolver interface {
 	Register(ctx context.Context, username string, password string) (*model.Session, error)
 	Login(ctx context.Context, username string, password string) (*model.Session, error)
@@ -208,6 +214,7 @@ type PortfolioSecurityResolver interface {
 }
 type QueryResolver interface {
 	Currencies(ctx context.Context) ([]*model.Currency, error)
+	Exchangerate(ctx context.Context, baseCurrencyCode string, quoteCurrencyCode string) (*model.Exchangerate, error)
 	Portfolios(ctx context.Context) ([]*model.Portfolio, error)
 	Portfolio(ctx context.Context, id int) (*model.Portfolio, error)
 	PortfolioAccounts(ctx context.Context, portfolioID int) ([]*model.PortfolioAccount, error)
@@ -304,6 +311,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Exchangerate.BaseCurrencyCode(childComplexity), true
+
+	case "Exchangerate.prices":
+		if e.complexity.Exchangerate.Prices == nil {
+			break
+		}
+
+		args, err := ec.field_Exchangerate_prices_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Exchangerate.Prices(childComplexity, args["from"].(*string)), true
 
 	case "Exchangerate.quoteCurrencyCode":
 		if e.complexity.Exchangerate.QuoteCurrencyCode == nil {
@@ -657,6 +676,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Currencies(childComplexity), true
+
+	case "Query.exchangerate":
+		if e.complexity.Query.Exchangerate == nil {
+			break
+		}
+
+		args, err := ec.field_Query_exchangerate_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Exchangerate(childComplexity, args["baseCurrencyCode"].(string), args["quoteCurrencyCode"].(string)), true
 
 	case "Query.portfolio":
 		if e.complexity.Query.Portfolio == nil {
@@ -1071,6 +1102,7 @@ type Event {
 type Exchangerate {
   baseCurrencyCode: String!
   quoteCurrencyCode: String!
+  prices(from: String): [ExchangeratePrice!]!
 }
 
 type ExchangeratePrice {
@@ -1187,14 +1219,16 @@ type User {
 type Query {
   currencies: [Currency!]!
 
+  exchangerate(baseCurrencyCode: String!, quoteCurrencyCode: String!): Exchangerate!
+
   portfolios: [Portfolio!]!
-  portfolio(id: Int!): Portfolio
+  portfolio(id: Int!): Portfolio!
 
   portfolioAccounts(portfolioId: Int!): [PortfolioAccount!]!
   portfolioSecurities(portfolioId: Int!): [PortfolioSecurity!]!
-  portfolioSecurity(portfolioId: Int!, uuid: String!): PortfolioSecurity
+  portfolioSecurity(portfolioId: Int!, uuid: String!): PortfolioSecurity!
 
-  security(uuid: String!): Security
+  security(uuid: String!): Security!
 
   sessions: [Session!]!
 }
@@ -1217,6 +1251,21 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Exchangerate_prices_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *string
+	if tmp, ok := rawArgs["from"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("from"))
+		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["from"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_createPortfolio_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -1392,6 +1441,30 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_exchangerate_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["baseCurrencyCode"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseCurrencyCode"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["baseCurrencyCode"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["quoteCurrencyCode"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("quoteCurrencyCode"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["quoteCurrencyCode"] = arg1
 	return args, nil
 }
 
@@ -1856,6 +1929,48 @@ func (ec *executionContext) _Exchangerate_quoteCurrencyCode(ctx context.Context,
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Exchangerate_prices(ctx context.Context, field graphql.CollectedField, obj *model.Exchangerate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exchangerate",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Exchangerate_prices_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Exchangerate().Prices(rctx, obj, args["from"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.ExchangeratePrice)
+	fc.Result = res
+	return ec.marshalNExchangeratePrice2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐExchangeratePriceᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ExchangeratePrice_date(ctx context.Context, field graphql.CollectedField, obj *model.ExchangeratePrice) (ret graphql.Marshaler) {
@@ -3402,6 +3517,48 @@ func (ec *executionContext) _Query_currencies(ctx context.Context, field graphql
 	return ec.marshalNCurrency2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐCurrencyᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_exchangerate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_exchangerate_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Exchangerate(rctx, args["baseCurrencyCode"].(string), args["quoteCurrencyCode"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Exchangerate)
+	fc.Result = res
+	return ec.marshalNExchangerate2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐExchangerate(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_portfolios(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3469,11 +3626,14 @@ func (ec *executionContext) _Query_portfolio(ctx context.Context, field graphql.
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.Portfolio)
 	fc.Result = res
-	return ec.marshalOPortfolio2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolio(ctx, field.Selections, res)
+	return ec.marshalNPortfolio2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolio(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_portfolioAccounts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3592,11 +3752,14 @@ func (ec *executionContext) _Query_portfolioSecurity(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.PortfolioSecurity)
 	fc.Result = res
-	return ec.marshalOPortfolioSecurity2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurity(ctx, field.Selections, res)
+	return ec.marshalNPortfolioSecurity2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurity(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_security(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3631,11 +3794,14 @@ func (ec *executionContext) _Query_security(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.Security)
 	fc.Result = res
-	return ec.marshalOSecurity2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐSecurity(ctx, field.Selections, res)
+	return ec.marshalNSecurity2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐSecurity(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_sessions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6326,7 +6492,7 @@ func (ec *executionContext) _Exchangerate(ctx context.Context, sel ast.Selection
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "quoteCurrencyCode":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -6336,8 +6502,28 @@ func (ec *executionContext) _Exchangerate(ctx context.Context, sel ast.Selection
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
+		case "prices":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Exchangerate_prices(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6921,6 +7107,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
+		case "exchangerate":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_exchangerate(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "portfolios":
 			field := field
 
@@ -6954,6 +7163,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_portfolio(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -7020,6 +7232,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_portfolioSecurity(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -7040,6 +7255,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_security(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -8128,6 +8346,10 @@ func (ec *executionContext) marshalNEvent2ᚖgithubᚗcomᚋportfolioᚑreport�
 	return ec._Event(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNExchangerate2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐExchangerate(ctx context.Context, sel ast.SelectionSet, v model.Exchangerate) graphql.Marshaler {
+	return ec._Exchangerate(ctx, sel, &v)
+}
+
 func (ec *executionContext) marshalNExchangerate2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐExchangerateᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Exchangerate) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -8180,6 +8402,60 @@ func (ec *executionContext) marshalNExchangerate2ᚖgithubᚗcomᚋportfolioᚑr
 		return graphql.Null
 	}
 	return ec._Exchangerate(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNExchangeratePrice2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐExchangeratePriceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ExchangeratePrice) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNExchangeratePrice2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐExchangeratePrice(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNExchangeratePrice2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐExchangeratePrice(ctx context.Context, sel ast.SelectionSet, v *model.ExchangeratePrice) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ExchangeratePrice(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
@@ -8329,6 +8605,10 @@ func (ec *executionContext) unmarshalNPortfolioInput2githubᚗcomᚋportfolioᚑ
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNPortfolioSecurity2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurity(ctx context.Context, sel ast.SelectionSet, v model.PortfolioSecurity) graphql.Marshaler {
+	return ec._PortfolioSecurity(ctx, sel, &v)
+}
+
 func (ec *executionContext) marshalNPortfolioSecurity2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PortfolioSecurity) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -8381,6 +8661,20 @@ func (ec *executionContext) marshalNPortfolioSecurity2ᚖgithubᚗcomᚋportfoli
 		return graphql.Null
 	}
 	return ec._PortfolioSecurity(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSecurity2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐSecurity(ctx context.Context, sel ast.SelectionSet, v model.Security) graphql.Marshaler {
+	return ec._Security(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSecurity2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐSecurity(ctx context.Context, sel ast.SelectionSet, v *model.Security) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Security(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNSecurityMarket2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐSecurityMarketᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.SecurityMarket) graphql.Marshaler {
@@ -8884,27 +9178,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
-}
-
-func (ec *executionContext) marshalOPortfolio2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolio(ctx context.Context, sel ast.SelectionSet, v *model.Portfolio) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Portfolio(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOPortfolioSecurity2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurity(ctx context.Context, sel ast.SelectionSet, v *model.PortfolioSecurity) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._PortfolioSecurity(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOSecurity2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐSecurity(ctx context.Context, sel ast.SelectionSet, v *model.Security) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Security(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {

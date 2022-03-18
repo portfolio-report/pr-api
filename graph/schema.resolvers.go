@@ -15,6 +15,10 @@ import (
 	"gorm.io/gorm"
 )
 
+func (r *exchangerateResolver) Prices(ctx context.Context, obj *model.Exchangerate, from *string) ([]*model.ExchangeratePrice, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *mutationResolver) Register(ctx context.Context, username string, password string) (*model.Session, error) {
 	user, err := r.UserService.Create(username)
 	if err != nil {
@@ -143,6 +147,10 @@ func (r *queryResolver) Currencies(ctx context.Context) ([]*model.Currency, erro
 	return r.CurrenciesService.GetCurrencies()
 }
 
+func (r *queryResolver) Exchangerate(ctx context.Context, baseCurrencyCode string, quoteCurrencyCode string) (*model.Exchangerate, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *queryResolver) Portfolios(ctx context.Context) ([]*model.Portfolio, error) {
 	user := middleware.UserFromContext(ctx)
 	if user == nil {
@@ -214,6 +222,9 @@ func (r *sessionResolver) User(ctx context.Context, obj *model.Session) (*model.
 	return r.UserService.GetUserFromSession(obj)
 }
 
+// Exchangerate returns generated.ExchangerateResolver implementation.
+func (r *Resolver) Exchangerate() generated.ExchangerateResolver { return &exchangerateResolver{r} }
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
@@ -241,6 +252,7 @@ func (r *Resolver) SecurityTaxonomy() generated.SecurityTaxonomyResolver {
 // Session returns generated.SessionResolver implementation.
 func (r *Resolver) Session() generated.SessionResolver { return &sessionResolver{r} }
 
+type exchangerateResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type portfolioAccountResolver struct{ *Resolver }
 type portfolioSecurityResolver struct{ *Resolver }

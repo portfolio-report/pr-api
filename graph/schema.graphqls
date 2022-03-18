@@ -21,6 +21,7 @@ type Event {
 type Exchangerate {
   baseCurrencyCode: String!
   quoteCurrencyCode: String!
+  prices(from: String): [ExchangeratePrice!]!
 }
 
 type ExchangeratePrice {
@@ -136,15 +137,16 @@ type User {
 
 type Query {
   currencies: [Currency!]!
+  exchangerate(baseCurrencyCode: String!, quoteCurrencyCode: String!): Exchangerate!
 
   portfolios: [Portfolio!]!
-  portfolio(id: Int!): Portfolio
+  portfolio(id: Int!): Portfolio!
 
   portfolioAccounts(portfolioId: Int!): [PortfolioAccount!]!
   portfolioSecurities(portfolioId: Int!): [PortfolioSecurity!]!
-  portfolioSecurity(portfolioId: Int!, uuid: String!): PortfolioSecurity
+  portfolioSecurity(portfolioId: Int!, uuid: String!): PortfolioSecurity!
 
-  security(uuid: String!): Security
+  security(uuid: String!): Security!
 
   sessions: [Session!]!
 }

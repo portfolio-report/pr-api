@@ -20,11 +20,6 @@ type Event struct {
 	Ratio        *string `json:"ratio"`
 }
 
-type Exchangerate struct {
-	BaseCurrencyCode  string `json:"baseCurrencyCode"`
-	QuoteCurrencyCode string `json:"quoteCurrencyCode"`
-}
-
 type ExchangeratePrice struct {
 	Date  string `json:"date"`
 	Value string `json:"value"`
