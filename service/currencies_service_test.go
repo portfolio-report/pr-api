@@ -183,4 +183,28 @@ func (s *CurrenciesServiceTestSuite) TestConvertCurrencyAmount() {
 		s.Error(err)
 	}
 
+	{
+		date, err := time.Parse("2006-01-02", "0001-01-01")
+		s.Nil(err)
+		value, err := s.service.ConvertCurrencyAmount(decimal.RequireFromString("100"), "EUR", "EUR", date)
+		s.Nil(err)
+		s.True(value.Equal(decimal.RequireFromString("100")), "amount should be 100: %s", value.String())
+	}
+
+	{
+		date, err := time.Parse("2006-01-02", "1999-01-01")
+		s.Nil(err)
+		_, err = s.service.ConvertCurrencyAmount(decimal.RequireFromString("100"), "EUR", "", date)
+		s.Error(err)
+	}
+
+	{
+		date, err := time.Parse("2006-01-02", "1999-01-05")
+		s.Nil(err)
+		value, err := s.service.ConvertCurrencyAmount(decimal.RequireFromString("100"), "USD", "EUR", date)
+		s.Nil(err)
+		floatValue, _ := value.Float64()
+		s.InDelta(84.81764207, floatValue, 0.00000001)
+
+	}
 }
