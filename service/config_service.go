@@ -9,7 +9,8 @@ import (
 	"github.com/portfolio-report/pr-api/db"
 )
 
-type configService struct {
+// Config holds the parameters read from environment variables
+type Config struct {
 	Db                    db.Config
 	MailerTransport       string
 	ContactRecipientEmail string
@@ -28,8 +29,8 @@ func defaultAtoi(s string, def int) int {
 
 // ReadConfig reads and parses configuration from environment variables.
 // It also sets default values where applicable.
-func ReadConfig() *configService {
-	c := configService{}
+func ReadConfig() *Config {
+	c := Config{}
 	c.Db = db.Config{}
 
 	c.MailerTransport = os.Getenv("MAILER_TRANSPORT")

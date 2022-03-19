@@ -35,8 +35,13 @@ jobs:
     - name: Build
       run: go build -v ./...
 
+    - name: Run migrations
+      run: go run main.go -migrateOnly
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable
+
     - name: Test
-      run: go test -v ./... -covermode=atomic -coverprofile=coverage.txt -coverpkg=./... -p=1
+      run: go test -v ./... -covermode=atomic -coverprofile=coverage.txt -coverpkg=./...
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable
 

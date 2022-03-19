@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,6 +17,7 @@ import (
 	"github.com/portfolio-report/pr-api/libs"
 	"github.com/portfolio-report/pr-api/models"
 	"github.com/portfolio-report/pr-api/service"
+	"gorm.io/gorm"
 
 	_ "github.com/joho/godotenv/autoload"
 
@@ -52,7 +54,7 @@ func setupCron(cs models.CurrenciesService) {
 	}()
 }
 
-func createApp() http.Handler {
+func prepareApp() (*service.Config, *gorm.DB) {
 	// Read config
 	cfg := service.ReadConfig()
 
@@ -67,6 +69,10 @@ func createApp() http.Handler {
 		log.Fatalln("Could not connect to database:", err)
 	}
 
+	return cfg, db
+}
+
+func createApp(cfg *service.Config, db *gorm.DB) http.Handler {
 	// Initialize validator
 	validate := libs.GetValidator()
 
@@ -125,7 +131,16 @@ func createApp() http.Handler {
 }
 
 func main() {
-	router := createApp()
+	migrateOnly := flag.Bool("migrateOnly", false, "Migrate database and quit.")
+	flag.Parse()
+
+	cfg, db := prepareApp()
+
+	if *migrateOnly {
+		os.Exit(0)
+	}
+
+	router := createApp(cfg, db)
 
 	address := ":3000"
 

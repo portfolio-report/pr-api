@@ -21,7 +21,8 @@ func req(method, tarGET string, body io.Reader) *httptest.ResponseRecorder {
 }
 
 func TestMain(m *testing.M) {
-	app = createApp()
+	cfg, db := prepareApp()
+	app = createApp(cfg, db)
 	exitVal := m.Run()
 	os.Exit(exitVal)
 }
