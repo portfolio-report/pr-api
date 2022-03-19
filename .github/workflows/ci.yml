@@ -36,7 +36,7 @@ jobs:
       run: go build -v ./...
 
     - name: Test
-      run: go test -v ./... -covermode=atomic -coverprofile=coverage.txt -coverpkg=./...
+      run: go test -v ./... -covermode=atomic -coverprofile=coverage.txt -coverpkg=./... -p=1
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable
 

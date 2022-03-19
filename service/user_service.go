@@ -83,7 +83,7 @@ func (s *userService) UpdatePassword(ctx context.Context, user *model.User, pass
 	}
 
 	if err := s.DB.Model(db.User{ID: uint(user.ID)}).Update("password", hash).Error; err != nil {
-		return err
+		panic(err)
 	}
 
 	return nil
@@ -95,6 +95,9 @@ func (s *userService) VerifyPassword(ctx context.Context, user *model.User, pass
 	err := s.DB.Take(&dbUser, user.ID).Error
 	if err != nil {
 		panic(err)
+	}
+	if dbUser.Password == nil {
+		return false, nil
 	}
 	return argon2.VerifyPassword(password, *dbUser.Password)
 }
