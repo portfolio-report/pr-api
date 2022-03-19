@@ -30,12 +30,16 @@ type currenciesService struct {
 }
 
 // NewCurrenciesService creates and returns currencies service
-func NewCurrenciesService(db *gorm.DB) models.CurrenciesService {
+func NewCurrenciesService(db *gorm.DB, setupInBackground bool) models.CurrenciesService {
 	s := &currenciesService{
 		DB: db,
 	}
 
-	go s.calculateCurrencyConversionRoutes()
+	if setupInBackground {
+		go s.calculateCurrencyConversionRoutes()
+	} else {
+		s.calculateCurrencyConversionRoutes()
+	}
 
 	return s
 }

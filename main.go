@@ -77,7 +77,7 @@ func createApp(cfg *service.Config, db *gorm.DB) http.Handler {
 	validate := libs.GetValidator()
 
 	// Initialize services
-	currenciesService := service.NewCurrenciesService(db)
+	currenciesService := service.NewCurrenciesService(db, true)
 	geoipService := service.NewGeoipService(cfg.Ip2locToken)
 	userService := service.NewUserService(db)
 	sessionService := service.NewSessionService(db, validate, cfg.SessionTimeout)

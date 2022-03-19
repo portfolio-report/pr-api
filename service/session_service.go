@@ -94,7 +94,7 @@ type authHeader struct {
 }
 
 // GetSessionToken returns session token from HTTP headers
-func (s *sessionService) GetSessionToken(c *gin.Context) string {
+func (*sessionService) GetSessionToken(c *gin.Context) string {
 	h := authHeader{}
 
 	if err := c.ShouldBindHeader(&h); err != nil {
@@ -142,7 +142,7 @@ func (s *sessionService) ValidateToken(token string) (*model.Session, error) {
 	return s.modelFromDb(session), nil
 }
 
-// updateLastActivity sets last activitiy session to now
+// updateLastActivity sets last activity of session to now
 func (s *sessionService) updateLastActivity(session *db.Session) error {
 	now := time.Now()
 	if now.Sub(session.LastActivityAt).Seconds() > 60 {

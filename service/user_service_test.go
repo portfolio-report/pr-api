@@ -62,7 +62,7 @@ func (s *UserServiceTestSuite) TestUserLifecycle() {
 	{
 		user, err := s.service.Create("testuser")
 		s.Nil(user)
-		s.ErrorIs(ErrUserExistsAlready, err)
+		s.ErrorIs(err, ErrUserExistsAlready)
 	}
 
 	// Get existing user
@@ -78,7 +78,7 @@ func (s *UserServiceTestSuite) TestUserLifecycle() {
 	// Get non-existent user
 	{
 		_, err := s.service.GetUserByUsername(context.TODO(), "unknown-user")
-		s.ErrorIs(gorm.ErrRecordNotFound, err)
+		s.ErrorIs(err, gorm.ErrRecordNotFound)
 	}
 
 	// Verify non-existent password
@@ -124,6 +124,6 @@ func (s *UserServiceTestSuite) TestUserLifecycle() {
 		s.Nil(err)
 
 		err = s.db.Take(&dbUser, "username = 'testuser'").Error
-		s.ErrorIs(gorm.ErrRecordNotFound, err)
+		s.ErrorIs(err, gorm.ErrRecordNotFound)
 	}
 }
