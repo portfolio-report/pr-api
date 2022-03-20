@@ -13,6 +13,7 @@ type securitiesHandler struct {
 	SessionService models.SessionService
 	UserService    models.UserService
 	validate       *validator.Validate
+	models.SecurityService
 }
 
 // NewHandler creates new securities handler and registers routes
@@ -21,13 +22,15 @@ func NewHandler(
 	DB *gorm.DB,
 	validate *validator.Validate,
 	UserService models.UserService,
+	SecurityService models.SecurityService,
 	SessionService models.SessionService,
 ) {
 	h := &securitiesHandler{
-		DB:             DB,
-		SessionService: SessionService,
-		UserService:    UserService,
-		validate:       validate,
+		DB:              DB,
+		SessionService:  SessionService,
+		SecurityService: SecurityService,
+		UserService:     UserService,
+		validate:        validate,
 	}
 
 	g := R.Group("/securities")

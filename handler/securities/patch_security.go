@@ -5,9 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/portfolio-report/pr-api/db"
+	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/libs"
-	"github.com/portfolio-report/pr-api/models"
 	"gorm.io/gorm"
 )
 
@@ -19,14 +18,14 @@ func (h *securitiesHandler) PatchSecurity(c *gin.Context) {
 		return
 	}
 
-	var request createUpdateSecurityRequest
+	var request model.SecurityInput
 	if err := c.BindJSON(&request); err != nil {
 		libs.HandleBadRequestError(c, err.Error())
 		return
 	}
 
-	var security db.Security
-	if err := h.DB.Take(&security, "uuid = ?", uuid).Error; err != nil {
+	security, err := h.SecurityService.GetSecurityByUUID(uuid)
+	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			libs.HandleNotFoundError(c)
 			return
@@ -34,31 +33,32 @@ func (h *securitiesHandler) PatchSecurity(c *gin.Context) {
 		panic(err)
 	}
 
-	if request.Name != nil {
-		security.Name = request.Name
+	if request.Name == nil {
+		request.Name = security.Name
 	}
-	if request.Isin != nil {
-		security.Isin = request.Isin
+	if request.Isin == nil {
+		request.Isin = security.Isin
 	}
-	if request.Wkn != nil {
-		security.Wkn = request.Wkn
+	if request.Wkn == nil {
+		request.Wkn = security.Wkn
 	}
-	if request.SecurityType != nil {
-		security.SecurityType = request.SecurityType
+	if request.SecurityType == nil {
+		request.SecurityType = security.SecurityType
 	}
-	if request.SymbolXfra != nil {
-		security.SymbolXfra = request.SymbolXfra
+	if request.SymbolXfra == nil {
+		request.SymbolXfra = security.SymbolXfra
 	}
-	if request.SymbolXnas != nil {
-		security.SymbolXnas = request.SymbolXnas
+	if request.SymbolXnas == nil {
+		request.SymbolXnas = security.SymbolXnas
 	}
-	if request.SymbolXnys != nil {
-		security.SymbolXnys = request.SymbolXnys
+	if request.SymbolXnys == nil {
+		request.SymbolXnys = security.SymbolXnys
 	}
 
-	if err := h.DB.Save(&security).Error; err != nil {
+	security, err = h.SecurityService.UpdateSecurity(uuid, &request)
+	if err != nil {
 		panic(err)
 	}
 
-	c.JSON(http.StatusOK, models.SecurityResponseFromDB(&security))
+	c.JSON(http.StatusOK, security)
 }

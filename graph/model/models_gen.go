@@ -87,6 +87,16 @@ type Security struct {
 	Events             []*Event            `json:"events"`
 }
 
+type SecurityInput struct {
+	Name         *string `json:"name"`
+	Isin         *string `json:"isin"`
+	Wkn          *string `json:"wkn"`
+	SecurityType *string `json:"securityType"`
+	SymbolXfra   *string `json:"symbolXfra"`
+	SymbolXnas   *string `json:"symbolXnas"`
+	SymbolXnys   *string `json:"symbolXnys"`
+}
+
 type SecurityMarket struct {
 	SecurityUUID   string  `json:"securityUuid"`
 	MarketCode     string  `json:"marketCode"`

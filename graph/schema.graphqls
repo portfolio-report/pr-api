@@ -95,6 +95,16 @@ type Security {
   events: [Event!]!
 }
 
+input SecurityInput {
+  name: String
+  isin: String
+  wkn: String
+  securityType: String
+  symbolXfra: String
+  symbolXnas: String
+  symbolXnys: String
+}
+
 type SecurityMarket {
   securityUuid: String!
   marketCode: String!

@@ -42,6 +42,9 @@ type PortfolioService interface {
 type SecurityService interface {
 	GetSecurityByUUID(uuid string) (*model.Security, error)
 	GetEventsOfSecurity(security *model.Security) ([]*model.Event, error)
+	CreateSecurity(input *model.SecurityInput) (*model.Security, error)
+	UpdateSecurity(uuid string, input *model.SecurityInput) (*model.Security, error)
+	DeleteSecurity(uuid string) (*model.Security, error)
 }
 
 // SessionService describes the interface of session service

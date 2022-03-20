@@ -1176,6 +1176,16 @@ type Security {
   events: [Event!]!
 }
 
+input SecurityInput {
+  name: String
+  isin: String
+  wkn: String
+  securityType: String
+  symbolXfra: String
+  symbolXnas: String
+  symbolXnys: String
+}
+
 type SecurityMarket {
   securityUuid: String!
   marketCode: String!
@@ -1218,7 +1228,6 @@ type User {
 
 type Query {
   currencies: [Currency!]!
-
   exchangerate(baseCurrencyCode: String!, quoteCurrencyCode: String!): Exchangerate!
 
   portfolios: [Portfolio!]!
@@ -6344,6 +6353,77 @@ func (ec *executionContext) unmarshalInputPortfolioInput(ctx context.Context, ob
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("baseCurrencyCode"))
 			it.BaseCurrencyCode, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputSecurityInput(ctx context.Context, obj interface{}) (model.SecurityInput, error) {
+	var it model.SecurityInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isin":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isin"))
+			it.Isin, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "wkn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("wkn"))
+			it.Wkn, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "securityType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("securityType"))
+			it.SecurityType, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "symbolXfra":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolXfra"))
+			it.SymbolXfra, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "symbolXnas":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolXnas"))
+			it.SymbolXnas, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "symbolXnys":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolXnys"))
+			it.SymbolXnys, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}

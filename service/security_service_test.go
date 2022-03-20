@@ -41,20 +41,54 @@ func TestSecurityService(t *testing.T) {
 	suite.Run(t, new(SecurityServiceTestSuite))
 }
 
-func (s *SecurityServiceTestSuite) TestGetSecurityByUUID() {
-	dbSecurity := db.Security{UUID: uuid.New().String()}
-	err := s.db.Create(&dbSecurity).Error
+func (s *SecurityServiceTestSuite) TestSecurityLifecycle() {
+	// Create empty security
+	emptySec, err := s.service.CreateSecurity(&model.SecurityInput{})
 	s.Nil(err)
+	s.NotNil(emptySec)
 
+	// Get existing security
 	{
-		security, err := s.service.GetSecurityByUUID(dbSecurity.UUID)
+		security, err := s.service.GetSecurityByUUID(emptySec.UUID)
 		s.Nil(err)
 		s.NotNil(security)
 	}
 
+	// Get non-existent security
 	{
 		_, err := s.service.GetSecurityByUUID("952df501-1e22-4693-a208-0c013cb1b415")
 		s.ErrorIs(err, gorm.ErrRecordNotFound)
+	}
+
+	// Update security
+	{
+		newName := "Updated name"
+		security, err := s.service.UpdateSecurity(emptySec.UUID, &model.SecurityInput{
+			Name: &newName,
+		})
+		s.Nil(err)
+		s.Equal(newName, *security.Name)
+		s.Nil(security.SecurityType)
+
+		newSecurityType := "secType"
+		security, err = s.service.UpdateSecurity(emptySec.UUID, &model.SecurityInput{
+			SecurityType: &newSecurityType,
+		})
+		s.Nil(err)
+		s.Nil(security.Name)
+		s.Equal(newSecurityType, *security.SecurityType)
+	}
+
+	// Delete security
+	{
+		_, err := s.service.DeleteSecurity(emptySec.UUID)
+		s.Nil(err)
+	}
+
+	// Delete non-existent security
+	{
+		_, err := s.service.DeleteSecurity(emptySec.UUID)
+		s.ErrorIs(err, model.ErrNotFound)
 	}
 }
 

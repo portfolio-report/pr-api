@@ -86,7 +86,7 @@ func NewHandler(c *Config) {
 	g.POST("/contact", h.Contact)
 
 	// /securities
-	securities.NewHandler(g, c.DB, c.Validate, c.UserService, c.SessionService)
+	securities.NewHandler(g, c.DB, c.Validate, c.UserService, c.SecurityService, c.SessionService)
 
 	// /portfolios
 	portfolios.NewHandler(g, c.DB, c.Validate, c.SessionService, c.UserService, c.PortfolioService)
