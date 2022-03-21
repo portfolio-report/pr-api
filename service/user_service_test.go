@@ -120,7 +120,7 @@ func (s *UserServiceTestSuite) TestUserLifecycle() {
 
 	// Delete user
 	{
-		err = s.service.Delete(user)
+		err = s.service.Delete(user.ID)
 		s.Nil(err)
 
 		err = s.db.Take(&dbUser, "username = 'testuser'").Error

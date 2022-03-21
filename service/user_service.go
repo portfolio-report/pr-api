@@ -103,8 +103,8 @@ func (s *userService) VerifyPassword(ctx context.Context, user *model.User, pass
 }
 
 // Delete removes user
-func (s *userService) Delete(user *model.User) error {
-	return s.DB.Delete(db.User{}, "id = ?", user.ID).Error
+func (s *userService) Delete(id int) error {
+	return s.DB.Delete(db.User{}, "id = ?", id).Error
 }
 
 // UpdateLastSeen updates the date a user was seen last

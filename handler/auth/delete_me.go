@@ -11,7 +11,7 @@ import (
 func (h *authHandler) DeleteMe(c *gin.Context) {
 	user := middleware.UserFromContext(c.Request.Context())
 
-	if err := h.UserService.Delete(user); err != nil {
+	if err := h.UserService.Delete(user.ID); err != nil {
 		panic(err)
 	}
 

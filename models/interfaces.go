@@ -74,6 +74,6 @@ type UserService interface {
 	GetUserFromSession(session *model.Session) (*model.User, error)
 	UpdatePassword(ctx context.Context, user *model.User, password string) error
 	VerifyPassword(ctx context.Context, user *model.User, password string) (bool, error)
-	Delete(user *model.User) error
+	Delete(id int) error
 	UpdateLastSeen(user *model.User) error
 }

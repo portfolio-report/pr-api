@@ -51,7 +51,7 @@ func TestMain(m *testing.M) {
 	exitVal := m.Run()
 
 	// Cleanup
-	err = handlerConfig.UserService.Delete(user)
+	err = handlerConfig.UserService.Delete(user.ID)
 	if err != nil {
 		panic(err)
 	}
