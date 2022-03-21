@@ -95,6 +95,54 @@ func (s *securityService) DeleteSecurity(uuid string) (*model.Security, error) {
 	return s.modelFromDb(security), nil
 }
 
+// UpdateSecurityTaxonomies creates/updates/deletes taxonomies of security
+func (s *securityService) UpdateSecurityTaxonomies(
+	securityUuid, rootTaxonomyUuid string, inputs []*model.SecurityTaxonomyInput,
+) (
+	[]*model.SecurityTaxonomy, error,
+) {
+	// Remove securityTaxonomies of rootTaxonomy not in inputs
+	secTaxonomyUuids := make([]string, len(inputs))
+	for i := range inputs {
+		secTaxonomyUuids[i] = inputs[i].TaxonomyUUID
+	}
+	var err error
+	if len(secTaxonomyUuids) == 0 {
+		err = s.DB.Exec("DELETE FROM securities_taxonomies st "+
+			"USING taxonomies t "+
+			"WHERE st.taxonomy_uuid = t.uuid"+
+			" AND st.security_uuid = ?"+
+			" AND t.root_uuid = ?", securityUuid, rootTaxonomyUuid).
+			Error
+	} else {
+		err = s.DB.Exec("DELETE FROM securities_taxonomies st "+
+			"USING taxonomies t "+
+			"WHERE st.taxonomy_uuid = t.uuid"+
+			" AND st.security_uuid = ?"+
+			" AND t.root_uuid = ?"+
+			" AND st.taxonomy_uuid NOT IN ?", securityUuid, rootTaxonomyUuid, secTaxonomyUuids).
+			Error
+	}
+	if err != nil {
+		panic(err)
+	}
+
+	// Upsert all security taxonomies in input
+	upsert := make([]db.SecurityTaxonomy, len(inputs))
+	for i := range inputs {
+		upsert[i].SecurityUUID = securityUuid
+		upsert[i].TaxonomyUUID = inputs[i].TaxonomyUUID
+		upsert[i].Weight = inputs[i].Weight
+	}
+	if len(upsert) > 0 {
+		if err := s.DB.Clauses(clause.OnConflict{UpdateAll: true}).Create(&upsert).Error; err != nil {
+			panic(err)
+		}
+	}
+
+	return s.securityTaxonomiesModelFromDb(upsert), nil
+}
+
 // eventsModelFromDb converts list of events from database into model
 func (*securityService) eventsModelFromDb(events []db.Event) []*model.Event {
 	ret := []*model.Event{}
@@ -106,6 +154,19 @@ func (*securityService) eventsModelFromDb(events []db.Event) []*model.Event {
 			CurrencyCode: e.CurrencyCode,
 			Ratio:        e.Ratio,
 		})
+	}
+	return ret
+}
+
+// securityTaxonomiesModelFromDb converts list of security taxonomies from database into model
+func (*securityService) securityTaxonomiesModelFromDb(secTaxonomies []db.SecurityTaxonomy) []*model.SecurityTaxonomy {
+	ret := make([]*model.SecurityTaxonomy, len(secTaxonomies))
+	for i := range secTaxonomies {
+		ret[i] = &model.SecurityTaxonomy{
+			SecurityUUID: secTaxonomies[i].SecurityUUID,
+			TaxonomyUUID: secTaxonomies[i].TaxonomyUUID,
+			Weight:       secTaxonomies[i].Weight,
+		}
 	}
 	return ret
 }

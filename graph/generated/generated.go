@@ -14,6 +14,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/portfolio-report/pr-api/graph/model"
+	"github.com/shopspring/decimal"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -1155,6 +1156,7 @@ var sources = []*ast.Source{
 
 scalar Time
 scalar Date
+scalar Decimal
 
 type Currency {
   code: String!
@@ -1285,8 +1287,13 @@ type SecurityMarket {
 type SecurityTaxonomy {
   securityUuid: String!
   taxonomyUuid: String!
-  weight: String!
+  weight: Decimal!
   taxonomy: Taxonomy!
+}
+
+input SecurityTaxonomyInput {
+  taxonomyUuid: String!
+  weight: Decimal!
 }
 
 type Session {
@@ -4989,9 +4996,9 @@ func (ec *executionContext) _SecurityTaxonomy_weight(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(decimal.Decimal)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNDecimal2githubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SecurityTaxonomy_taxonomy(ctx context.Context, field graphql.CollectedField, obj *model.SecurityTaxonomy) (ret graphql.Marshaler) {
@@ -6797,6 +6804,37 @@ func (ec *executionContext) unmarshalInputSecurityInput(ctx context.Context, obj
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolXnys"))
 			it.SymbolXnys, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputSecurityTaxonomyInput(ctx context.Context, obj interface{}) (model.SecurityTaxonomyInput, error) {
+	var it model.SecurityTaxonomyInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "taxonomyUuid":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("taxonomyUuid"))
+			it.TaxonomyUUID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "weight":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("weight"))
+			it.Weight, err = ec.unmarshalNDecimal2githubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8922,6 +8960,21 @@ func (ec *executionContext) unmarshalNDate2githubᚗcomᚋportfolioᚑreportᚋp
 
 func (ec *executionContext) marshalNDate2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐDate(ctx context.Context, sel ast.SelectionSet, v model.Date) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) unmarshalNDecimal2githubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx context.Context, v interface{}) (decimal.Decimal, error) {
+	res, err := model.UnmarshalDecimalScalar(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNDecimal2githubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx context.Context, sel ast.SelectionSet, v decimal.Decimal) graphql.Marshaler {
+	res := model.MarshalDecimalScalar(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) marshalNEvent2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐEventᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Event) graphql.Marshaler {

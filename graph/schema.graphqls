@@ -135,8 +135,13 @@ type SecurityMarket {
 type SecurityTaxonomy {
   securityUuid: String!
   taxonomyUuid: String!
-  weight: String!
+  weight: Decimal!
   taxonomy: Taxonomy!
+}
+
+input SecurityTaxonomyInput {
+  taxonomyUuid: String!
+  weight: Decimal!
 }
 
 type Session {

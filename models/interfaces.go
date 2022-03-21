@@ -45,6 +45,7 @@ type SecurityService interface {
 	CreateSecurity(input *model.SecurityInput) (*model.Security, error)
 	UpdateSecurity(uuid string, input *model.SecurityInput) (*model.Security, error)
 	DeleteSecurity(uuid string) (*model.Security, error)
+	UpdateSecurityTaxonomies(securityUuid, rootTaxonomyUuid string, inputs []*model.SecurityTaxonomyInput) ([]*model.SecurityTaxonomy, error)
 }
 
 // SessionService describes the interface of session service

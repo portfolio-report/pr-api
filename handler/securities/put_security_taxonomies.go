@@ -4,11 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/portfolio-report/pr-api/db"
+	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/libs"
-	"github.com/portfolio-report/pr-api/models"
 	"github.com/shopspring/decimal"
-	"gorm.io/gorm/clause"
 )
 
 type securityTaxonomyRequest struct {
@@ -35,38 +33,19 @@ func (h *securitiesHandler) PutSecurityTaxonomies(c *gin.Context) {
 		return
 	}
 
-	// Remove securityTaxonomies not in request
-	taxonomyUuids := []string{}
-	for _, st := range req {
-		taxonomyUuids = append(taxonomyUuids, st.TaxonomyUuid)
+	// Convert []securityTaxonomyRequest to []*model.SecurityTaxonomyInput
+	inputs := make([]*model.SecurityTaxonomyInput, len(req))
+	for i := range req {
+		inputs[i] = &model.SecurityTaxonomyInput{
+			TaxonomyUUID: req[i].TaxonomyUuid,
+			Weight:       req[i].Weight,
+		}
 	}
-	err := h.DB.Exec("DELETE FROM securities_taxonomies st "+
-		"USING taxonomies t "+
-		"WHERE st.taxonomy_uuid = t.uuid"+
-		" AND st.security_uuid = ?"+
-		" AND t.root_uuid = ?"+
-		" AND st.taxonomy_uuid NOT IN ?", securityUuid, taxonomyRootUuid, taxonomyUuids).
-		Error
+
+	ret, err := h.SecurityService.UpdateSecurityTaxonomies(securityUuid, taxonomyRootUuid, inputs)
 	if err != nil {
 		panic(err)
 	}
 
-	// Upsert all securityTaxonomies in request
-	securityTaxonomies := []db.SecurityTaxonomy{}
-	for _, r := range req {
-		securityTaxonomies = append(securityTaxonomies, db.SecurityTaxonomy{
-			SecurityUUID: securityUuid,
-			TaxonomyUUID: r.TaxonomyUuid,
-			Weight:       r.Weight,
-		})
-	}
-	if err := h.DB.Clauses(clause.OnConflict{UpdateAll: true}).Create(&securityTaxonomies).Error; err != nil {
-		panic(err)
-	}
-
-	ret := []models.SecurityTaxonomyResponse{}
-	for _, t := range securityTaxonomies {
-		ret = append(ret, models.SecurityTaxonomyResponseFromDB(&t))
-	}
 	c.JSON(http.StatusOK, ret)
 }

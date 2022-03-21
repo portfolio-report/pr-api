@@ -4,6 +4,8 @@ package model
 
 import (
 	"time"
+
+	"github.com/shopspring/decimal"
 )
 
 type Currency struct {
@@ -122,10 +124,15 @@ type SecurityMarket struct {
 }
 
 type SecurityTaxonomy struct {
-	SecurityUUID string    `json:"securityUuid"`
-	TaxonomyUUID string    `json:"taxonomyUuid"`
-	Weight       string    `json:"weight"`
-	Taxonomy     *Taxonomy `json:"taxonomy"`
+	SecurityUUID string          `json:"securityUuid"`
+	TaxonomyUUID string          `json:"taxonomyUuid"`
+	Weight       decimal.Decimal `json:"weight"`
+	Taxonomy     *Taxonomy       `json:"taxonomy"`
+}
+
+type SecurityTaxonomyInput struct {
+	TaxonomyUUID string          `json:"taxonomyUuid"`
+	Weight       decimal.Decimal `json:"weight"`
 }
 
 type Taxonomy struct {
