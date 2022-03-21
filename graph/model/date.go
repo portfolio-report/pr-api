@@ -63,10 +63,10 @@ func (date *Date) UnmarshalGQL(v interface{}) error {
 	if !ok {
 		return fmt.Errorf("must be a string")
 	}
-	if len(str) != 12 {
+	if len(str) != 10 {
 		return fmt.Errorf("cannot parse %s as YYYY-MM-DD", str)
 	}
-	t, err := time.Parse("2006-01-02", string(str[1:11]))
+	t, err := time.Parse("2006-01-02", str)
 	*date = Date(t)
 	return err
 }
