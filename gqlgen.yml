@@ -57,6 +57,9 @@ models:
   Date:
     model:
       - github.com/portfolio-report/pr-api/graph/model.Date
+  Decimal:
+    model:
+      - github.com/portfolio-report/pr-api/graph/model.DecimalScalar
   PortfolioSecurity:
     fields:
       shares:

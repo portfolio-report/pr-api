@@ -4,6 +4,7 @@
 
 scalar Time
 scalar Date
+scalar Decimal
 
 type Currency {
   code: String!
