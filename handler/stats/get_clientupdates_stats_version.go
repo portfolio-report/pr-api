@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/portfolio-report/pr-api/db"
+	"github.com/portfolio-report/pr-api/graph/model"
 )
 
 // GetClientupdatesStatsVersion returns statistics for updates to a certain version
@@ -12,8 +12,8 @@ func (h *statsHandler) GetClientupdatesStatsVersion(c *gin.Context) {
 	version := c.Param("version")
 
 	type ByDate struct {
-		Date  db.DbDate `json:"date"`
-		Count int       `json:"count"`
+		Date  model.Date `json:"date"`
+		Count int        `json:"count"`
 	}
 
 	var byDate []ByDate

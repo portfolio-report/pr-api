@@ -3,6 +3,7 @@
 # https://gqlgen.com/getting-started/
 
 scalar Time
+scalar Date
 
 type Currency {
   code: String!
@@ -74,11 +75,26 @@ type PortfolioSecurity {
   feedUrl: String
   latestFeed: String
   latestFeedUrl: String
+  events: [PortfolioSecurityEvent]!
+  properties: [PortfolioSecurityProperty]!
 
   # computed:
   shares: String!
   quote(currenyCode: String): String!
 }
+
+type PortfolioSecurityEvent {
+  date: Date!
+  type: String!
+  details: String!
+}
+
+type PortfolioSecurityProperty {
+  name: String!
+  type: String!
+  value: String!
+}
+
 
 type Security {
   uuid: String!

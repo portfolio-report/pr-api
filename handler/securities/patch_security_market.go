@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 	"github.com/portfolio-report/pr-api/db"
+	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/libs"
 	"gorm.io/gorm/clause"
 )
@@ -16,8 +17,8 @@ type patchSecurityMarketRequest struct {
 	Symbol       *string `json:"symbol"`
 	UpdatePrices *bool   `json:"updatePrices"`
 	Prices       *[]struct {
-		Date  db.DbDate `json:"date"`
-		Close float64   `json:"close"`
+		Date  model.Date `json:"date"`
+		Close float64    `json:"close"`
 	} `json:"prices"`
 }
 

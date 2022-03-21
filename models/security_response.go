@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/portfolio-report/pr-api/db"
+	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/shopspring/decimal"
 )
 
@@ -20,11 +21,11 @@ func SecurityTaxonomyResponseFromDB(st *db.SecurityTaxonomy) SecurityTaxonomyRes
 }
 
 type SecurityMarketResponsePublic struct {
-	MarketCode     string     `json:"marketCode"`
-	CurrencyCode   string     `json:"currencyCode"`
-	FirstPriceDate *db.DbDate `json:"firstPriceDate"`
-	LastPriceDate  *db.DbDate `json:"lastPriceDate"`
-	Symbol         *string    `json:"symbol"`
+	MarketCode     string      `json:"marketCode"`
+	CurrencyCode   string      `json:"currencyCode"`
+	FirstPriceDate *model.Date `json:"firstPriceDate"`
+	LastPriceDate  *model.Date `json:"lastPriceDate"`
+	Symbol         *string     `json:"symbol"`
 }
 
 func SecurityMarketResponsePublicFromDB(m *db.SecurityMarket) SecurityMarketResponsePublic {
@@ -38,7 +39,7 @@ func SecurityMarketResponsePublicFromDB(m *db.SecurityMarket) SecurityMarketResp
 }
 
 type SecurityMarketPriceResponse struct {
-	Date  db.DbDate        `json:"date"`
+	Date  model.Date       `json:"date"`
 	Close db.DecimalString `json:"close"`
 }
 

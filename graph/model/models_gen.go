@@ -54,23 +54,37 @@ type PortfolioInput struct {
 }
 
 type PortfolioSecurity struct {
-	UUID          string    `json:"uuid"`
-	Name          string    `json:"name"`
-	CurrencyCode  string    `json:"currencyCode"`
-	Isin          string    `json:"isin"`
-	Wkn           string    `json:"wkn"`
-	Symbol        string    `json:"symbol"`
-	Active        bool      `json:"active"`
-	Note          string    `json:"note"`
-	SecurityUUID  *string   `json:"securityUuid"`
-	UpdatedAt     time.Time `json:"updatedAt"`
-	Calendar      *string   `json:"calendar"`
-	Feed          *string   `json:"feed"`
-	FeedURL       *string   `json:"feedUrl"`
-	LatestFeed    *string   `json:"latestFeed"`
-	LatestFeedURL *string   `json:"latestFeedUrl"`
-	Shares        string    `json:"shares"`
-	Quote         string    `json:"quote"`
+	UUID          string                       `json:"uuid"`
+	Name          string                       `json:"name"`
+	CurrencyCode  string                       `json:"currencyCode"`
+	Isin          string                       `json:"isin"`
+	Wkn           string                       `json:"wkn"`
+	Symbol        string                       `json:"symbol"`
+	Active        bool                         `json:"active"`
+	Note          string                       `json:"note"`
+	SecurityUUID  *string                      `json:"securityUuid"`
+	UpdatedAt     time.Time                    `json:"updatedAt"`
+	Calendar      *string                      `json:"calendar"`
+	Feed          *string                      `json:"feed"`
+	FeedURL       *string                      `json:"feedUrl"`
+	LatestFeed    *string                      `json:"latestFeed"`
+	LatestFeedURL *string                      `json:"latestFeedUrl"`
+	Events        []*PortfolioSecurityEvent    `json:"events"`
+	Properties    []*PortfolioSecurityProperty `json:"properties"`
+	Shares        string                       `json:"shares"`
+	Quote         string                       `json:"quote"`
+}
+
+type PortfolioSecurityEvent struct {
+	Date    Date   `json:"date"`
+	Type    string `json:"type"`
+	Details string `json:"details"`
+}
+
+type PortfolioSecurityProperty struct {
+	Name  string `json:"name"`
+	Type  string `json:"type"`
+	Value string `json:"value"`
 }
 
 type Security struct {

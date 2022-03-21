@@ -139,7 +139,7 @@ func (s *currenciesService) UpdateExchangeRates() error {
 		panic(err)
 	}
 
-	today := db.DbDate{}.FromTime(time.Now())
+	today := model.Date{}.FromTime(time.Now())
 
 	for _, er := range exchangeRates {
 		var latestPrice db.ExchangeratePrice
@@ -166,7 +166,7 @@ func (s *currenciesService) UpdateExchangeRates() error {
 				if p.Time.After(latestPrice.Date.Time()) {
 					newPrices = append(newPrices, db.ExchangeratePrice{
 						ExchangerateID: er.ID,
-						Date:           db.DbDate(p.Time),
+						Date:           model.Date(p.Time),
 						Value:          db.DecimalString(p.Value.String()),
 					})
 				}

@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/portfolio-report/pr-api/db"
+	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/libs"
 	"github.com/shopspring/decimal"
 )
@@ -14,7 +14,7 @@ type convertRequest struct {
 	SourceCurrencyCode string          `json:"sourceCurrencyCode" binding:"required"`
 	TargetCurrencyCode string          `json:"targetCurrencyCode" binding:"required"`
 	SourceAmount       decimal.Decimal `json:"sourceAmount"`
-	Date               *db.DbDate      `json:"date" binding:"omitempty,DateYYYY-MM-DD"`
+	Date               *model.Date     `json:"date" binding:"omitempty,DateYYYY-MM-DD"`
 }
 
 // Convert converts amount between currencies
@@ -26,7 +26,7 @@ func (h *currenciesHandler) Convert(c *gin.Context) {
 	}
 
 	if r.Date == nil {
-		now := db.DbDate(time.Now())
+		now := model.Date(time.Now())
 		r.Date = &now
 	}
 

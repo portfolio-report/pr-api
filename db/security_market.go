@@ -1,13 +1,15 @@
 package db
 
+import "github.com/portfolio-report/pr-api/graph/model"
+
 // SecurityMarket in database
 type SecurityMarket struct {
 	ID             uint `gorm:"primaryKey"`
 	SecurityUUID   string
 	MarketCode     string
 	CurrencyCode   string
-	FirstPriceDate *DbDate
-	LastPriceDate  *DbDate
+	FirstPriceDate *model.Date
+	LastPriceDate  *model.Date
 	Symbol         *string
 	UpdatePrices   bool
 }
@@ -19,8 +21,8 @@ func (SecurityMarket) TableName() string {
 
 // SecurityMarketPrice in database
 type SecurityMarketPrice struct {
-	SecurityMarketID uint   `gorm:"primaryKey;autoIncrement:false"`
-	Date             DbDate `gorm:"primaryKey"`
+	SecurityMarketID uint       `gorm:"primaryKey;autoIncrement:false"`
+	Date             model.Date `gorm:"primaryKey"`
 	Close            DecimalString
 }
 

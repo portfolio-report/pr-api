@@ -54,6 +54,9 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
+  Date:
+    model:
+      - github.com/portfolio-report/pr-api/graph/model.Date
   PortfolioSecurity:
     fields:
       shares:

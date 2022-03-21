@@ -1,5 +1,7 @@
 package db
 
+import "github.com/portfolio-report/pr-api/graph/model"
+
 // Exchangerate in database
 type Exchangerate struct {
 	ID                uint `gorm:"primaryKey"`
@@ -14,8 +16,8 @@ func (Exchangerate) TableName() string {
 
 // ExchangeratePrice in database
 type ExchangeratePrice struct {
-	ExchangerateID uint   `gorm:"primaryKey;autoIncrement:false"`
-	Date           DbDate `gorm:"primaryKey"`
+	ExchangerateID uint       `gorm:"primaryKey;autoIncrement:false"`
+	Date           model.Date `gorm:"primaryKey"`
 	Value          DecimalString
 }
 

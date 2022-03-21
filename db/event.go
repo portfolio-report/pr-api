@@ -1,9 +1,11 @@
 package db
 
+import "github.com/portfolio-report/pr-api/graph/model"
+
 // Event in database
 type Event struct {
 	ID           uint `gorm:"primaryKey"`
-	Date         DbDate
+	Date         model.Date
 	Type         string
 	Amount       *string
 	CurrencyCode *string

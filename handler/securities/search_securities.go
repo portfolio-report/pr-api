@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/portfolio-report/pr-api/db"
+	"github.com/portfolio-report/pr-api/graph/model"
 	"gorm.io/gorm/clause"
 )
 
@@ -43,11 +44,11 @@ func searchSecuritiesResponseFromDB(s db.Security) searchSecuritiesResponse {
 }
 
 type searchSecuritiesResponseMarket struct {
-	MarketCode     string     `json:"marketCode"`
-	Symbol         *string    `json:"symbol"`
-	FirstPriceDate *db.DbDate `json:"firstPriceDate"`
-	LastPriceDate  *db.DbDate `json:"lastPriceDate"`
-	CurrencyCode   string     `json:"currencyCode"`
+	MarketCode     string      `json:"marketCode"`
+	Symbol         *string     `json:"symbol"`
+	FirstPriceDate *model.Date `json:"firstPriceDate"`
+	LastPriceDate  *model.Date `json:"lastPriceDate"`
+	CurrencyCode   string      `json:"currencyCode"`
 }
 
 func searchSecuritiesResponseMarketFromDB(s db.SecurityMarket) searchSecuritiesResponseMarket {
