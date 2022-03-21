@@ -74,9 +74,13 @@ func (h *securitiesHandler) GetSecurityPublic(c *gin.Context) {
 		marketsResp = append(marketsResp, models.SecurityMarketResponsePublicFromDB(&m))
 	}
 
-	taxonomiesResp := []models.SecurityTaxonomyResponse{}
+	taxonomiesResp := []gin.H{}
 	for _, t := range securityTaxonomies {
-		taxonomiesResp = append(taxonomiesResp, models.SecurityTaxonomyResponseFromDB(&t))
+		taxonomiesResp = append(taxonomiesResp, gin.H{
+			"taxonomyUuid":     t.TaxonomyUUID,
+			"weight":           t.Weight.String(),
+			"rootTaxonomyUuid": t.Taxonomy.RootUUID,
+		})
 	}
 
 	c.JSON(http.StatusOK, gin.H{

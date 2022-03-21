@@ -3,22 +3,7 @@ package models
 import (
 	"github.com/portfolio-report/pr-api/db"
 	"github.com/portfolio-report/pr-api/graph/model"
-	"github.com/shopspring/decimal"
 )
-
-type SecurityTaxonomyResponse struct {
-	TaxonomyUUID     string
-	Weight           decimal.Decimal
-	RootTaxonomyUUID *string `json:"rootTaxonomyUuid"`
-}
-
-func SecurityTaxonomyResponseFromDB(st *db.SecurityTaxonomy) SecurityTaxonomyResponse {
-	return SecurityTaxonomyResponse{
-		TaxonomyUUID:     st.TaxonomyUUID,
-		Weight:           st.Weight,
-		RootTaxonomyUUID: st.Taxonomy.RootUUID,
-	}
-}
 
 type SecurityMarketResponsePublic struct {
 	MarketCode     string      `json:"marketCode"`
