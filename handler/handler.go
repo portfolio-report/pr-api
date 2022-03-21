@@ -18,7 +18,6 @@ import (
 
 // Config holds configuration for all handlers
 type Config struct {
-	R                 *gin.Engine
 	UserService       models.UserService
 	SessionService    models.SessionService
 	CurrenciesService models.CurrenciesService
@@ -46,7 +45,7 @@ type rootHandler struct {
 }
 
 // NewHandler creates new root handler and registers routes
-func NewHandler(c *Config) {
+func NewHandler(R *gin.Engine, c *Config) {
 	h := &rootHandler{
 		UserService:       c.UserService,
 		SessionService:    c.SessionService,
@@ -60,9 +59,9 @@ func NewHandler(c *Config) {
 		validate:          c.Validate,
 	}
 
-	c.R.Use(middleware.AuthUser(c.SessionService, c.UserService))
+	R.Use(middleware.AuthUser(c.SessionService, c.UserService))
 
-	g := c.R.Group(c.BaseURL)
+	g := R.Group(c.BaseURL)
 
 	g.GET("", h.GetRoot)
 

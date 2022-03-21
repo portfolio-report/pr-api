@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -8,22 +9,53 @@ import (
 	"os"
 	"testing"
 
+	"github.com/gin-gonic/gin"
+	"github.com/portfolio-report/pr-api/db"
+	"github.com/portfolio-report/pr-api/graph/model"
+	"github.com/portfolio-report/pr-api/handler"
 	"github.com/stretchr/testify/assert"
 )
 
 var app http.Handler
+var handlerConfig *handler.Config
+var user *model.User
+var session *model.Session
 
-func req(method, tarGET string, body io.Reader) *httptest.ResponseRecorder {
-	req := httptest.NewRequest(method, tarGET, body)
+func req(method, target string, body io.Reader) *httptest.ResponseRecorder {
+	req := httptest.NewRequest(method, target, body)
 	res := httptest.NewRecorder()
 	app.ServeHTTP(res, req)
 	return res
 }
 
 func TestMain(m *testing.M) {
+	// Set up app
 	cfg, db := prepareApp()
-	app = createApp(cfg, db)
+	handlerConfig = initializeService(cfg, db)
+	app = createApp(handlerConfig)
+
+	// Prepare user
+	var err error
+	user, err = handlerConfig.UserService.Create("testuser-e2e")
+	if err != nil {
+		panic(err)
+	}
+
+	// Prepare session
+	session, err = handlerConfig.SessionService.CreateSession(user, "e2e-test")
+	if err != nil {
+		panic(err)
+	}
+
+	// Run tests
 	exitVal := m.Run()
+
+	// Cleanup
+	err = handlerConfig.UserService.Delete(user)
+	if err != nil {
+		panic(err)
+	}
+
 	os.Exit(exitVal)
 }
 
@@ -75,6 +107,14 @@ func TestAuth(t *testing.T) {
 		{"GET", "/portfolios/42/securities/"},
 		{"PUT", "/portfolios/42/securities/42"},
 		{"DELETE", "/portfolios/42/securities/42"},
+		{"GET", "/securities/"},
+		{"POST", "/securities/"},
+		{"GET", "/securities/42"},
+		{"PATCH", "/securities/42"},
+		{"DELETE", "/securities/42"},
+		{"PATCH", "/securities/uuid/42/markets/42"},
+		{"DELETE", "/securities/uuid/42/markets/42"},
+		{"PUT", "/securities/uuid/42/taxonomies/42"},
 	}
 
 	for _, tc := range testCases {
@@ -88,5 +128,98 @@ func TestAuth(t *testing.T) {
 			app.ServeHTTP(res, req)
 			assert.Equal(t, 401, res.Code, "Forbidden with invalid Authorization header")
 		})
+	}
+}
+
+func TestAdminAuth(t *testing.T) {
+	handlerConfig.DB.Model(&db.User{}).Where("id = ?", user.ID).Update("is_admin", false)
+
+	testCases := []struct {
+		method string
+		url    string
+	}{
+		{"GET", "/securities/"},
+		{"POST", "/securities/"},
+		{"GET", "/securities/42"},
+		{"PATCH", "/securities/42"},
+		{"DELETE", "/securities/42"},
+		{"PATCH", "/securities/uuid/42/markets/42"},
+		{"DELETE", "/securities/uuid/42/markets/42"},
+		{"PUT", "/securities/uuid/42/taxonomies/42"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.method+" "+tc.url, func(t *testing.T) {
+			req := httptest.NewRequest(tc.method, tc.url, nil)
+			req.Header.Add("Authorization", "Bearer "+session.Token)
+			res := httptest.NewRecorder()
+			app.ServeHTTP(res, req)
+
+			assert.Equal(t, 401, res.Code, "Forbidden without admin privileges")
+		})
+	}
+}
+
+func TestSecurities(t *testing.T) {
+	handlerConfig.DB.Model(&db.User{}).Where("username = 'testuser-e2e'").Update("is_admin", true)
+
+	a := assert.New(t)
+
+	var securityUuid string
+
+	// Create security
+	{
+		reqBody, err := json.Marshal(gin.H{
+			"name": "Test name",
+		})
+		a.Nil(err)
+		req := httptest.NewRequest("POST", "/securities/", bytes.NewReader(reqBody))
+		req.Header.Add("Authorization", "Bearer "+session.Token)
+		res := httptest.NewRecorder()
+		app.ServeHTTP(res, req)
+
+		a.Equal(201, res.Code)
+
+		var body gin.H
+		json.Unmarshal(res.Body.Bytes(), &body)
+		a.Equal("Test name", body["name"])
+
+		securityUuid = body["uuid"].(string)
+	}
+
+	// Update security
+	{
+		reqBody, err := json.Marshal(gin.H{
+			"securityType": "Test type",
+		})
+		a.Nil(err)
+		req := httptest.NewRequest("PATCH", "/securities/"+securityUuid, bytes.NewReader(reqBody))
+		req.Header.Add("Authorization", "Bearer "+session.Token)
+		res := httptest.NewRecorder()
+		app.ServeHTTP(res, req)
+
+		a.Equal(200, res.Code)
+
+		var body gin.H
+		json.Unmarshal(res.Body.Bytes(), &body)
+		a.Equal(securityUuid, body["uuid"])
+		a.Equal("Test name", body["name"])
+		a.Equal("Test type", body["securityType"])
+	}
+
+	// Delete security
+	{
+		req := httptest.NewRequest("DELETE", "/securities/"+securityUuid, nil)
+		req.Header.Add("Authorization", "Bearer "+session.Token)
+		res := httptest.NewRecorder()
+		app.ServeHTTP(res, req)
+
+		a.Equal(200, res.Code)
+
+		var body gin.H
+		json.Unmarshal(res.Body.Bytes(), &body)
+		a.Equal(securityUuid, body["uuid"])
+		a.Equal("Test name", body["name"])
+		a.Equal("Test type", body["securityType"])
 	}
 }

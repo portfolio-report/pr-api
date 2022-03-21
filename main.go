@@ -72,7 +72,7 @@ func prepareApp() (*service.Config, *gorm.DB) {
 	return cfg, db
 }
 
-func createApp(cfg *service.Config, db *gorm.DB) http.Handler {
+func initializeService(cfg *service.Config, db *gorm.DB) *handler.Config {
 	// Initialize validator
 	validate := libs.GetValidator()
 
@@ -97,6 +97,22 @@ func createApp(cfg *service.Config, db *gorm.DB) http.Handler {
 		libs.RegisterCustomValidations(v)
 	}
 
+	return &handler.Config{
+		UserService:       userService,
+		SessionService:    sessionService,
+		CurrenciesService: currenciesService,
+		MailerService:     mailerService,
+		GeoipService:      geoipService,
+		PortfolioService:  portfolioService,
+		SecurityService:   securityService,
+		TaxonomyService:   taxonomyService,
+		BaseURL:           "",
+		DB:                db,
+		Validate:          validate,
+	}
+}
+
+func createApp(cfg *handler.Config) http.Handler {
 	router := gin.New()
 
 	router.Use(gin.Logger())
@@ -112,20 +128,7 @@ func createApp(cfg *service.Config, db *gorm.DB) http.Handler {
 	// Use CORS middleware
 	router.Use(libs.Cors)
 
-	handler.NewHandler(&handler.Config{
-		R:                 router,
-		UserService:       userService,
-		SessionService:    sessionService,
-		CurrenciesService: currenciesService,
-		MailerService:     mailerService,
-		GeoipService:      geoipService,
-		PortfolioService:  portfolioService,
-		SecurityService:   securityService,
-		TaxonomyService:   taxonomyService,
-		BaseURL:           "",
-		DB:                db,
-		Validate:          validate,
-	})
+	handler.NewHandler(router, cfg)
 
 	return router
 }
@@ -140,7 +143,8 @@ func main() {
 		os.Exit(0)
 	}
 
-	router := createApp(cfg, db)
+	handlerConfig := initializeService(cfg, db)
+	router := createApp(handlerConfig)
 
 	address := ":3000"
 
