@@ -34,7 +34,7 @@ func (h *securitiesHandler) GetSecurityPublic(c *gin.Context) {
 
 	var markets []db.SecurityMarket
 	err = h.DB.
-		Select("market_code", "currency_code", "first_price_date", "last_price_date").
+		Select("market_code", "symbol", "currency_code", "first_price_date", "last_price_date").
 		Where("security_uuid = ?", uuid).
 		Find(&markets).Error
 	if err != nil {
