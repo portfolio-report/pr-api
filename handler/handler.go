@@ -76,7 +76,7 @@ func NewHandler(R *gin.Engine, c *Config) {
 	auth.NewHandler(g, c.DB, c.Validate, c.SessionService, c.UserService)
 
 	// /currencies
-	currencies.NewHandler(g, c.DB, c.UserService, c.SessionService, c.CurrenciesService)
+	currencies.NewHandler(g, c.UserService, c.SessionService, c.CurrenciesService)
 
 	// /stats
 	stats.NewHandler(g, c.DB, c.UserService, c.SessionService, c.GeoipService)
@@ -91,6 +91,6 @@ func NewHandler(R *gin.Engine, c *Config) {
 	portfolios.NewHandler(g, c.DB, c.Validate, c.SessionService, c.UserService, c.PortfolioService)
 
 	// /taxonomies
-	taxonomies.NewHandler(g, c.DB, c.Validate, c.UserService, c.SessionService, c.TaxonomyService)
+	taxonomies.NewHandler(g, c.Validate, c.UserService, c.SessionService, c.TaxonomyService)
 
 }

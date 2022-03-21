@@ -5,21 +5,18 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/portfolio-report/pr-api/handler/middleware"
 	"github.com/portfolio-report/pr-api/models"
-	"gorm.io/gorm"
 )
 
 type taxonomiesHandler struct {
 	UserService     models.UserService
 	SessionService  models.SessionService
 	TaxonomyService models.TaxonomyService
-	DB              *gorm.DB
 	Validate        *validator.Validate
 }
 
 // NewHandler creates new taxonomies handler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
-	DB *gorm.DB,
 	Validate *validator.Validate,
 	UserService models.UserService,
 	SessionService models.SessionService,
@@ -29,7 +26,6 @@ func NewHandler(
 		UserService:     UserService,
 		SessionService:  SessionService,
 		TaxonomyService: TaxonomyService,
-		DB:              DB,
 		Validate:        Validate,
 	}
 

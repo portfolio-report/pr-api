@@ -3,24 +3,20 @@ package currencies
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/portfolio-report/pr-api/models"
-	"gorm.io/gorm"
 )
 
 type currenciesHandler struct {
-	DB                *gorm.DB
 	CurrenciesService models.CurrenciesService
 }
 
 // NewHandler creates new CurrenciesHandler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
-	DB *gorm.DB,
 	UserService models.UserService,
 	SessionService models.SessionService,
 	CurrenciesService models.CurrenciesService,
 ) {
 	h := &currenciesHandler{
-		DB:                DB,
 		CurrenciesService: CurrenciesService,
 	}
 
