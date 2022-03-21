@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/portfolio-report/pr-api/db"
@@ -14,13 +15,15 @@ import (
 )
 
 type taxonomyService struct {
-	DB *gorm.DB
+	DB       *gorm.DB
+	Validate *validator.Validate
 }
 
 // NewTaxonomyService creates and returns new taxonomy service
-func NewTaxonomyService(db *gorm.DB) models.TaxonomyService {
+func NewTaxonomyService(db *gorm.DB, validate *validator.Validate) models.TaxonomyService {
 	return &taxonomyService{
-		DB: db,
+		DB:       db,
+		Validate: validate,
 	}
 }
 
@@ -75,10 +78,14 @@ func (s *taxonomyService) GetDescendantsOfTaxonomy(taxonomy *model.Taxonomy) ([]
 }
 
 // CreateTaxonomy creates new taxonomy
-func (s *taxonomyService) CreateTaxonomy(input *model.Taxonomy) (*model.Taxonomy, error) {
+func (s *taxonomyService) CreateTaxonomy(input *model.TaxonomyInput) (*model.Taxonomy, error) {
+	if input.Name == nil {
+		return nil, fmt.Errorf("name is required")
+	}
+
 	taxonomy := db.Taxonomy{
 		UUID: uuid.New().String(),
-		Name: input.Name,
+		Name: *input.Name,
 		Code: input.Code,
 	}
 
@@ -108,9 +115,8 @@ func (s *taxonomyService) CreateTaxonomy(input *model.Taxonomy) (*model.Taxonomy
 	return s.modelFromDb(taxonomy), nil
 }
 
-// UpdateTaxonomy updates taxonomy
-func (s *taxonomyService) UpdateTaxonomy(uuid string, input *model.Taxonomy) (*model.Taxonomy, error) {
-
+// UpdateTaxonomy updates taxonomy with non-nil values
+func (s *taxonomyService) UpdateTaxonomy(uuid string, input *model.TaxonomyInput) (*model.Taxonomy, error) {
 	var taxonomy db.Taxonomy
 	if err := s.DB.Take(&taxonomy, "uuid = ?", uuid).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -119,8 +125,8 @@ func (s *taxonomyService) UpdateTaxonomy(uuid string, input *model.Taxonomy) (*m
 		panic(err)
 	}
 
-	if input.Name != "" {
-		taxonomy.Name = input.Name
+	if input.Name != nil {
+		taxonomy.Name = *input.Name
 	}
 
 	if input.ParentUUID != nil {
@@ -132,6 +138,10 @@ func (s *taxonomyService) UpdateTaxonomy(uuid string, input *model.Taxonomy) (*m
 			taxonomy.ParentUUID = nil
 			taxonomy.RootUUID = nil
 		} else {
+			if err := s.Validate.Var(*input.ParentUUID, "uuid"); err != nil {
+				return nil, fmt.Errorf("parentUuid is not a valid uuid")
+			}
+
 			parent, err := s.GetTaxonomyByUUID(*input.ParentUUID)
 			if err != nil {
 				return nil, fmt.Errorf("parentUuid invalid")

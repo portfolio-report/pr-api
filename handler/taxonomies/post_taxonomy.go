@@ -8,25 +8,15 @@ import (
 	"github.com/portfolio-report/pr-api/libs"
 )
 
-type postTaxonomyRequest struct {
-	Name       string  `json:"name" binding:"required"`
-	Code       *string `json:"code"`
-	ParentUuid *string `json:"parentUuid" binding:"omitempty,uuid"`
-}
-
 // PostTaxonomy creates taxonomy
 func (h *taxonomiesHandler) PostTaxonomy(c *gin.Context) {
-	var request postTaxonomyRequest
+	var request model.TaxonomyInput
 	if err := c.BindJSON(&request); err != nil {
 		libs.HandleBadRequestError(c, err.Error())
 		return
 	}
 
-	taxonomy, err := h.TaxonomyService.CreateTaxonomy(&model.Taxonomy{
-		Name:       request.Name,
-		Code:       request.Code,
-		ParentUUID: request.ParentUuid,
-	})
+	taxonomy, err := h.TaxonomyService.CreateTaxonomy(&request)
 	if err != nil {
 		libs.HandleBadRequestError(c, err.Error())
 		return

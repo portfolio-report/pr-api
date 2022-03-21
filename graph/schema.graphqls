@@ -154,6 +154,13 @@ type Taxonomy {
   code: String
 }
 
+input TaxonomyInput {
+  parentUuid: String
+  rootUuid: String
+  name: String
+  code: String
+}
+
 type User {
   id: Int!
   username: String!

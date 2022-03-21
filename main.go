@@ -83,7 +83,7 @@ func initializeService(cfg *service.Config, db *gorm.DB) *handler.Config {
 	sessionService := service.NewSessionService(db, validate, cfg.SessionTimeout)
 	portfolioService := service.NewPortfolioService(db)
 	securityService := service.NewSecurityService(db)
-	taxonomyService := service.NewTaxonomyService(db)
+	taxonomyService := service.NewTaxonomyService(db, validate)
 	mailerService, err := service.NewMailerService(cfg.MailerTransport, cfg.ContactRecipientEmail, validate)
 	if err != nil {
 		fmt.Println("WARNING: Cannot send emails, could not create MailerService: " + err.Error())

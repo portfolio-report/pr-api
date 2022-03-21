@@ -62,8 +62,8 @@ type TaxonomyService interface {
 	GetAllTaxonomies() ([]*model.Taxonomy, error)
 	GetTaxonomyByUUID(uuid string) (*model.Taxonomy, error)
 	GetDescendantsOfTaxonomy(taxonomy *model.Taxonomy) ([]*model.Taxonomy, error)
-	CreateTaxonomy(taxonomy *model.Taxonomy) (*model.Taxonomy, error)
-	UpdateTaxonomy(uuid string, taxonomy *model.Taxonomy) (*model.Taxonomy, error)
+	CreateTaxonomy(taxonomy *model.TaxonomyInput) (*model.Taxonomy, error)
+	UpdateTaxonomy(uuid string, taxonomy *model.TaxonomyInput) (*model.Taxonomy, error)
 	DeleteTaxonomy(uuid string) (*model.Taxonomy, error)
 }
 

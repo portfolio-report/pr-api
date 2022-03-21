@@ -136,6 +136,13 @@ type Taxonomy struct {
 	Code       *string `json:"code"`
 }
 
+type TaxonomyInput struct {
+	ParentUUID *string `json:"parentUuid"`
+	RootUUID   *string `json:"rootUuid"`
+	Name       *string `json:"name"`
+	Code       *string `json:"code"`
+}
+
 type User struct {
 	ID         int    `json:"id"`
 	Username   string `json:"username"`

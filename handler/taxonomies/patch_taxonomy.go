@@ -10,12 +10,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type patchTaxonomyRequest struct {
-	Name       *string `json:"name"`
-	Code       *string `json:"code"`
-	ParentUuid *string `json:"parentUuid" binding:"omitempty,uuid"`
-}
-
 // PatchTaxonomy updates taxonomy
 func (h *taxonomiesHandler) PatchTaxonomy(c *gin.Context) {
 	uuid := c.Param("uuid")
@@ -24,19 +18,13 @@ func (h *taxonomiesHandler) PatchTaxonomy(c *gin.Context) {
 		return
 	}
 
-	var request patchTaxonomyRequest
+	var request model.TaxonomyInput
 	if err := c.BindJSON(&request); err != nil {
 		libs.HandleBadRequestError(c, err.Error())
 		return
 	}
 
-	taxonomy := &model.Taxonomy{
-		Name:       *request.Name,
-		Code:       request.Code,
-		ParentUUID: request.ParentUuid,
-	}
-
-	taxonomy, err := h.TaxonomyService.UpdateTaxonomy(uuid, taxonomy)
+	taxonomy, err := h.TaxonomyService.UpdateTaxonomy(uuid, &request)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			libs.HandleNotFoundError(c)
