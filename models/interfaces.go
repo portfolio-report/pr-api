@@ -36,9 +36,14 @@ type PortfolioService interface {
 	CreatePortfolio(user *model.User, req *model.PortfolioInput) (*model.Portfolio, error)
 	UpdatePortfolio(ID uint, req *model.PortfolioInput) (*model.Portfolio, error)
 	DeletePortfolio(ID uint) (*model.Portfolio, error)
+
 	GetPortfolioAccountsOfPortfolio(portfolioId int) ([]*model.PortfolioAccount, error)
 	UpsertPortfolioAccount(portfolioId int, uuid string, input model.PortfolioAccountInput) (*model.PortfolioAccount, error)
 	DeletePortfolioAccount(portfolioId int, uuid string) (*model.PortfolioAccount, error)
+
+	GetPortfolioSecuritiesOfPortfolio(portfolioId int) ([]*model.PortfolioSecurity, error)
+	UpsertPortfolioSecurity(portfolioId int, uuid string, input model.PortfolioSecurityInput) (*model.PortfolioSecurity, error)
+	DeletePortfolioSecurity(portfolioId int, uuid string) (*model.PortfolioSecurity, error)
 }
 
 // SecurityService describes the interface of security service

@@ -93,7 +93,38 @@ type PortfolioSecurityEvent struct {
 	Details string `json:"details"`
 }
 
+type PortfolioSecurityEventInput struct {
+	Date    Date   `json:"date"`
+	Type    string `json:"type"`
+	Details string `json:"details"`
+}
+
+type PortfolioSecurityInput struct {
+	Name          string                            `json:"name"`
+	CurrencyCode  string                            `json:"currencyCode"`
+	Isin          string                            `json:"isin"`
+	Wkn           string                            `json:"wkn"`
+	Symbol        string                            `json:"symbol"`
+	Active        bool                              `json:"active"`
+	Note          string                            `json:"note"`
+	SecurityUUID  *string                           `json:"securityUuid"`
+	UpdatedAt     time.Time                         `json:"updatedAt"`
+	Calendar      *string                           `json:"calendar"`
+	Feed          *string                           `json:"feed"`
+	FeedURL       *string                           `json:"feedUrl"`
+	LatestFeed    *string                           `json:"latestFeed"`
+	LatestFeedURL *string                           `json:"latestFeedUrl"`
+	Events        []*PortfolioSecurityEventInput    `json:"events"`
+	Properties    []*PortfolioSecurityPropertyInput `json:"properties"`
+}
+
 type PortfolioSecurityProperty struct {
+	Name  string `json:"name"`
+	Type  string `json:"type"`
+	Value string `json:"value"`
+}
+
+type PortfolioSecurityPropertyInput struct {
 	Name  string `json:"name"`
 	Type  string `json:"type"`
 	Value string `json:"value"`

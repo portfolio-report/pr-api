@@ -1,10 +1,12 @@
 package service
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/lib/pq"
 	"github.com/portfolio-report/pr-api/db"
 	"github.com/portfolio-report/pr-api/graph/model"
@@ -14,13 +16,15 @@ import (
 )
 
 type portfolioService struct {
-	DB *gorm.DB
+	DB       *gorm.DB
+	Validate *validator.Validate
 }
 
 // NewPortfolioService creates and returns new portfolio service
-func NewPortfolioService(db *gorm.DB) models.PortfolioService {
+func NewPortfolioService(db *gorm.DB, validate *validator.Validate) models.PortfolioService {
 	return &portfolioService{
-		DB: db,
+		DB:       db,
+		Validate: validate,
 	}
 }
 
@@ -36,7 +40,7 @@ func (*portfolioService) modelFromDb(p db.Portfolio) *model.Portfolio {
 	}
 }
 
-// accountModelFromDb converts portfolio acount from database into model
+// accountModelFromDb converts portfolio account from database into model
 func (*portfolioService) accountModelFromDb(a db.PortfolioAccount) *model.PortfolioAccount {
 	return &model.PortfolioAccount{
 		UUID:                 a.UUID,
@@ -47,6 +51,49 @@ func (*portfolioService) accountModelFromDb(a db.PortfolioAccount) *model.Portfo
 		Active:               a.Active,
 		Note:                 a.Note,
 		UpdatedAt:            a.UpdatedAt.UTC(),
+	}
+}
+
+// securityModelFromDb converts portfolio security from database into model
+func (*portfolioService) securityModelFromDb(s db.PortfolioSecurity) *model.PortfolioSecurity {
+	var properties []model.PortfolioSecurityProperty
+	err := json.Unmarshal(s.Properties, &properties)
+	if err != nil {
+		panic(err)
+	}
+	propertiesPtr := make([]*model.PortfolioSecurityProperty, len(properties))
+	for i := range properties {
+		propertiesPtr[i] = &properties[i]
+	}
+
+	var events []model.PortfolioSecurityEvent
+	err = json.Unmarshal(s.Events, &events)
+	if err != nil {
+		panic(err)
+	}
+	eventsPtr := make([]*model.PortfolioSecurityEvent, len(events))
+	for i := range events {
+		eventsPtr[i] = &events[i]
+	}
+
+	return &model.PortfolioSecurity{
+		UUID:          s.UUID,
+		Name:          s.Name,
+		CurrencyCode:  s.CurrencyCode,
+		Isin:          s.Isin,
+		Wkn:           s.Wkn,
+		Symbol:        s.Symbol,
+		Active:        s.Active,
+		Note:          s.Note,
+		SecurityUUID:  s.SecurityUUID,
+		UpdatedAt:     s.UpdatedAt.UTC(),
+		Calendar:      s.Calendar,
+		Feed:          s.Feed,
+		FeedURL:       s.FeedUrl,
+		LatestFeed:    s.LatestFeed,
+		LatestFeedURL: s.LatestFeedUrl,
+		Events:        eventsPtr,
+		Properties:    propertiesPtr,
 	}
 }
 
@@ -145,7 +192,7 @@ func (s *portfolioService) DeletePortfolio(ID uint) (*model.Portfolio, error) {
 	return s.modelFromDb(portfolio), nil
 }
 
-// GetAccountsOfPortfolio lists all account in portfolio
+// GetPortfolioAccountsOfPortfolio lists all account in portfolio
 func (s *portfolioService) GetPortfolioAccountsOfPortfolio(portfolioId int) ([]*model.PortfolioAccount, error) {
 	var accounts []db.PortfolioAccount
 	err := s.DB.Where("portfolio_id = ?", portfolioId).Find(&accounts).Error
@@ -194,8 +241,8 @@ func (s *portfolioService) UpsertPortfolioAccount(portfolioId int, uuid string, 
 	}
 
 	if err := s.DB.Save(&account).Error; err != nil {
-		if pgErr, ok := err.(*pq.Error); ok && pgErr.Code == "23503" {
-			return nil, fmt.Errorf("data violates constraint: %s", pgErr.Constraint)
+		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23503" {
+			return nil, fmt.Errorf("data violates constraint: %s", pqErr.Constraint)
 		}
 
 		panic(err)
@@ -204,7 +251,7 @@ func (s *portfolioService) UpsertPortfolioAccount(portfolioId int, uuid string, 
 	return s.accountModelFromDb(account), nil
 }
 
-// DeletePortfolioAccount remoces account from portfolio and links to it
+// DeletePortfolioAccount removes account from portfolio and links to it
 func (s *portfolioService) DeletePortfolioAccount(portfolioId int, uuid string) (*model.PortfolioAccount, error) {
 	// Remove links as reference account
 	err := s.DB.Model(&db.PortfolioAccount{}).
@@ -232,4 +279,101 @@ func (s *portfolioService) DeletePortfolioAccount(portfolioId int, uuid string) 
 	}
 
 	return s.accountModelFromDb(account), nil
+}
+
+// GetPortfolioSecuritiesOfPortfolio lists all securities in portfolio
+func (s *portfolioService) GetPortfolioSecuritiesOfPortfolio(portfolioId int) ([]*model.PortfolioSecurity, error) {
+	var securities []db.PortfolioSecurity
+	err := s.DB.Where("portfolio_id = ?", portfolioId).Find(&securities).Error
+	if err != nil {
+		panic(err)
+	}
+
+	response := make([]*model.PortfolioSecurity, len(securities))
+	for i := range securities {
+		response[i] = s.securityModelFromDb(securities[i])
+	}
+
+	return response, nil
+}
+
+// UpsertPortfolioSecurity creates or updates portfolio security
+func (s *portfolioService) UpsertPortfolioSecurity(portfolioId int, uuid string, input model.PortfolioSecurityInput) (*model.PortfolioSecurity, error) {
+	var security db.PortfolioSecurity
+
+	err := s.DB.FirstOrInit(&security, db.PortfolioSecurity{PortfolioID: uint(portfolioId), UUID: uuid}).Error
+	if err != nil {
+		panic(err)
+	}
+
+	security.Name = input.Name
+	security.CurrencyCode = input.CurrencyCode
+	security.Isin = input.Isin
+	security.Wkn = input.Wkn
+	security.Symbol = input.Symbol
+	security.Active = input.Active
+	security.Note = input.Note
+	if err := s.Validate.Var(input.SecurityUUID, "omitempty,LaxUuid"); err != nil {
+		return nil, fmt.Errorf("securityUuid is not a valid uuid")
+	}
+	security.SecurityUUID = input.SecurityUUID
+	security.UpdatedAt = input.UpdatedAt
+	security.Calendar = input.Calendar
+	security.Feed = input.Feed
+	security.FeedUrl = input.FeedURL
+	security.LatestFeed = input.LatestFeed
+	security.LatestFeedUrl = input.LatestFeedURL
+	for _, e := range input.Events {
+		if e.Type != "STOCK_SPLIT" && e.Type != "NOTE" && e.Type != "DIVIDEND_PAYMENT" {
+			return nil, fmt.Errorf("event type %s is not supported", e.Type)
+		}
+	}
+	security.Events, err = json.Marshal(input.Events)
+	if err != nil {
+		panic(err)
+	}
+	for _, p := range input.Properties {
+		if p.Type != "MARKET" && p.Type != "FEED" {
+			return nil, fmt.Errorf("propertey type %s is not supported", p.Type)
+		}
+	}
+	security.Properties, err = json.Marshal(input.Properties)
+	if err != nil {
+		panic(err)
+	}
+
+	if err := s.DB.Save(&security).Error; err != nil {
+		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23503" {
+			return nil, fmt.Errorf("data violates constraint: %s", pqErr.Constraint)
+		}
+
+		panic(err)
+	}
+
+	return s.securityModelFromDb(security), nil
+}
+
+// DeletePortfolioSecurity removes security from portfolio and links to it
+func (s *portfolioService) DeletePortfolioSecurity(portfolioId int, uuid string) (*model.PortfolioSecurity, error) {
+	// Delete transactions of security
+	err := s.DB.
+		Where("portfolio_id = ? AND portfolio_security_uuid = ?", portfolioId, uuid).
+		Delete(&db.PortfolioTransaction{}).Error
+	if err != nil {
+		panic(err)
+	}
+
+	var security db.PortfolioSecurity
+	result := s.DB.
+		Clauses(clause.Returning{}).
+		Where("portfolio_id = ? AND uuid = ?", portfolioId, uuid).
+		Delete(&security)
+	if err := result.Error; err != nil {
+		panic(err)
+	}
+	if result.RowsAffected == 0 {
+		return nil, model.ErrNotFound
+	}
+
+	return s.securityModelFromDb(security), nil
 }

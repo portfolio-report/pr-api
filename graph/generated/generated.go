@@ -1238,15 +1238,40 @@ type PortfolioSecurity {
   feedUrl: String
   latestFeed: String
   latestFeedUrl: String
-  events: [PortfolioSecurityEvent]!
-  properties: [PortfolioSecurityProperty]!
+  events: [PortfolioSecurityEvent!]!
+  properties: [PortfolioSecurityProperty!]!
 
   # computed:
   shares: String!
   quote(currenyCode: String): String!
 }
 
+input PortfolioSecurityInput {
+  name: String!
+  currencyCode: String!
+  isin: String!
+  wkn: String!
+  symbol: String!
+  active: Boolean!
+  note: String!
+  securityUuid: String
+  updatedAt: Time!
+  calendar: String
+  feed: String
+  feedUrl: String
+  latestFeed: String
+  latestFeedUrl: String
+  events: [PortfolioSecurityEventInput!]!
+  properties: [PortfolioSecurityPropertyInput!]!
+}
+
 type PortfolioSecurityEvent {
+  date: Date!
+  type: String!
+  details: String!
+}
+
+input PortfolioSecurityEventInput {
   date: Date!
   type: String!
   details: String!
@@ -1258,6 +1283,11 @@ type PortfolioSecurityProperty {
   value: String!
 }
 
+input PortfolioSecurityPropertyInput {
+  name: String!
+  type: String!
+  value: String!
+}
 
 type Security {
   uuid: String!
@@ -3556,7 +3586,7 @@ func (ec *executionContext) _PortfolioSecurity_events(ctx context.Context, field
 	}
 	res := resTmp.([]*model.PortfolioSecurityEvent)
 	fc.Result = res
-	return ec.marshalNPortfolioSecurityEvent2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityEvent(ctx, field.Selections, res)
+	return ec.marshalNPortfolioSecurityEvent2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityEventᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PortfolioSecurity_properties(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioSecurity) (ret graphql.Marshaler) {
@@ -3591,7 +3621,7 @@ func (ec *executionContext) _PortfolioSecurity_properties(ctx context.Context, f
 	}
 	res := resTmp.([]*model.PortfolioSecurityProperty)
 	fc.Result = res
-	return ec.marshalNPortfolioSecurityProperty2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityProperty(ctx, field.Selections, res)
+	return ec.marshalNPortfolioSecurityProperty2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityPropertyᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PortfolioSecurity_shares(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioSecurity) (ret graphql.Marshaler) {
@@ -6823,6 +6853,227 @@ func (ec *executionContext) unmarshalInputPortfolioInput(ctx context.Context, ob
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputPortfolioSecurityEventInput(ctx context.Context, obj interface{}) (model.PortfolioSecurityEventInput, error) {
+	var it model.PortfolioSecurityEventInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "date":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("date"))
+			it.Date, err = ec.unmarshalNDate2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐDate(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "details":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("details"))
+			it.Details, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPortfolioSecurityInput(ctx context.Context, obj interface{}) (model.PortfolioSecurityInput, error) {
+	var it model.PortfolioSecurityInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "currencyCode":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencyCode"))
+			it.CurrencyCode, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isin":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isin"))
+			it.Isin, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "wkn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("wkn"))
+			it.Wkn, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "symbol":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbol"))
+			it.Symbol, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "active":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
+			it.Active, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "note":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("note"))
+			it.Note, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "securityUuid":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("securityUuid"))
+			it.SecurityUUID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "updatedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			it.UpdatedAt, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "calendar":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("calendar"))
+			it.Calendar, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "feed":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("feed"))
+			it.Feed, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "feedUrl":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("feedUrl"))
+			it.FeedURL, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "latestFeed":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("latestFeed"))
+			it.LatestFeed, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "latestFeedUrl":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("latestFeedUrl"))
+			it.LatestFeedURL, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "events":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("events"))
+			it.Events, err = ec.unmarshalNPortfolioSecurityEventInput2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityEventInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "properties":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("properties"))
+			it.Properties, err = ec.unmarshalNPortfolioSecurityPropertyInput2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityPropertyInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPortfolioSecurityPropertyInput(ctx context.Context, obj interface{}) (model.PortfolioSecurityPropertyInput, error) {
+	var it model.PortfolioSecurityPropertyInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "value":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
+			it.Value, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputSecurityInput(ctx context.Context, obj interface{}) (model.SecurityInput, error) {
 	var it model.SecurityInput
 	asMap := map[string]interface{}{}
@@ -9429,7 +9680,7 @@ func (ec *executionContext) marshalNPortfolioSecurity2ᚖgithubᚗcomᚋportfoli
 	return ec._PortfolioSecurity(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNPortfolioSecurityEvent2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityEvent(ctx context.Context, sel ast.SelectionSet, v []*model.PortfolioSecurityEvent) graphql.Marshaler {
+func (ec *executionContext) marshalNPortfolioSecurityEvent2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityEventᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PortfolioSecurityEvent) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -9453,7 +9704,7 @@ func (ec *executionContext) marshalNPortfolioSecurityEvent2ᚕᚖgithubᚗcomᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOPortfolioSecurityEvent2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityEvent(ctx, sel, v[i])
+			ret[i] = ec.marshalNPortfolioSecurityEvent2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityEvent(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -9463,11 +9714,49 @@ func (ec *executionContext) marshalNPortfolioSecurityEvent2ᚕᚖgithubᚗcomᚋ
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
 
 	return ret
 }
 
-func (ec *executionContext) marshalNPortfolioSecurityProperty2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityProperty(ctx context.Context, sel ast.SelectionSet, v []*model.PortfolioSecurityProperty) graphql.Marshaler {
+func (ec *executionContext) marshalNPortfolioSecurityEvent2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityEvent(ctx context.Context, sel ast.SelectionSet, v *model.PortfolioSecurityEvent) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PortfolioSecurityEvent(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNPortfolioSecurityEventInput2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityEventInputᚄ(ctx context.Context, v interface{}) ([]*model.PortfolioSecurityEventInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*model.PortfolioSecurityEventInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNPortfolioSecurityEventInput2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityEventInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNPortfolioSecurityEventInput2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityEventInput(ctx context.Context, v interface{}) (*model.PortfolioSecurityEventInput, error) {
+	res, err := ec.unmarshalInputPortfolioSecurityEventInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNPortfolioSecurityProperty2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityPropertyᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PortfolioSecurityProperty) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -9491,7 +9780,7 @@ func (ec *executionContext) marshalNPortfolioSecurityProperty2ᚕᚖgithubᚗcom
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOPortfolioSecurityProperty2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityProperty(ctx, sel, v[i])
+			ret[i] = ec.marshalNPortfolioSecurityProperty2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityProperty(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -9502,7 +9791,45 @@ func (ec *executionContext) marshalNPortfolioSecurityProperty2ᚕᚖgithubᚗcom
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
+}
+
+func (ec *executionContext) marshalNPortfolioSecurityProperty2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityProperty(ctx context.Context, sel ast.SelectionSet, v *model.PortfolioSecurityProperty) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PortfolioSecurityProperty(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNPortfolioSecurityPropertyInput2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityPropertyInputᚄ(ctx context.Context, v interface{}) ([]*model.PortfolioSecurityPropertyInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*model.PortfolioSecurityPropertyInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNPortfolioSecurityPropertyInput2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityPropertyInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNPortfolioSecurityPropertyInput2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityPropertyInput(ctx context.Context, v interface{}) (*model.PortfolioSecurityPropertyInput, error) {
+	res, err := ec.unmarshalInputPortfolioSecurityPropertyInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNSecurity2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐSecurity(ctx context.Context, sel ast.SelectionSet, v model.Security) graphql.Marshaler {
@@ -10036,20 +10363,6 @@ func (ec *executionContext) marshalODate2ᚖgithubᚗcomᚋportfolioᚑreportᚋ
 		return graphql.Null
 	}
 	return v
-}
-
-func (ec *executionContext) marshalOPortfolioSecurityEvent2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityEvent(ctx context.Context, sel ast.SelectionSet, v *model.PortfolioSecurityEvent) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._PortfolioSecurityEvent(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOPortfolioSecurityProperty2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityProperty(ctx context.Context, sel ast.SelectionSet, v *model.PortfolioSecurityProperty) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._PortfolioSecurityProperty(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
