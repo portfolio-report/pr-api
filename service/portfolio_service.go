@@ -7,10 +7,13 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/portfolio-report/pr-api/db"
 	"github.com/portfolio-report/pr-api/graph/model"
+	"github.com/portfolio-report/pr-api/libs"
 	"github.com/portfolio-report/pr-api/models"
+	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -94,6 +97,33 @@ func (*portfolioService) securityModelFromDb(s db.PortfolioSecurity) *model.Port
 		LatestFeedURL: s.LatestFeedUrl,
 		Events:        eventsPtr,
 		Properties:    propertiesPtr,
+	}
+}
+
+// transactionModelFromDb converts portfolio transaction from database into model
+func (*portfolioService) transactionModelFromDb(t db.PortfolioTransaction) *model.PortfolioTransaction {
+	units := []*model.PortfolioTransactionUnit{}
+	for _, u := range t.Units {
+		units = append(units, &model.PortfolioTransactionUnit{
+			Type:                 u.Type,
+			Amount:               u.Amount,
+			CurrencyCode:         u.CurrencyCode,
+			OriginalAmount:       u.OriginalAmount,
+			OriginalCurrencyCode: u.OriginalCurrencyCode,
+			ExchangeRate:         u.ExchangeRate,
+		})
+	}
+	return &model.PortfolioTransaction{
+		UUID:                   t.UUID,
+		AccountUUID:            t.AccountUUID,
+		Type:                   t.Type,
+		Datetime:               t.Datetime.UTC(),
+		PartnerTransactionUUID: t.PartnerTransactionUUID,
+		Shares:                 t.Shares,
+		PortfolioSecurityUUID:  t.PortfolioSecurityUUID,
+		Note:                   t.Note,
+		UpdatedAt:              t.UpdatedAt.UTC(),
+		Units:                  units,
 	}
 }
 
@@ -376,4 +406,147 @@ func (s *portfolioService) DeletePortfolioSecurity(portfolioId int, uuid string)
 	}
 
 	return s.securityModelFromDb(security), nil
+}
+
+// GetPortfolioTransactionsOfPortfolio lists all transactions in portfolio
+func (s *portfolioService) GetPortfolioTransactionsOfPortfolio(portfolioId int) ([]*model.PortfolioTransaction, error) {
+	var transactions []db.PortfolioTransaction
+	err := s.DB.
+		Preload("Units").
+		Where("portfolio_id = ?", portfolioId).
+		Find(&transactions).Error
+	if err != nil {
+		panic(err)
+	}
+
+	response := make([]*model.PortfolioTransaction, len(transactions))
+	for i := range transactions {
+		response[i] = s.transactionModelFromDb(transactions[i])
+	}
+
+	return response, nil
+}
+
+// UpsertPortfolioTransaction creates or updates portfolio transaction
+func (s *portfolioService) UpsertPortfolioTransaction(portfolioId int, uuid uuid.UUID, input model.PortfolioTransactionInput) (*model.PortfolioTransaction, error) {
+	var transaction db.PortfolioTransaction
+	err := s.DB.
+		Preload("Units").
+		FirstOrInit(&transaction, db.PortfolioTransaction{PortfolioID: uint(portfolioId), UUID: uuid}).Error
+	if err != nil {
+		panic(err)
+	}
+
+	transaction.Type = input.Type
+	transaction.Datetime = input.Datetime
+	transaction.Note = input.Note
+	transaction.Shares = input.Shares
+	transaction.UpdatedAt = input.UpdatedAt
+	transaction.AccountUUID = input.AccountUUID
+	transaction.PartnerTransactionUUID = input.PartnerTransactionUUID
+	transaction.PortfolioSecurityUUID = input.PortfolioSecurityUUID
+
+	if err := s.DB.Save(&transaction).Error; err != nil {
+		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23503" {
+			return nil, fmt.Errorf("data violates constraint %s", pqErr.Constraint)
+		}
+
+		panic(err)
+	}
+
+	units, err := s.createUpdateDeleteTransactionUnits(uint(portfolioId), uuid, input.Units, transaction.Units)
+	if err != nil {
+		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23503" {
+			return nil, fmt.Errorf("data violates constraint %s", pqErr.Constraint)
+		}
+
+		panic(err)
+	}
+
+	transaction.Units = units
+
+	return s.transactionModelFromDb(transaction), nil
+}
+
+// createUpdateDeleteTransactionUnits creates/updates/deletes units in database to match units in request
+func (s *portfolioService) createUpdateDeleteTransactionUnits(
+	portfolioId uint,
+	transactionUuid uuid.UUID,
+	req []*model.PortfolioTransactionUnitInput,
+	dbUnits []db.PortfolioTransactionUnit,
+) ([]db.PortfolioTransactionUnit, error) {
+
+	matcher := func(r *model.PortfolioTransactionUnitInput, dbUnit db.PortfolioTransactionUnit) bool {
+		return dbUnit.Type == r.Type &&
+			dbUnit.Amount.Equal(r.Amount) &&
+			dbUnit.CurrencyCode == r.CurrencyCode &&
+			equalDecimalPtr(dbUnit.OriginalAmount, r.OriginalAmount) &&
+			((dbUnit.OriginalCurrencyCode == nil && r.OriginalCurrencyCode == nil) || *dbUnit.OriginalCurrencyCode == *r.OriginalCurrencyCode) &&
+			equalDecimalPtr(dbUnit.ExchangeRate, r.ExchangeRate)
+	}
+
+	unmatchedReq, unmatchedDb, matchedDb := libs.MatchElementsInArrays(req, dbUnits, matcher)
+
+	// Delete removed units
+	if len(unmatchedDb) > 0 {
+		err := s.DB.Delete(unmatchedDb).Error
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	// Create new units
+	newDb := []db.PortfolioTransactionUnit{}
+	for _, el := range unmatchedReq {
+		newDb = append(newDb, db.PortfolioTransactionUnit{
+			PortfolioID:          portfolioId,
+			TransactionUUID:      transactionUuid,
+			Type:                 el.Type,
+			Amount:               el.Amount,
+			CurrencyCode:         el.CurrencyCode,
+			OriginalAmount:       el.OriginalAmount,
+			OriginalCurrencyCode: el.OriginalCurrencyCode,
+			ExchangeRate:         el.ExchangeRate,
+		})
+	}
+
+	if len(newDb) > 0 {
+		if err := s.DB.Create(&newDb).Error; err != nil {
+			return nil, err
+		}
+	}
+
+	return append(matchedDb, newDb...), nil
+}
+
+func equalDecimalPtr(d1 *decimal.Decimal, d2 *decimal.Decimal) bool {
+	if d1 == nil && d2 == nil {
+		return true
+	}
+	if d1 != nil && d2 != nil {
+		return d1.Equal(*d2)
+	}
+	return false
+}
+
+// DeletePortfolioTransaction removes transaction from portfolio and links to it
+func (s *portfolioService) DeletePortfolioTransaction(portfolioId int, uuid uuid.UUID) (*model.PortfolioTransaction, error) {
+	// Remove link from partner transaction (if exists)
+	s.DB.Model(&db.PortfolioTransaction{}).
+		Where("portfolio_id = ? AND partner_transaction_uuid = ?", portfolioId, uuid).
+		Update("partner_transaction_uuid", nil)
+
+	var transaction db.PortfolioTransaction
+	result := s.DB.
+		Clauses(clause.Returning{}).
+		Where("portfolio_id = ? AND uuid = ?", portfolioId, uuid).
+		Delete(&transaction)
+	if err := result.Error; err != nil {
+		panic(err)
+	}
+	if result.RowsAffected == 0 {
+		return nil, model.ErrNotFound
+	}
+
+	return s.transactionModelFromDb(transaction), nil
 }

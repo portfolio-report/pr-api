@@ -60,6 +60,9 @@ models:
   Decimal:
     model:
       - github.com/portfolio-report/pr-api/graph/model.DecimalScalar
+  UUID:
+    model:
+      - github.com/portfolio-report/pr-api/graph/model.UUIDScalar
   PortfolioSecurity:
     fields:
       shares:
@@ -68,6 +71,12 @@ models:
     fields:
       value:
         resolver: true
+  PortfolioTransactionType:
+    model:
+      - github.com/portfolio-report/pr-api/graph/model.PortfolioTransactionType
+  PortfolioTransactionUnitType:
+    model:
+      - github.com/portfolio-report/pr-api/graph/model.PortfolioTransactionUnitType
   Security:
     fields:
       securityTaxonomies:

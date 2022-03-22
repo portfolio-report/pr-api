@@ -5,6 +5,7 @@ package model
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
@@ -128,6 +129,49 @@ type PortfolioSecurityPropertyInput struct {
 	Name  string `json:"name"`
 	Type  string `json:"type"`
 	Value string `json:"value"`
+}
+
+type PortfolioTransaction struct {
+	UUID                   uuid.UUID                   `json:"uuid"`
+	AccountUUID            uuid.UUID                   `json:"accountUuid"`
+	Type                   PortfolioTransactionType    `json:"type"`
+	Datetime               time.Time                   `json:"datetime"`
+	PartnerTransactionUUID *uuid.UUID                  `json:"partnerTransactionUuid"`
+	Shares                 *decimal.Decimal            `json:"shares"`
+	PortfolioSecurityUUID  *uuid.UUID                  `json:"portfolioSecurityUuid"`
+	Note                   string                      `json:"note"`
+	UpdatedAt              time.Time                   `json:"updatedAt"`
+	Units                  []*PortfolioTransactionUnit `json:"units"`
+}
+
+type PortfolioTransactionInput struct {
+	AccountUUID            uuid.UUID                        `json:"accountUuid"`
+	Type                   PortfolioTransactionType         `json:"type"`
+	Datetime               time.Time                        `json:"datetime"`
+	PartnerTransactionUUID *uuid.UUID                       `json:"partnerTransactionUuid"`
+	Shares                 *decimal.Decimal                 `json:"shares"`
+	PortfolioSecurityUUID  *uuid.UUID                       `json:"portfolioSecurityUuid"`
+	Note                   string                           `json:"note"`
+	UpdatedAt              time.Time                        `json:"updatedAt"`
+	Units                  []*PortfolioTransactionUnitInput `json:"units"`
+}
+
+type PortfolioTransactionUnit struct {
+	Type                 PortfolioTransactionUnitType `json:"type"`
+	Amount               decimal.Decimal              `json:"amount"`
+	CurrencyCode         string                       `json:"currencyCode"`
+	OriginalAmount       *decimal.Decimal             `json:"originalAmount"`
+	OriginalCurrencyCode *string                      `json:"originalCurrencyCode"`
+	ExchangeRate         *decimal.Decimal             `json:"exchangeRate"`
+}
+
+type PortfolioTransactionUnitInput struct {
+	Type                 PortfolioTransactionUnitType `json:"type"`
+	Amount               decimal.Decimal              `json:"amount"`
+	CurrencyCode         string                       `json:"currencyCode"`
+	OriginalAmount       *decimal.Decimal             `json:"originalAmount"`
+	OriginalCurrencyCode *string                      `json:"originalCurrencyCode"`
+	ExchangeRate         *decimal.Decimal             `json:"exchangeRate"`
 }
 
 type Security struct {

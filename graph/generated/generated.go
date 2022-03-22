@@ -13,6 +13,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
+	"github.com/google/uuid"
 	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/shopspring/decimal"
 	gqlparser "github.com/vektah/gqlparser/v2"
@@ -140,6 +141,28 @@ type ComplexityRoot struct {
 		Name  func(childComplexity int) int
 		Type  func(childComplexity int) int
 		Value func(childComplexity int) int
+	}
+
+	PortfolioTransaction struct {
+		AccountUUID            func(childComplexity int) int
+		Datetime               func(childComplexity int) int
+		Note                   func(childComplexity int) int
+		PartnerTransactionUUID func(childComplexity int) int
+		PortfolioSecurityUUID  func(childComplexity int) int
+		Shares                 func(childComplexity int) int
+		Type                   func(childComplexity int) int
+		UUID                   func(childComplexity int) int
+		Units                  func(childComplexity int) int
+		UpdatedAt              func(childComplexity int) int
+	}
+
+	PortfolioTransactionUnit struct {
+		Amount               func(childComplexity int) int
+		CurrencyCode         func(childComplexity int) int
+		ExchangeRate         func(childComplexity int) int
+		OriginalAmount       func(childComplexity int) int
+		OriginalCurrencyCode func(childComplexity int) int
+		Type                 func(childComplexity int) int
 	}
 
 	Query struct {
@@ -741,6 +764,118 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PortfolioSecurityProperty.Value(childComplexity), true
 
+	case "PortfolioTransaction.accountUuid":
+		if e.complexity.PortfolioTransaction.AccountUUID == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransaction.AccountUUID(childComplexity), true
+
+	case "PortfolioTransaction.datetime":
+		if e.complexity.PortfolioTransaction.Datetime == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransaction.Datetime(childComplexity), true
+
+	case "PortfolioTransaction.note":
+		if e.complexity.PortfolioTransaction.Note == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransaction.Note(childComplexity), true
+
+	case "PortfolioTransaction.partnerTransactionUuid":
+		if e.complexity.PortfolioTransaction.PartnerTransactionUUID == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransaction.PartnerTransactionUUID(childComplexity), true
+
+	case "PortfolioTransaction.portfolioSecurityUuid":
+		if e.complexity.PortfolioTransaction.PortfolioSecurityUUID == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransaction.PortfolioSecurityUUID(childComplexity), true
+
+	case "PortfolioTransaction.shares":
+		if e.complexity.PortfolioTransaction.Shares == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransaction.Shares(childComplexity), true
+
+	case "PortfolioTransaction.type":
+		if e.complexity.PortfolioTransaction.Type == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransaction.Type(childComplexity), true
+
+	case "PortfolioTransaction.uuid":
+		if e.complexity.PortfolioTransaction.UUID == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransaction.UUID(childComplexity), true
+
+	case "PortfolioTransaction.units":
+		if e.complexity.PortfolioTransaction.Units == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransaction.Units(childComplexity), true
+
+	case "PortfolioTransaction.updatedAt":
+		if e.complexity.PortfolioTransaction.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransaction.UpdatedAt(childComplexity), true
+
+	case "PortfolioTransactionUnit.amount":
+		if e.complexity.PortfolioTransactionUnit.Amount == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransactionUnit.Amount(childComplexity), true
+
+	case "PortfolioTransactionUnit.currencyCode":
+		if e.complexity.PortfolioTransactionUnit.CurrencyCode == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransactionUnit.CurrencyCode(childComplexity), true
+
+	case "PortfolioTransactionUnit.exchangeRate":
+		if e.complexity.PortfolioTransactionUnit.ExchangeRate == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransactionUnit.ExchangeRate(childComplexity), true
+
+	case "PortfolioTransactionUnit.originalAmount":
+		if e.complexity.PortfolioTransactionUnit.OriginalAmount == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransactionUnit.OriginalAmount(childComplexity), true
+
+	case "PortfolioTransactionUnit.originalCurrencyCode":
+		if e.complexity.PortfolioTransactionUnit.OriginalCurrencyCode == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransactionUnit.OriginalCurrencyCode(childComplexity), true
+
+	case "PortfolioTransactionUnit.type":
+		if e.complexity.PortfolioTransactionUnit.Type == nil {
+			break
+		}
+
+		return e.complexity.PortfolioTransactionUnit.Type(childComplexity), true
+
 	case "Query.currencies":
 		if e.complexity.Query.Currencies == nil {
 			break
@@ -1157,6 +1292,9 @@ var sources = []*ast.Source{
 scalar Time
 scalar Date
 scalar Decimal
+scalar UUID
+scalar PortfolioTransactionType
+scalar PortfolioTransactionUnitType
 
 type Currency {
   code: String!
@@ -1287,6 +1425,49 @@ input PortfolioSecurityPropertyInput {
   name: String!
   type: String!
   value: String!
+}
+
+type PortfolioTransaction {
+  uuid: UUID!
+  accountUuid: UUID!
+  type: PortfolioTransactionType!
+  datetime: Time!
+  partnerTransactionUuid: UUID
+  shares: Decimal
+  portfolioSecurityUuid: UUID
+  note: String!
+  updatedAt: Time!
+  units: [PortfolioTransactionUnit!]!
+}
+
+input PortfolioTransactionInput {
+  accountUuid: UUID!
+  type: PortfolioTransactionType!
+  datetime: Time!
+  partnerTransactionUuid: UUID
+  shares: Decimal
+  portfolioSecurityUuid: UUID
+  note: String!
+  updatedAt: Time!
+  units: [PortfolioTransactionUnitInput!]!
+}
+
+type PortfolioTransactionUnit {
+  type: PortfolioTransactionUnitType!
+  amount: Decimal!
+  currencyCode: String!
+  originalAmount: Decimal
+  originalCurrencyCode: String
+  exchangeRate: Decimal
+}
+
+input PortfolioTransactionUnitInput {
+  type: PortfolioTransactionUnitType!
+  amount: Decimal!
+  currencyCode: String!
+  originalAmount: Decimal
+  originalCurrencyCode: String
+  exchangeRate: Decimal
 }
 
 type Security {
@@ -3909,6 +4090,548 @@ func (ec *executionContext) _PortfolioSecurityProperty_value(ctx context.Context
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransaction_uuid(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransaction) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransaction",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UUID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransaction_accountUuid(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransaction) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransaction",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AccountUUID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransaction_type(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransaction) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransaction",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.PortfolioTransactionType)
+	fc.Result = res
+	return ec.marshalNPortfolioTransactionType2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransaction_datetime(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransaction) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransaction",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Datetime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransaction_partnerTransactionUuid(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransaction) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransaction",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PartnerTransactionUUID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*uuid.UUID)
+	fc.Result = res
+	return ec.marshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransaction_shares(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransaction) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransaction",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Shares, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*decimal.Decimal)
+	fc.Result = res
+	return ec.marshalODecimal2ᚖgithubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransaction_portfolioSecurityUuid(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransaction) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransaction",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PortfolioSecurityUUID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*uuid.UUID)
+	fc.Result = res
+	return ec.marshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransaction_note(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransaction) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransaction",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Note, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransaction_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransaction) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransaction",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransaction_units(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransaction) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransaction",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Units, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.PortfolioTransactionUnit)
+	fc.Result = res
+	return ec.marshalNPortfolioTransactionUnit2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionUnitᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransactionUnit_type(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransactionUnit) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransactionUnit",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.PortfolioTransactionUnitType)
+	fc.Result = res
+	return ec.marshalNPortfolioTransactionUnitType2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionUnitType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransactionUnit_amount(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransactionUnit) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransactionUnit",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Amount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(decimal.Decimal)
+	fc.Result = res
+	return ec.marshalNDecimal2githubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransactionUnit_currencyCode(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransactionUnit) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransactionUnit",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CurrencyCode, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransactionUnit_originalAmount(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransactionUnit) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransactionUnit",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OriginalAmount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*decimal.Decimal)
+	fc.Result = res
+	return ec.marshalODecimal2ᚖgithubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransactionUnit_originalCurrencyCode(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransactionUnit) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransactionUnit",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OriginalCurrencyCode, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PortfolioTransactionUnit_exchangeRate(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioTransactionUnit) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioTransactionUnit",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExchangeRate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*decimal.Decimal)
+	fc.Result = res
+	return ec.marshalODecimal2ᚖgithubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_currencies(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -7074,6 +7797,156 @@ func (ec *executionContext) unmarshalInputPortfolioSecurityPropertyInput(ctx con
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputPortfolioTransactionInput(ctx context.Context, obj interface{}) (model.PortfolioTransactionInput, error) {
+	var it model.PortfolioTransactionInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "accountUuid":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accountUuid"))
+			it.AccountUUID, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalNPortfolioTransactionType2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "datetime":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("datetime"))
+			it.Datetime, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "partnerTransactionUuid":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("partnerTransactionUuid"))
+			it.PartnerTransactionUUID, err = ec.unmarshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "shares":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("shares"))
+			it.Shares, err = ec.unmarshalODecimal2ᚖgithubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "portfolioSecurityUuid":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("portfolioSecurityUuid"))
+			it.PortfolioSecurityUUID, err = ec.unmarshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "note":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("note"))
+			it.Note, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "updatedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			it.UpdatedAt, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "units":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("units"))
+			it.Units, err = ec.unmarshalNPortfolioTransactionUnitInput2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionUnitInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPortfolioTransactionUnitInput(ctx context.Context, obj interface{}) (model.PortfolioTransactionUnitInput, error) {
+	var it model.PortfolioTransactionUnitInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalNPortfolioTransactionUnitType2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionUnitType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "amount":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
+			it.Amount, err = ec.unmarshalNDecimal2githubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "currencyCode":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencyCode"))
+			it.CurrencyCode, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "originalAmount":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("originalAmount"))
+			it.OriginalAmount, err = ec.unmarshalODecimal2ᚖgithubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "originalCurrencyCode":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("originalCurrencyCode"))
+			it.OriginalCurrencyCode, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "exchangeRate":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchangeRate"))
+			it.ExchangeRate, err = ec.unmarshalODecimal2ᚖgithubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputSecurityInput(ctx context.Context, obj interface{}) (model.SecurityInput, error) {
 	var it model.SecurityInput
 	asMap := map[string]interface{}{}
@@ -8046,6 +8919,190 @@ func (ec *executionContext) _PortfolioSecurityProperty(ctx context.Context, sel 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var portfolioTransactionImplementors = []string{"PortfolioTransaction"}
+
+func (ec *executionContext) _PortfolioTransaction(ctx context.Context, sel ast.SelectionSet, obj *model.PortfolioTransaction) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, portfolioTransactionImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PortfolioTransaction")
+		case "uuid":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransaction_uuid(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "accountUuid":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransaction_accountUuid(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "type":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransaction_type(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "datetime":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransaction_datetime(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "partnerTransactionUuid":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransaction_partnerTransactionUuid(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+		case "shares":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransaction_shares(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+		case "portfolioSecurityUuid":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransaction_portfolioSecurityUuid(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+		case "note":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransaction_note(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransaction_updatedAt(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "units":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransaction_units(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var portfolioTransactionUnitImplementors = []string{"PortfolioTransactionUnit"}
+
+func (ec *executionContext) _PortfolioTransactionUnit(ctx context.Context, sel ast.SelectionSet, obj *model.PortfolioTransactionUnit) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, portfolioTransactionUnitImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PortfolioTransactionUnit")
+		case "type":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransactionUnit_type(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "amount":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransactionUnit_amount(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "currencyCode":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransactionUnit_currencyCode(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "originalAmount":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransactionUnit_originalAmount(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+		case "originalCurrencyCode":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransactionUnit_originalCurrencyCode(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+		case "exchangeRate":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioTransactionUnit_exchangeRate(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -9832,6 +10889,102 @@ func (ec *executionContext) unmarshalNPortfolioSecurityPropertyInput2ᚖgithub�
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNPortfolioTransactionType2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionType(ctx context.Context, v interface{}) (model.PortfolioTransactionType, error) {
+	var res model.PortfolioTransactionType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNPortfolioTransactionType2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionType(ctx context.Context, sel ast.SelectionSet, v model.PortfolioTransactionType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) marshalNPortfolioTransactionUnit2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionUnitᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PortfolioTransactionUnit) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPortfolioTransactionUnit2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionUnit(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNPortfolioTransactionUnit2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionUnit(ctx context.Context, sel ast.SelectionSet, v *model.PortfolioTransactionUnit) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PortfolioTransactionUnit(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNPortfolioTransactionUnitInput2ᚕᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionUnitInputᚄ(ctx context.Context, v interface{}) ([]*model.PortfolioTransactionUnitInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*model.PortfolioTransactionUnitInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNPortfolioTransactionUnitInput2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionUnitInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNPortfolioTransactionUnitInput2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionUnitInput(ctx context.Context, v interface{}) (*model.PortfolioTransactionUnitInput, error) {
+	res, err := ec.unmarshalInputPortfolioTransactionUnitInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNPortfolioTransactionUnitType2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionUnitType(ctx context.Context, v interface{}) (model.PortfolioTransactionUnitType, error) {
+	var res model.PortfolioTransactionUnitType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNPortfolioTransactionUnitType2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioTransactionUnitType(ctx context.Context, sel ast.SelectionSet, v model.PortfolioTransactionUnitType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNSecurity2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐSecurity(ctx context.Context, sel ast.SelectionSet, v model.Security) graphql.Marshaler {
 	return ec._Security(ctx, sel, &v)
 }
@@ -10048,6 +11201,21 @@ func (ec *executionContext) unmarshalNTime2timeᚐTime(ctx context.Context, v in
 
 func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
 	res := graphql.MarshalTime(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx context.Context, v interface{}) (uuid.UUID, error) {
+	res, err := model.UnmarshalUUIDScalar(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx context.Context, sel ast.SelectionSet, v uuid.UUID) graphql.Marshaler {
+	res := model.MarshalUUIDScalar(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -10365,6 +11533,22 @@ func (ec *executionContext) marshalODate2ᚖgithubᚗcomᚋportfolioᚑreportᚋ
 	return v
 }
 
+func (ec *executionContext) unmarshalODecimal2ᚖgithubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx context.Context, v interface{}) (*decimal.Decimal, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := model.UnmarshalDecimalScalar(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalODecimal2ᚖgithubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx context.Context, sel ast.SelectionSet, v *decimal.Decimal) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := model.MarshalDecimalScalar(*v)
+	return res
+}
+
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
 	if v == nil {
 		return nil, nil
@@ -10378,6 +11562,22 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	res := graphql.MarshalString(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx context.Context, v interface{}) (*uuid.UUID, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := model.UnmarshalUUIDScalar(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx context.Context, sel ast.SelectionSet, v *uuid.UUID) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := model.MarshalUUIDScalar(*v)
 	return res
 }
 

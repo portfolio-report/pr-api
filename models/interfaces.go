@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/shopspring/decimal"
 )
@@ -44,6 +45,10 @@ type PortfolioService interface {
 	GetPortfolioSecuritiesOfPortfolio(portfolioId int) ([]*model.PortfolioSecurity, error)
 	UpsertPortfolioSecurity(portfolioId int, uuid string, input model.PortfolioSecurityInput) (*model.PortfolioSecurity, error)
 	DeletePortfolioSecurity(portfolioId int, uuid string) (*model.PortfolioSecurity, error)
+
+	GetPortfolioTransactionsOfPortfolio(portfolioId int) ([]*model.PortfolioTransaction, error)
+	UpsertPortfolioTransaction(portfolioId int, uuid uuid.UUID, input model.PortfolioTransactionInput) (*model.PortfolioTransaction, error)
+	DeletePortfolioTransaction(portfolioId int, uuid uuid.UUID) (*model.PortfolioTransaction, error)
 }
 
 // SecurityService describes the interface of security service

@@ -5,6 +5,9 @@
 scalar Time
 scalar Date
 scalar Decimal
+scalar UUID
+scalar PortfolioTransactionType
+scalar PortfolioTransactionUnitType
 
 type Currency {
   code: String!
@@ -135,6 +138,49 @@ input PortfolioSecurityPropertyInput {
   name: String!
   type: String!
   value: String!
+}
+
+type PortfolioTransaction {
+  uuid: UUID!
+  accountUuid: UUID!
+  type: PortfolioTransactionType!
+  datetime: Time!
+  partnerTransactionUuid: UUID
+  shares: Decimal
+  portfolioSecurityUuid: UUID
+  note: String!
+  updatedAt: Time!
+  units: [PortfolioTransactionUnit!]!
+}
+
+input PortfolioTransactionInput {
+  accountUuid: UUID!
+  type: PortfolioTransactionType!
+  datetime: Time!
+  partnerTransactionUuid: UUID
+  shares: Decimal
+  portfolioSecurityUuid: UUID
+  note: String!
+  updatedAt: Time!
+  units: [PortfolioTransactionUnitInput!]!
+}
+
+type PortfolioTransactionUnit {
+  type: PortfolioTransactionUnitType!
+  amount: Decimal!
+  currencyCode: String!
+  originalAmount: Decimal
+  originalCurrencyCode: String
+  exchangeRate: Decimal
+}
+
+input PortfolioTransactionUnitInput {
+  type: PortfolioTransactionUnitType!
+  amount: Decimal!
+  currencyCode: String!
+  originalAmount: Decimal
+  originalCurrencyCode: String
+  exchangeRate: Decimal
 }
 
 type Security {
