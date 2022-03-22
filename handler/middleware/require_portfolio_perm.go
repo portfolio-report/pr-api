@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/portfolio-report/pr-api/graph/model"
-	"github.com/portfolio-report/pr-api/models"
 
 	"github.com/portfolio-report/pr-api/libs"
 	"gorm.io/gorm"
@@ -14,7 +13,7 @@ import (
 
 // RequirePortfolioPerm returns middleware which checks if URL parameter porfolioId
 // belongs to the current user and stores the portfolio in Gin context
-func RequirePortfolioPerm(PortfolioService models.PortfolioService) gin.HandlerFunc {
+func RequirePortfolioPerm(PortfolioService model.PortfolioService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := UserFromContext(c.Request.Context())
 		portfolioId, err := strconv.Atoi(c.Param("portfolioId"))

@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/handler/auth"
 	"github.com/portfolio-report/pr-api/handler/currencies"
 	"github.com/portfolio-report/pr-api/handler/middleware"
@@ -12,36 +13,35 @@ import (
 	"github.com/portfolio-report/pr-api/handler/securities"
 	"github.com/portfolio-report/pr-api/handler/stats"
 	"github.com/portfolio-report/pr-api/handler/taxonomies"
-	"github.com/portfolio-report/pr-api/models"
 	"gorm.io/gorm"
 )
 
 // Config holds configuration for all handlers
 type Config struct {
-	UserService       models.UserService
-	SessionService    models.SessionService
-	CurrenciesService models.CurrenciesService
-	PortfolioService  models.PortfolioService
-	SecurityService   models.SecurityService
-	TaxonomyService   models.TaxonomyService
-	MailerService     models.MailerService
-	GeoipService      models.GeoipService
-	BaseURL           string
-	DB                *gorm.DB
-	Validate          *validator.Validate
+	model.UserService
+	model.SessionService
+	model.CurrenciesService
+	model.PortfolioService
+	model.SecurityService
+	model.TaxonomyService
+	model.MailerService
+	model.GeoipService
+	BaseURL string
+	*gorm.DB
+	*validator.Validate
 }
 
 type rootHandler struct {
-	UserService       models.UserService
-	SessionService    models.SessionService
-	CurrenciesService models.CurrenciesService
-	PortfolioService  models.PortfolioService
-	SecurityService   models.SecurityService
-	TaxonomyService   models.TaxonomyService
-	MailerService     models.MailerService
-	GeoipService      models.GeoipService
-	DB                *gorm.DB
-	validate          *validator.Validate
+	model.UserService
+	model.SessionService
+	model.CurrenciesService
+	model.PortfolioService
+	model.SecurityService
+	model.TaxonomyService
+	model.MailerService
+	model.GeoipService
+	*gorm.DB
+	*validator.Validate
 }
 
 // NewHandler creates new root handler and registers routes
@@ -56,7 +56,7 @@ func NewHandler(R *gin.Engine, c *Config) {
 		MailerService:     c.MailerService,
 		GeoipService:      c.GeoipService,
 		DB:                c.DB,
-		validate:          c.Validate,
+		Validate:          c.Validate,
 	}
 
 	R.Use(middleware.AuthUser(c.SessionService, c.UserService))

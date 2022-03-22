@@ -4,7 +4,7 @@ package graph
 
 import (
 	"github.com/go-playground/validator/v10"
-	"github.com/portfolio-report/pr-api/models"
+	"github.com/portfolio-report/pr-api/graph/model"
 	"gorm.io/gorm"
 )
 
@@ -12,11 +12,11 @@ import (
 
 // Resolver contains dependencies to be injected
 type Resolver struct {
-	DB               *gorm.DB
-	Validate         *validator.Validate
-	UserService      models.UserService
-	SessionService   models.SessionService
-	PortfolioService models.PortfolioService
-	models.CurrenciesService
-	SecurityService models.SecurityService
+	*gorm.DB
+	*validator.Validate
+	model.UserService
+	model.SessionService
+	model.PortfolioService
+	model.CurrenciesService
+	model.SecurityService
 }

@@ -11,7 +11,6 @@ import (
 	"github.com/portfolio-report/pr-api/db"
 	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/libs"
-	"github.com/portfolio-report/pr-api/models"
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 )
@@ -30,7 +29,7 @@ type currenciesService struct {
 }
 
 // NewCurrenciesService creates and returns currencies service
-func NewCurrenciesService(db *gorm.DB, setupInBackground bool) models.CurrenciesService {
+func NewCurrenciesService(db *gorm.DB, setupInBackground bool) model.CurrenciesService {
 	s := &currenciesService{
 		DB: db,
 	}

@@ -11,7 +11,6 @@ import (
 	"github.com/portfolio-report/pr-api/db"
 	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/libs"
-	"github.com/portfolio-report/pr-api/models"
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -22,7 +21,7 @@ type portfolioService struct {
 }
 
 // NewPortfolioService creates and returns new portfolio service
-func NewPortfolioService(db *gorm.DB) models.PortfolioService {
+func NewPortfolioService(db *gorm.DB) model.PortfolioService {
 	return &portfolioService{
 		DB: db,
 	}

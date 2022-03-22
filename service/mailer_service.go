@@ -7,7 +7,7 @@ import (
 	"regexp"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/portfolio-report/pr-api/models"
+	"github.com/portfolio-report/pr-api/graph/model"
 )
 
 type mailerService struct {
@@ -19,7 +19,7 @@ type mailerService struct {
 }
 
 // NewMailerService creates and returns new mailer service
-func NewMailerService(config string, recipientEmail string, validate *validator.Validate) (models.MailerService, error) {
+func NewMailerService(config string, recipientEmail string, validate *validator.Validate) (model.MailerService, error) {
 	if err := validate.Var(recipientEmail, "required,email"); err != nil {
 		return nil, errors.New("no valid email address for recipient")
 	}

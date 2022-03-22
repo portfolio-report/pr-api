@@ -12,7 +12,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/portfolio-report/pr-api/db"
 	"github.com/portfolio-report/pr-api/graph/model"
-	"github.com/portfolio-report/pr-api/models"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -24,7 +23,7 @@ type sessionService struct {
 }
 
 // NewSessionService creates and returns new session service
-func NewSessionService(db *gorm.DB, validate *validator.Validate, timeout time.Duration) models.SessionService {
+func NewSessionService(db *gorm.DB, validate *validator.Validate, timeout time.Duration) model.SessionService {
 	return &sessionService{
 		DB:       db,
 		Validate: validate,

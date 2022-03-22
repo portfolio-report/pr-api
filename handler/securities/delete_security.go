@@ -10,7 +10,7 @@ import (
 // DeleteSecurity removes security
 func (h *securitiesHandler) DeleteSecurity(c *gin.Context) {
 	uuid := c.Param("uuid")
-	if err := h.validate.Var(uuid, "uuid"); err != nil {
+	if err := h.Validate.Var(uuid, "uuid"); err != nil {
 		libs.HandleNotFoundError(c)
 		return
 	}

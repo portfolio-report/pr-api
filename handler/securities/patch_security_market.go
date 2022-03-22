@@ -25,7 +25,7 @@ type patchSecurityMarketRequest struct {
 // PatchSecurityMarket creates or updates market of security and its prices
 func (h *securitiesHandler) PatchSecurityMarket(c *gin.Context) {
 	uuid := c.Param("uuid")
-	if err := h.validate.Var(uuid, "uuid"); err != nil {
+	if err := h.Validate.Var(uuid, "uuid"); err != nil {
 		libs.HandleNotFoundError(c)
 		return
 	}

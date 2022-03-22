@@ -10,7 +10,6 @@ import (
 	"github.com/portfolio-report/pr-api/db"
 	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/libs/argon2"
-	"github.com/portfolio-report/pr-api/models"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -20,7 +19,7 @@ type userService struct {
 }
 
 // NewUserService creates and returns new user service
-func NewUserService(db *gorm.DB) models.UserService {
+func NewUserService(db *gorm.DB) model.UserService {
 	return &userService{
 		DB: db,
 	}

@@ -4,7 +4,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/portfolio-report/pr-api/db"
 	"github.com/portfolio-report/pr-api/graph/model"
-	"github.com/portfolio-report/pr-api/models"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -14,7 +13,7 @@ type securityService struct {
 }
 
 // NewSecurityService creates and returns new security service
-func NewSecurityService(db *gorm.DB) models.SecurityService {
+func NewSecurityService(db *gorm.DB) model.SecurityService {
 	return &securityService{
 		DB: db,
 	}

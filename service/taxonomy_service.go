@@ -9,7 +9,6 @@ import (
 	"github.com/lib/pq"
 	"github.com/portfolio-report/pr-api/db"
 	"github.com/portfolio-report/pr-api/graph/model"
-	"github.com/portfolio-report/pr-api/models"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -20,7 +19,7 @@ type taxonomyService struct {
 }
 
 // NewTaxonomyService creates and returns new taxonomy service
-func NewTaxonomyService(db *gorm.DB, validate *validator.Validate) models.TaxonomyService {
+func NewTaxonomyService(db *gorm.DB, validate *validator.Validate) model.TaxonomyService {
 	return &taxonomyService{
 		DB:       db,
 		Validate: validate,

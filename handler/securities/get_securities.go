@@ -44,7 +44,7 @@ func (h *securitiesHandler) GetSecurities(c *gin.Context) {
 	query := h.DB
 
 	if q.Search != "" {
-		if err := h.validate.Var(q.Search, "required,LaxUuid"); err == nil {
+		if err := h.Validate.Var(q.Search, "required,LaxUuid"); err == nil {
 			query = query.Where("uuid = ?", q.Search)
 		} else {
 			like := "%" + q.Search + "%"

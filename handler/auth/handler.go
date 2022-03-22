@@ -3,16 +3,16 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/handler/middleware"
-	"github.com/portfolio-report/pr-api/models"
 	"gorm.io/gorm"
 )
 
 type authHandler struct {
-	DB             *gorm.DB
-	SessionService models.SessionService
-	UserService    models.UserService
-	Validate       *validator.Validate
+	*gorm.DB
+	model.SessionService
+	model.UserService
+	*validator.Validate
 }
 
 // NewHandler creates new AuthHandler and registers routes
@@ -20,8 +20,8 @@ func NewHandler(
 	R *gin.RouterGroup,
 	DB *gorm.DB,
 	Validate *validator.Validate,
-	SessionService models.SessionService,
-	UserService models.UserService,
+	SessionService model.SessionService,
+	UserService model.UserService,
 ) {
 	h := &authHandler{
 		DB:             DB,

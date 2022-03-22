@@ -3,34 +3,34 @@ package securities
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/handler/middleware"
-	"github.com/portfolio-report/pr-api/models"
 	"gorm.io/gorm"
 )
 
 type securitiesHandler struct {
-	DB             *gorm.DB
-	SessionService models.SessionService
-	UserService    models.UserService
-	validate       *validator.Validate
-	models.SecurityService
+	*gorm.DB
+	model.SessionService
+	model.UserService
+	*validator.Validate
+	model.SecurityService
 }
 
 // NewHandler creates new securities handler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
 	DB *gorm.DB,
-	validate *validator.Validate,
-	UserService models.UserService,
-	SecurityService models.SecurityService,
-	SessionService models.SessionService,
+	Validate *validator.Validate,
+	UserService model.UserService,
+	SecurityService model.SecurityService,
+	SessionService model.SessionService,
 ) {
 	h := &securitiesHandler{
 		DB:              DB,
 		SessionService:  SessionService,
 		SecurityService: SecurityService,
 		UserService:     UserService,
-		validate:        validate,
+		Validate:        Validate,
 	}
 
 	g := R.Group("/securities")

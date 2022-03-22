@@ -13,9 +13,9 @@ import (
 	"time"
 
 	"github.com/portfolio-report/pr-api/db"
+	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/handler"
 	"github.com/portfolio-report/pr-api/libs"
-	"github.com/portfolio-report/pr-api/models"
 	"github.com/portfolio-report/pr-api/service"
 	"gorm.io/gorm"
 
@@ -27,7 +27,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 )
 
-func setupCron(cs models.CurrenciesService) {
+func setupCron(cs model.CurrenciesService) {
 	logger := log.New(os.Stderr, "[cron] ", log.LstdFlags|log.Lmsgprefix)
 
 	updateExchangeRates := func() {

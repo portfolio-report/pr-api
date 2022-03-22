@@ -2,25 +2,25 @@ package stats
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/handler/middleware"
-	"github.com/portfolio-report/pr-api/models"
 	"gorm.io/gorm"
 )
 
 type statsHandler struct {
-	DB             *gorm.DB
-	SessionService models.SessionService
-	UserService    models.UserService
-	GeoipService   models.GeoipService
+	*gorm.DB
+	model.SessionService
+	model.UserService
+	model.GeoipService
 }
 
 // NewHandler creates new stats handler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
 	DB *gorm.DB,
-	UserService models.UserService,
-	SessionService models.SessionService,
-	GeoipService models.GeoipService,
+	UserService model.UserService,
+	SessionService model.SessionService,
+	GeoipService model.GeoipService,
 ) {
 	h := &statsHandler{
 		DB:             DB,

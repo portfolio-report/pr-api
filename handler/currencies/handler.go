@@ -2,19 +2,19 @@ package currencies
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/portfolio-report/pr-api/models"
+	"github.com/portfolio-report/pr-api/graph/model"
 )
 
 type currenciesHandler struct {
-	CurrenciesService models.CurrenciesService
+	model.CurrenciesService
 }
 
 // NewHandler creates new CurrenciesHandler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
-	UserService models.UserService,
-	SessionService models.SessionService,
-	CurrenciesService models.CurrenciesService,
+	UserService model.UserService,
+	SessionService model.SessionService,
+	CurrenciesService model.CurrenciesService,
 ) {
 	h := &currenciesHandler{
 		CurrenciesService: CurrenciesService,

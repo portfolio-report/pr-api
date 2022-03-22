@@ -16,7 +16,7 @@ import (
 func (h *securitiesHandler) GetSecurityPublic(c *gin.Context) {
 	uuid := c.Param("uuid")
 
-	if err := h.validate.Var(uuid, "required,LaxUuid"); err != nil {
+	if err := h.Validate.Var(uuid, "required,LaxUuid"); err != nil {
 		libs.HandleNotFoundError(c)
 		return
 	}

@@ -17,12 +17,12 @@ type securityTaxonomyRequest struct {
 // PutSecurityTaxonomies creates, updates and deletes taxonomies of security
 func (h *securitiesHandler) PutSecurityTaxonomies(c *gin.Context) {
 	securityUuid := c.Param("uuid")
-	if err := h.validate.Var(securityUuid, "uuid"); err != nil {
+	if err := h.Validate.Var(securityUuid, "uuid"); err != nil {
 		libs.HandleNotFoundError(c)
 		return
 	}
 	taxonomyRootUuid := c.Param("rootUuid")
-	if err := h.validate.Var(taxonomyRootUuid, "uuid"); err != nil {
+	if err := h.Validate.Var(taxonomyRootUuid, "uuid"); err != nil {
 		libs.HandleNotFoundError(c)
 		return
 	}

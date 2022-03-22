@@ -3,24 +3,24 @@ package taxonomies
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/handler/middleware"
-	"github.com/portfolio-report/pr-api/models"
 )
 
 type taxonomiesHandler struct {
-	UserService     models.UserService
-	SessionService  models.SessionService
-	TaxonomyService models.TaxonomyService
-	Validate        *validator.Validate
+	model.UserService
+	model.SessionService
+	model.TaxonomyService
+	*validator.Validate
 }
 
 // NewHandler creates new taxonomies handler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
 	Validate *validator.Validate,
-	UserService models.UserService,
-	SessionService models.SessionService,
-	TaxonomyService models.TaxonomyService,
+	UserService model.UserService,
+	SessionService model.SessionService,
+	TaxonomyService model.TaxonomyService,
 ) {
 	h := &taxonomiesHandler{
 		UserService:     UserService,

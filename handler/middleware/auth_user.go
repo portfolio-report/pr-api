@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/portfolio-report/pr-api/graph/model"
-	"github.com/portfolio-report/pr-api/models"
 )
 
 type contextKey struct {
@@ -18,7 +17,7 @@ var userCtxKey = &contextKey{name: "user"}
 
 // AuthUser reads authorization token from HTTP header (if any),
 // stores user in request context if token corresponds to valid session
-func AuthUser(s models.SessionService, u models.UserService) gin.HandlerFunc {
+func AuthUser(s model.SessionService, u model.UserService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		token := s.GetSessionToken(c)

@@ -14,7 +14,7 @@ import (
 // GetSecurityPrices returns the market and prices of security
 func (h *securitiesHandler) GetSecurityPrices(c *gin.Context) {
 	uuid := c.Param("uuid")
-	if err := h.validate.Var(uuid, "LaxUuid"); err != nil {
+	if err := h.Validate.Var(uuid, "LaxUuid"); err != nil {
 		libs.HandleNotFoundError(c)
 		return
 	}
@@ -24,7 +24,7 @@ func (h *securitiesHandler) GetSecurityPrices(c *gin.Context) {
 		from = time.Now().AddDate(0, 0, -14).Format("2006-01-02")
 	}
 
-	if err := h.validate.Var(from, "DateYYYY-MM-DD"); err != nil {
+	if err := h.Validate.Var(from, "DateYYYY-MM-DD"); err != nil {
 		libs.HandleBadRequestError(c, "from is not a valid date")
 		return
 	}
