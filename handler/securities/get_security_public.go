@@ -9,7 +9,6 @@ import (
 	"github.com/portfolio-report/pr-api/db"
 	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/libs"
-	"github.com/portfolio-report/pr-api/models"
 	"gorm.io/gorm"
 )
 
@@ -69,9 +68,15 @@ func (h *securitiesHandler) GetSecurityPublic(c *gin.Context) {
 		})
 	}
 
-	marketsResp := []models.SecurityMarketResponsePublic{}
+	marketsResp := []gin.H{}
 	for _, m := range markets {
-		marketsResp = append(marketsResp, models.SecurityMarketResponsePublicFromDB(&m))
+		marketsResp = append(marketsResp, gin.H{
+			"marketCode":     m.MarketCode,
+			"currencyCode":   m.CurrencyCode,
+			"symbol":         m.Symbol,
+			"firstPriceDate": m.FirstPriceDate,
+			"lastPriceDate":  m.LastPriceDate,
+		})
 	}
 
 	taxonomiesResp := []gin.H{}

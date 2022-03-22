@@ -85,14 +85,28 @@ func (s *securityService) UpdateSecurity(uuid string, input *model.SecurityInput
 func (s *securityService) DeleteSecurity(uuid string) (*model.Security, error) {
 	var security db.Security
 	result := s.DB.Clauses(clause.Returning{}).Delete(&security, "uuid = ?", uuid)
-	err := result.Error
-	if err != nil {
+	if err := result.Error; err != nil {
 		panic(err)
 	}
 	if result.RowsAffected == 0 {
 		return nil, model.ErrNotFound
 	}
 	return s.modelFromDb(security), nil
+}
+
+// DeleteSecurityMarket removes market of security
+func (s *securityService) DeleteSecurityMarket(securityUuid, marketCode string) (*model.SecurityMarket, error) {
+	var market db.SecurityMarket
+	result := s.DB.
+		Clauses(clause.Returning{}).
+		Delete(&market, "security_uuid = ? AND market_code = ?", securityUuid, marketCode)
+	if err := result.Error; err != nil {
+		panic(err)
+	}
+	if result.RowsAffected == 0 {
+		return nil, model.ErrNotFound
+	}
+	return s.securityMarketModelFromDb(market), nil
 }
 
 // UpdateSecurityTaxonomies creates/updates/deletes taxonomies of security
@@ -169,6 +183,17 @@ func (*securityService) securityTaxonomiesModelFromDb(secTaxonomies []db.Securit
 		}
 	}
 	return ret
+}
+
+// securityMarketModelFromDb converts security market from database into model
+func (*securityService) securityMarketModelFromDb(m db.SecurityMarket) *model.SecurityMarket {
+	return &model.SecurityMarket{
+		MarketCode:     m.MarketCode,
+		CurrencyCode:   m.CurrencyCode,
+		Symbol:         m.Symbol,
+		FirstPriceDate: m.FirstPriceDate,
+		LastPriceDate:  m.LastPriceDate,
+	}
 }
 
 // modelFromDb converts security from database into model

@@ -4,10 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/portfolio-report/pr-api/db"
 	"github.com/portfolio-report/pr-api/libs"
-	"github.com/portfolio-report/pr-api/models"
-	"gorm.io/gorm/clause"
 )
 
 // DeleteSecurityMarket removes market of security
@@ -20,15 +17,11 @@ func (h *securitiesHandler) DeleteSecurityMarket(c *gin.Context) {
 	}
 	marketCode := c.Param("marketCode")
 
-	var market db.SecurityMarket
-	result := h.DB.Clauses(clause.Returning{}).Delete(&market, "security_uuid = ? AND market_code = ?", uuid, marketCode)
-	if err := result.Error; err != nil {
-		panic(err)
-	}
-	if result.RowsAffected == 0 {
+	market, err := h.SecurityService.DeleteSecurityMarket(uuid, marketCode)
+	if err != nil {
 		libs.HandleNotFoundError(c)
 		return
 	}
 
-	c.JSON(http.StatusOK, models.SecurityMarketResponsePublicFromDB(&market))
+	c.JSON(http.StatusOK, market)
 }

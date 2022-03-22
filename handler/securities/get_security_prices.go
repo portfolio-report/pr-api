@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/portfolio-report/pr-api/db"
 	"github.com/portfolio-report/pr-api/libs"
-	"github.com/portfolio-report/pr-api/models"
 	"gorm.io/gorm"
 )
 
@@ -53,9 +52,9 @@ func (h *securitiesHandler) GetSecurityPrices(c *gin.Context) {
 		panic(err)
 	}
 
-	pricesResponse := []models.SecurityMarketPriceResponse{}
+	pricesResponse := []gin.H{}
 	for _, p := range prices {
-		pricesResponse = append(pricesResponse, models.SecurityMarketPriceResponseFromDB(&p))
+		pricesResponse = append(pricesResponse, gin.H{"date": p.Date, "close": p.Close})
 	}
 
 	c.JSON(http.StatusOK, gin.H{

@@ -117,8 +117,8 @@ type SecurityMarket struct {
 	SecurityUUID   string  `json:"securityUuid"`
 	MarketCode     string  `json:"marketCode"`
 	CurrencyCode   string  `json:"currencyCode"`
-	FirstPriceDate *string `json:"firstPriceDate"`
-	LastPriceDate  *string `json:"lastPriceDate"`
+	FirstPriceDate *Date   `json:"firstPriceDate"`
+	LastPriceDate  *Date   `json:"lastPriceDate"`
 	Symbol         *string `json:"symbol"`
 	UpdatePrices   *bool   `json:"updatePrices"`
 }

@@ -126,8 +126,8 @@ type SecurityMarket {
   securityUuid: String!
   marketCode: String!
   currencyCode: String!
-  firstPriceDate: String
-  lastPriceDate: String
+  firstPriceDate: Date
+  lastPriceDate: Date
   symbol: String
   updatePrices: Boolean
 }

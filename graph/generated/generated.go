@@ -1278,8 +1278,8 @@ type SecurityMarket {
   securityUuid: String!
   marketCode: String!
   currencyCode: String!
-  firstPriceDate: String
-  lastPriceDate: String
+  firstPriceDate: Date
+  lastPriceDate: Date
   symbol: String
   updatePrices: Boolean
 }
@@ -4795,9 +4795,9 @@ func (ec *executionContext) _SecurityMarket_firstPriceDate(ctx context.Context, 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*model.Date)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalODate2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐDate(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SecurityMarket_lastPriceDate(ctx context.Context, field graphql.CollectedField, obj *model.SecurityMarket) (ret graphql.Marshaler) {
@@ -4827,9 +4827,9 @@ func (ec *executionContext) _SecurityMarket_lastPriceDate(ctx context.Context, f
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*model.Date)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalODate2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐDate(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SecurityMarket_symbol(ctx context.Context, field graphql.CollectedField, obj *model.SecurityMarket) (ret graphql.Marshaler) {
@@ -9939,6 +9939,22 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalODate2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐDate(ctx context.Context, v interface{}) (*model.Date, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(model.Date)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalODate2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐDate(ctx context.Context, sel ast.SelectionSet, v *model.Date) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOPortfolioSecurityEvent2ᚖgithubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioSecurityEvent(ctx context.Context, sel ast.SelectionSet, v *model.PortfolioSecurityEvent) graphql.Marshaler {
