@@ -1,15 +1,19 @@
 package db
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 // PortfolioAccount in database
 type PortfolioAccount struct {
-	PortfolioID          uint   `gorm:"primaryKey"`
-	UUID                 string `gorm:"primaryKey"`
+	PortfolioID          uint      `gorm:"primaryKey"`
+	UUID                 uuid.UUID `gorm:"primaryKey"`
 	Type                 string
 	Name                 string
 	CurrencyCode         *string
-	ReferenceAccountUUID *string
+	ReferenceAccountUUID *uuid.UUID
 	Active               bool
 	Note                 string
 	UpdatedAt            time.Time

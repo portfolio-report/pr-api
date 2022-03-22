@@ -3,13 +3,14 @@ package db
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/datatypes"
 )
 
 // PortfolioSecurity in database
 type PortfolioSecurity struct {
-	PortfolioID   uint   `gorm:"primaryKey"`
-	UUID          string `gorm:"primaryKey"`
+	PortfolioID   uint      `gorm:"primaryKey"`
+	UUID          uuid.UUID `gorm:"primaryKey"`
 	Name          string
 	CurrencyCode  string
 	Isin          string
@@ -17,7 +18,7 @@ type PortfolioSecurity struct {
 	Symbol        string
 	Active        bool
 	Note          string
-	SecurityUUID  *string
+	SecurityUUID  *uuid.UUID
 	UpdatedAt     time.Time
 	Calendar      *string
 	Feed          *string

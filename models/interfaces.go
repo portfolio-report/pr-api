@@ -39,12 +39,12 @@ type PortfolioService interface {
 	DeletePortfolio(ID uint) (*model.Portfolio, error)
 
 	GetPortfolioAccountsOfPortfolio(portfolioId int) ([]*model.PortfolioAccount, error)
-	UpsertPortfolioAccount(portfolioId int, uuid string, input model.PortfolioAccountInput) (*model.PortfolioAccount, error)
-	DeletePortfolioAccount(portfolioId int, uuid string) (*model.PortfolioAccount, error)
+	UpsertPortfolioAccount(portfolioId int, uuid uuid.UUID, input model.PortfolioAccountInput) (*model.PortfolioAccount, error)
+	DeletePortfolioAccount(portfolioId int, uuid uuid.UUID) (*model.PortfolioAccount, error)
 
 	GetPortfolioSecuritiesOfPortfolio(portfolioId int) ([]*model.PortfolioSecurity, error)
-	UpsertPortfolioSecurity(portfolioId int, uuid string, input model.PortfolioSecurityInput) (*model.PortfolioSecurity, error)
-	DeletePortfolioSecurity(portfolioId int, uuid string) (*model.PortfolioSecurity, error)
+	UpsertPortfolioSecurity(portfolioId int, uuid uuid.UUID, input model.PortfolioSecurityInput) (*model.PortfolioSecurity, error)
+	DeletePortfolioSecurity(portfolioId int, uuid uuid.UUID) (*model.PortfolioSecurity, error)
 
 	GetPortfolioTransactionsOfPortfolio(portfolioId int) ([]*model.PortfolioTransaction, error)
 	UpsertPortfolioTransaction(portfolioId int, uuid uuid.UUID, input model.PortfolioTransactionInput) (*model.PortfolioTransaction, error)

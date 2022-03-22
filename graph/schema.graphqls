@@ -50,11 +50,11 @@ input PortfolioInput {
 }
 
 type PortfolioAccount {
-  uuid: String!
+  uuid: UUID!
   type: String!
   name: String!
   currencyCode: String
-  referenceAccountUuid: String
+  referenceAccountUuid: UUID
   active: Boolean!
   note: String!
   updatedAt: Time!
@@ -67,14 +67,14 @@ input PortfolioAccountInput {
   type: String!
   name: String!
   currencyCode: String
-  referenceAccountUuid: String
+  referenceAccountUuid: UUID
   active: Boolean!
   note: String!
   updatedAt: Time!
 }
 
 type PortfolioSecurity {
-  uuid: String!
+  uuid: UUID!
   name: String!
   currencyCode: String!
   isin: String!
@@ -82,7 +82,7 @@ type PortfolioSecurity {
   symbol: String!
   active: Boolean!
   note: String!
-  securityUuid: String
+  securityUuid: UUID
   updatedAt: Time!
   calendar: String
   feed: String
@@ -105,7 +105,7 @@ input PortfolioSecurityInput {
   symbol: String!
   active: Boolean!
   note: String!
-  securityUuid: String
+  securityUuid: UUID
   updatedAt: Time!
   calendar: String
   feed: String

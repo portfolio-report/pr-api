@@ -38,26 +38,26 @@ type Portfolio struct {
 }
 
 type PortfolioAccount struct {
-	UUID                 string    `json:"uuid"`
-	Type                 string    `json:"type"`
-	Name                 string    `json:"name"`
-	CurrencyCode         *string   `json:"currencyCode"`
-	ReferenceAccountUUID *string   `json:"referenceAccountUuid"`
-	Active               bool      `json:"active"`
-	Note                 string    `json:"note"`
-	UpdatedAt            time.Time `json:"updatedAt"`
-	Balance              string    `json:"balance"`
-	Value                string    `json:"value"`
+	UUID                 uuid.UUID  `json:"uuid"`
+	Type                 string     `json:"type"`
+	Name                 string     `json:"name"`
+	CurrencyCode         *string    `json:"currencyCode"`
+	ReferenceAccountUUID *uuid.UUID `json:"referenceAccountUuid"`
+	Active               bool       `json:"active"`
+	Note                 string     `json:"note"`
+	UpdatedAt            time.Time  `json:"updatedAt"`
+	Balance              string     `json:"balance"`
+	Value                string     `json:"value"`
 }
 
 type PortfolioAccountInput struct {
-	Type                 string    `json:"type"`
-	Name                 string    `json:"name"`
-	CurrencyCode         *string   `json:"currencyCode"`
-	ReferenceAccountUUID *string   `json:"referenceAccountUuid"`
-	Active               bool      `json:"active"`
-	Note                 string    `json:"note"`
-	UpdatedAt            time.Time `json:"updatedAt"`
+	Type                 string     `json:"type"`
+	Name                 string     `json:"name"`
+	CurrencyCode         *string    `json:"currencyCode"`
+	ReferenceAccountUUID *uuid.UUID `json:"referenceAccountUuid"`
+	Active               bool       `json:"active"`
+	Note                 string     `json:"note"`
+	UpdatedAt            time.Time  `json:"updatedAt"`
 }
 
 type PortfolioInput struct {
@@ -67,7 +67,7 @@ type PortfolioInput struct {
 }
 
 type PortfolioSecurity struct {
-	UUID          string                       `json:"uuid"`
+	UUID          uuid.UUID                    `json:"uuid"`
 	Name          string                       `json:"name"`
 	CurrencyCode  string                       `json:"currencyCode"`
 	Isin          string                       `json:"isin"`
@@ -75,7 +75,7 @@ type PortfolioSecurity struct {
 	Symbol        string                       `json:"symbol"`
 	Active        bool                         `json:"active"`
 	Note          string                       `json:"note"`
-	SecurityUUID  *string                      `json:"securityUuid"`
+	SecurityUUID  *uuid.UUID                   `json:"securityUuid"`
 	UpdatedAt     time.Time                    `json:"updatedAt"`
 	Calendar      *string                      `json:"calendar"`
 	Feed          *string                      `json:"feed"`
@@ -108,7 +108,7 @@ type PortfolioSecurityInput struct {
 	Symbol        string                            `json:"symbol"`
 	Active        bool                              `json:"active"`
 	Note          string                            `json:"note"`
-	SecurityUUID  *string                           `json:"securityUuid"`
+	SecurityUUID  *uuid.UUID                        `json:"securityUuid"`
 	UpdatedAt     time.Time                         `json:"updatedAt"`
 	Calendar      *string                           `json:"calendar"`
 	Feed          *string                           `json:"feed"`

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/portfolio-report/pr-api/handler/middleware"
 	"github.com/portfolio-report/pr-api/libs"
 )
@@ -11,8 +12,8 @@ import (
 // DeleteSecurity removes security from portfolio and links to it
 func (h *portfoliosHandler) DeleteSecurity(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
-	uuid := c.Param("uuid")
-	if err := h.Validate.Var(uuid, "uuid"); err != nil {
+	uuid, err := uuid.Parse(c.Param("uuid"))
+	if err != nil {
 		libs.HandleNotFoundError(c)
 		return
 	}

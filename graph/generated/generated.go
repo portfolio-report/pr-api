@@ -1337,11 +1337,11 @@ input PortfolioInput {
 }
 
 type PortfolioAccount {
-  uuid: String!
+  uuid: UUID!
   type: String!
   name: String!
   currencyCode: String
-  referenceAccountUuid: String
+  referenceAccountUuid: UUID
   active: Boolean!
   note: String!
   updatedAt: Time!
@@ -1354,14 +1354,14 @@ input PortfolioAccountInput {
   type: String!
   name: String!
   currencyCode: String
-  referenceAccountUuid: String
+  referenceAccountUuid: UUID
   active: Boolean!
   note: String!
   updatedAt: Time!
 }
 
 type PortfolioSecurity {
-  uuid: String!
+  uuid: UUID!
   name: String!
   currencyCode: String!
   isin: String!
@@ -1369,7 +1369,7 @@ type PortfolioSecurity {
   symbol: String!
   active: Boolean!
   note: String!
-  securityUuid: String
+  securityUuid: UUID
   updatedAt: Time!
   calendar: String
   feed: String
@@ -1392,7 +1392,7 @@ input PortfolioSecurityInput {
   symbol: String!
   active: Boolean!
   note: String!
-  securityUuid: String
+  securityUuid: UUID
   updatedAt: Time!
   calendar: String
   feed: String
@@ -2907,9 +2907,9 @@ func (ec *executionContext) _PortfolioAccount_uuid(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(uuid.UUID)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PortfolioAccount_type(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioAccount) (ret graphql.Marshaler) {
@@ -3041,9 +3041,9 @@ func (ec *executionContext) _PortfolioAccount_referenceAccountUuid(ctx context.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*uuid.UUID)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PortfolioAccount_active(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioAccount) (ret graphql.Marshaler) {
@@ -3258,9 +3258,9 @@ func (ec *executionContext) _PortfolioSecurity_uuid(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(uuid.UUID)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PortfolioSecurity_name(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioSecurity) (ret graphql.Marshaler) {
@@ -3535,9 +3535,9 @@ func (ec *executionContext) _PortfolioSecurity_securityUuid(ctx context.Context,
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*uuid.UUID)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PortfolioSecurity_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioSecurity) (ret graphql.Marshaler) {
@@ -7503,7 +7503,7 @@ func (ec *executionContext) unmarshalInputPortfolioAccountInput(ctx context.Cont
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("referenceAccountUuid"))
-			it.ReferenceAccountUUID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.ReferenceAccountUUID, err = ec.unmarshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7684,7 +7684,7 @@ func (ec *executionContext) unmarshalInputPortfolioSecurityInput(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("securityUuid"))
-			it.SecurityUUID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.SecurityUUID, err = ec.unmarshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
 			if err != nil {
 				return it, err
 			}

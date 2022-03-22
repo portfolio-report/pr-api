@@ -239,7 +239,11 @@ func (s *portfolioService) GetPortfolioAccountsOfPortfolio(portfolioId int) ([]*
 }
 
 // UpsertPortfolioAccount creates or updates portfolio account
-func (s *portfolioService) UpsertPortfolioAccount(portfolioId int, uuid string, input model.PortfolioAccountInput) (*model.PortfolioAccount, error) {
+func (s *portfolioService) UpsertPortfolioAccount(
+	portfolioId int, uuid uuid.UUID, input model.PortfolioAccountInput,
+) (
+	*model.PortfolioAccount, error,
+) {
 	var account db.PortfolioAccount
 
 	err := s.DB.FirstOrInit(&account, db.PortfolioAccount{PortfolioID: uint(portfolioId), UUID: uuid}).Error
@@ -282,7 +286,7 @@ func (s *portfolioService) UpsertPortfolioAccount(portfolioId int, uuid string, 
 }
 
 // DeletePortfolioAccount removes account from portfolio and links to it
-func (s *portfolioService) DeletePortfolioAccount(portfolioId int, uuid string) (*model.PortfolioAccount, error) {
+func (s *portfolioService) DeletePortfolioAccount(portfolioId int, uuid uuid.UUID) (*model.PortfolioAccount, error) {
 	// Remove links as reference account
 	err := s.DB.Model(&db.PortfolioAccount{}).
 		Where("portfolio_id = ? AND reference_account_uuid = ?", portfolioId, uuid).
@@ -328,7 +332,11 @@ func (s *portfolioService) GetPortfolioSecuritiesOfPortfolio(portfolioId int) ([
 }
 
 // UpsertPortfolioSecurity creates or updates portfolio security
-func (s *portfolioService) UpsertPortfolioSecurity(portfolioId int, uuid string, input model.PortfolioSecurityInput) (*model.PortfolioSecurity, error) {
+func (s *portfolioService) UpsertPortfolioSecurity(
+	portfolioId int, uuid uuid.UUID, input model.PortfolioSecurityInput,
+) (
+	*model.PortfolioSecurity, error,
+) {
 	var security db.PortfolioSecurity
 
 	err := s.DB.FirstOrInit(&security, db.PortfolioSecurity{PortfolioID: uint(portfolioId), UUID: uuid}).Error
@@ -343,9 +351,6 @@ func (s *portfolioService) UpsertPortfolioSecurity(portfolioId int, uuid string,
 	security.Symbol = input.Symbol
 	security.Active = input.Active
 	security.Note = input.Note
-	if err := s.Validate.Var(input.SecurityUUID, "omitempty,LaxUuid"); err != nil {
-		return nil, fmt.Errorf("securityUuid is not a valid uuid")
-	}
 	security.SecurityUUID = input.SecurityUUID
 	security.UpdatedAt = input.UpdatedAt
 	security.Calendar = input.Calendar
@@ -384,7 +389,7 @@ func (s *portfolioService) UpsertPortfolioSecurity(portfolioId int, uuid string,
 }
 
 // DeletePortfolioSecurity removes security from portfolio and links to it
-func (s *portfolioService) DeletePortfolioSecurity(portfolioId int, uuid string) (*model.PortfolioSecurity, error) {
+func (s *portfolioService) DeletePortfolioSecurity(portfolioId int, uuid uuid.UUID) (*model.PortfolioSecurity, error) {
 	// Delete transactions of security
 	err := s.DB.
 		Where("portfolio_id = ? AND portfolio_security_uuid = ?", portfolioId, uuid).
@@ -428,7 +433,11 @@ func (s *portfolioService) GetPortfolioTransactionsOfPortfolio(portfolioId int) 
 }
 
 // UpsertPortfolioTransaction creates or updates portfolio transaction
-func (s *portfolioService) UpsertPortfolioTransaction(portfolioId int, uuid uuid.UUID, input model.PortfolioTransactionInput) (*model.PortfolioTransaction, error) {
+func (s *portfolioService) UpsertPortfolioTransaction(
+	portfolioId int, uuid uuid.UUID, input model.PortfolioTransactionInput,
+) (
+	*model.PortfolioTransaction, error,
+) {
 	var transaction db.PortfolioTransaction
 	err := s.DB.
 		Preload("Units").
