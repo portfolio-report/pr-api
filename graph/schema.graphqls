@@ -60,6 +60,16 @@ type PortfolioAccount {
   value(currencyCode: String): String!
 }
 
+input PortfolioAccountInput {
+  type: String!
+  name: String!
+  currencyCode: String
+  referenceAccountUuid: String
+  active: Boolean!
+  note: String!
+  updatedAt: Time!
+}
+
 type PortfolioSecurity {
   uuid: String!
   name: String!

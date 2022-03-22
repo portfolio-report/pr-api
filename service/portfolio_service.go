@@ -36,6 +36,20 @@ func (*portfolioService) modelFromDb(p db.Portfolio) *model.Portfolio {
 	}
 }
 
+// accountModelFromDb converts portfolio acount from database into model
+func (*portfolioService) accountModelFromDb(a db.PortfolioAccount) *model.PortfolioAccount {
+	return &model.PortfolioAccount{
+		UUID:                 a.UUID,
+		Type:                 a.Type,
+		Name:                 a.Name,
+		CurrencyCode:         a.CurrencyCode,
+		ReferenceAccountUUID: a.ReferenceAccountUUID,
+		Active:               a.Active,
+		Note:                 a.Note,
+		UpdatedAt:            a.UpdatedAt.UTC(),
+	}
+}
+
 // GetAllOfUser returns all portfolios of user
 func (s *portfolioService) GetAllOfUser(user *model.User) ([]*model.Portfolio, error) {
 	var portfolios []db.Portfolio
@@ -129,4 +143,93 @@ func (s *portfolioService) DeletePortfolio(ID uint) (*model.Portfolio, error) {
 		panic(err)
 	}
 	return s.modelFromDb(portfolio), nil
+}
+
+// GetAccountsOfPortfolio lists all account in portfolio
+func (s *portfolioService) GetPortfolioAccountsOfPortfolio(portfolioId int) ([]*model.PortfolioAccount, error) {
+	var accounts []db.PortfolioAccount
+	err := s.DB.Where("portfolio_id = ?", portfolioId).Find(&accounts).Error
+	if err != nil {
+		panic(err)
+	}
+
+	response := make([]*model.PortfolioAccount, len(accounts))
+	for i := range accounts {
+		response[i] = s.accountModelFromDb(accounts[i])
+	}
+
+	return response, nil
+}
+
+// UpsertPortfolioAccount creates or updates portfolio account
+func (s *portfolioService) UpsertPortfolioAccount(portfolioId int, uuid string, input model.PortfolioAccountInput) (*model.PortfolioAccount, error) {
+	var account db.PortfolioAccount
+
+	err := s.DB.FirstOrInit(&account, db.PortfolioAccount{PortfolioID: uint(portfolioId), UUID: uuid}).Error
+	if err != nil {
+		panic(err)
+	}
+
+	account.Type = input.Type
+	account.Name = input.Name
+	account.Active = input.Active
+	account.Note = input.Note
+	account.UpdatedAt = input.UpdatedAt
+
+	switch input.Type {
+	case "deposit":
+		if input.CurrencyCode == nil {
+			return nil, fmt.Errorf("currencyCode is missing")
+		}
+		account.CurrencyCode = input.CurrencyCode
+		account.ReferenceAccountUUID = nil
+	case "securities":
+		if input.ReferenceAccountUUID == nil {
+			return nil, fmt.Errorf("referenceAccountUuid is missing")
+		}
+		account.CurrencyCode = nil
+		account.ReferenceAccountUUID = input.ReferenceAccountUUID
+	default:
+		return nil, fmt.Errorf("invalid type: %s", input.Type)
+	}
+
+	if err := s.DB.Save(&account).Error; err != nil {
+		if pgErr, ok := err.(*pq.Error); ok && pgErr.Code == "23503" {
+			return nil, fmt.Errorf("data violates constraint: %s", pgErr.Constraint)
+		}
+
+		panic(err)
+	}
+
+	return s.accountModelFromDb(account), nil
+}
+
+// DeletePortfolioAccount remoces account from portfolio and links to it
+func (s *portfolioService) DeletePortfolioAccount(portfolioId int, uuid string) (*model.PortfolioAccount, error) {
+	// Remove links as reference account
+	err := s.DB.Model(&db.PortfolioAccount{}).
+		Where("portfolio_id = ? AND reference_account_uuid = ?", portfolioId, uuid).
+		Update("reference_account_uuid", nil).Error
+	if err != nil {
+		panic(err)
+	}
+
+	// Delete transactions of account
+	err = s.DB.
+		Where("portfolio_id = ? AND account_uuid = ?", portfolioId, uuid).
+		Delete(&db.PortfolioTransaction{}).Error
+	if err != nil {
+		panic(err)
+	}
+
+	var account db.PortfolioAccount
+	result := s.DB.Clauses(clause.Returning{}).Where("portfolio_id = ? AND uuid = ?", portfolioId, uuid).Delete(&account)
+	if err := result.Error; err != nil {
+		panic(err)
+	}
+	if result.RowsAffected == 0 {
+		return nil, model.ErrNotFound
+	}
+
+	return s.accountModelFromDb(account), nil
 }

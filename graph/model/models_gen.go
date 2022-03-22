@@ -49,6 +49,16 @@ type PortfolioAccount struct {
 	Value                string    `json:"value"`
 }
 
+type PortfolioAccountInput struct {
+	Type                 string    `json:"type"`
+	Name                 string    `json:"name"`
+	CurrencyCode         *string   `json:"currencyCode"`
+	ReferenceAccountUUID *string   `json:"referenceAccountUuid"`
+	Active               bool      `json:"active"`
+	Note                 string    `json:"note"`
+	UpdatedAt            time.Time `json:"updatedAt"`
+}
+
 type PortfolioInput struct {
 	Name             string `json:"name"`
 	Note             string `json:"note"`
