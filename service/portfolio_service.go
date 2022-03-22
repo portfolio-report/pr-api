@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/portfolio-report/pr-api/db"
@@ -19,15 +18,13 @@ import (
 )
 
 type portfolioService struct {
-	DB       *gorm.DB
-	Validate *validator.Validate
+	DB *gorm.DB
 }
 
 // NewPortfolioService creates and returns new portfolio service
-func NewPortfolioService(db *gorm.DB, validate *validator.Validate) models.PortfolioService {
+func NewPortfolioService(db *gorm.DB) models.PortfolioService {
 	return &portfolioService{
-		DB:       db,
-		Validate: validate,
+		DB: db,
 	}
 }
 

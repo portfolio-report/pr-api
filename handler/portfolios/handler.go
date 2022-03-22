@@ -2,7 +2,6 @@ package portfolios
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"github.com/portfolio-report/pr-api/handler/middleware"
 	"github.com/portfolio-report/pr-api/models"
 	"gorm.io/gorm"
@@ -13,14 +12,12 @@ type portfoliosHandler struct {
 	SessionService   models.SessionService
 	UserService      models.UserService
 	PortfolioService models.PortfolioService
-	Validate         *validator.Validate
 }
 
 // NewHandler creates new portfolios handler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
 	DB *gorm.DB,
-	Validate *validator.Validate,
 	SessionService models.SessionService,
 	UserService models.UserService,
 	PortfolioService models.PortfolioService,
@@ -30,7 +27,6 @@ func NewHandler(
 		SessionService:   SessionService,
 		UserService:      UserService,
 		PortfolioService: PortfolioService,
-		Validate:         Validate,
 	}
 
 	g := R.Group("/portfolios")

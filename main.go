@@ -81,7 +81,7 @@ func initializeService(cfg *service.Config, db *gorm.DB) *handler.Config {
 	geoipService := service.NewGeoipService(cfg.Ip2locToken)
 	userService := service.NewUserService(db)
 	sessionService := service.NewSessionService(db, validate, cfg.SessionTimeout)
-	portfolioService := service.NewPortfolioService(db, validate)
+	portfolioService := service.NewPortfolioService(db)
 	securityService := service.NewSecurityService(db)
 	taxonomyService := service.NewTaxonomyService(db, validate)
 	mailerService, err := service.NewMailerService(cfg.MailerTransport, cfg.ContactRecipientEmail, validate)
