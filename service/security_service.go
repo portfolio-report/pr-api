@@ -20,7 +20,7 @@ func NewSecurityService(db *gorm.DB) model.SecurityService {
 }
 
 // GetSecurityByUUID returns security idenfitied by UUID
-func (s *securityService) GetSecurityByUUID(uuid string) (*model.Security, error) {
+func (s *securityService) GetSecurityByUUID(uuid uuid.UUID) (*model.Security, error) {
 	var security db.Security
 	if err := s.DB.Take(&security, "uuid = ?", uuid).Error; err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (s *securityService) GetEventsOfSecurity(security *model.Security) ([]*mode
 // CreateSecurity create security
 func (s *securityService) CreateSecurity(input *model.SecurityInput) (*model.Security, error) {
 	security := db.Security{
-		UUID:         uuid.New().String(),
+		UUID:         uuid.New(),
 		Name:         input.Name,
 		Isin:         input.Isin,
 		Wkn:          input.Wkn,
@@ -60,7 +60,7 @@ func (s *securityService) CreateSecurity(input *model.SecurityInput) (*model.Sec
 }
 
 // UpdateSecurity stores all attributes of input (incl. nil values)
-func (s *securityService) UpdateSecurity(uuid string, input *model.SecurityInput) (*model.Security, error) {
+func (s *securityService) UpdateSecurity(uuid uuid.UUID, input *model.SecurityInput) (*model.Security, error) {
 	security := db.Security{UUID: uuid}
 	err := s.DB.Model(&security).
 		Clauses(clause.Returning{}).
@@ -81,7 +81,7 @@ func (s *securityService) UpdateSecurity(uuid string, input *model.SecurityInput
 }
 
 // DeleteSecurity removes security
-func (s *securityService) DeleteSecurity(uuid string) (*model.Security, error) {
+func (s *securityService) DeleteSecurity(uuid uuid.UUID) (*model.Security, error) {
 	var security db.Security
 	result := s.DB.Clauses(clause.Returning{}).Delete(&security, "uuid = ?", uuid)
 	if err := result.Error; err != nil {
@@ -94,7 +94,7 @@ func (s *securityService) DeleteSecurity(uuid string) (*model.Security, error) {
 }
 
 // DeleteSecurityMarket removes market of security
-func (s *securityService) DeleteSecurityMarket(securityUuid, marketCode string) (*model.SecurityMarket, error) {
+func (s *securityService) DeleteSecurityMarket(securityUuid uuid.UUID, marketCode string) (*model.SecurityMarket, error) {
 	var market db.SecurityMarket
 	result := s.DB.
 		Clauses(clause.Returning{}).
@@ -110,12 +110,12 @@ func (s *securityService) DeleteSecurityMarket(securityUuid, marketCode string) 
 
 // UpdateSecurityTaxonomies creates/updates/deletes taxonomies of security
 func (s *securityService) UpdateSecurityTaxonomies(
-	securityUuid, rootTaxonomyUuid string, inputs []*model.SecurityTaxonomyInput,
+	securityUuid, rootTaxonomyUuid uuid.UUID, inputs []*model.SecurityTaxonomyInput,
 ) (
 	[]*model.SecurityTaxonomy, error,
 ) {
 	// Remove securityTaxonomies of rootTaxonomy not in inputs
-	secTaxonomyUuids := make([]string, len(inputs))
+	secTaxonomyUuids := make([]uuid.UUID, len(inputs))
 	for i := range inputs {
 		secTaxonomyUuids[i] = inputs[i].TaxonomyUUID
 	}

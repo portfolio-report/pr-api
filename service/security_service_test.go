@@ -56,7 +56,7 @@ func (s *SecurityServiceTestSuite) TestSecurityLifecycle() {
 
 	// Get non-existent security
 	{
-		_, err := s.service.GetSecurityByUUID("952df501-1e22-4693-a208-0c013cb1b415")
+		_, err := s.service.GetSecurityByUUID(uuid.MustParse("952df501-1e22-4693-a208-0c013cb1b415"))
 		s.ErrorIs(err, gorm.ErrRecordNotFound)
 	}
 
@@ -93,7 +93,7 @@ func (s *SecurityServiceTestSuite) TestSecurityLifecycle() {
 }
 
 func (s *SecurityServiceTestSuite) TestGetEventsOfSecurity() {
-	dbSecurity := db.Security{UUID: uuid.New().String()}
+	dbSecurity := db.Security{UUID: uuid.New()}
 	err := s.db.Create(&dbSecurity).Error
 	s.Nil(err)
 	security := model.Security{UUID: dbSecurity.UUID}

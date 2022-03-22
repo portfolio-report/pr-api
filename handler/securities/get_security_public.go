@@ -89,7 +89,7 @@ func (h *securitiesHandler) GetSecurityPublic(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"uuid":               strings.Replace(security.UUID, "-", "", 4),
+		"uuid":               strings.Replace(security.UUID.String(), "-", "", 4),
 		"name":               security.Name,
 		"isin":               security.Isin,
 		"wkn":                security.Wkn,

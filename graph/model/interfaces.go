@@ -52,13 +52,13 @@ type PortfolioService interface {
 
 // SecurityService describes the interface of security service
 type SecurityService interface {
-	GetSecurityByUUID(uuid string) (*Security, error)
+	GetSecurityByUUID(uuid uuid.UUID) (*Security, error)
 	GetEventsOfSecurity(security *Security) ([]*Event, error)
 	CreateSecurity(input *SecurityInput) (*Security, error)
-	UpdateSecurity(uuid string, input *SecurityInput) (*Security, error)
-	DeleteSecurity(uuid string) (*Security, error)
-	DeleteSecurityMarket(securityUuid, marketCode string) (*SecurityMarket, error)
-	UpdateSecurityTaxonomies(securityUuid, rootTaxonomyUuid string, inputs []*SecurityTaxonomyInput) ([]*SecurityTaxonomy, error)
+	UpdateSecurity(uuid uuid.UUID, input *SecurityInput) (*Security, error)
+	DeleteSecurity(uuid uuid.UUID) (*Security, error)
+	DeleteSecurityMarket(securityUuid uuid.UUID, marketCode string) (*SecurityMarket, error)
+	UpdateSecurityTaxonomies(securityUuid, rootTaxonomyUuid uuid.UUID, inputs []*SecurityTaxonomyInput) ([]*SecurityTaxonomy, error)
 }
 
 // SessionService describes the interface of session service
@@ -74,11 +74,11 @@ type SessionService interface {
 // TaxonomyService describes the interface of taxonomy service
 type TaxonomyService interface {
 	GetAllTaxonomies() ([]*Taxonomy, error)
-	GetTaxonomyByUUID(uuid string) (*Taxonomy, error)
+	GetTaxonomyByUUID(uuid uuid.UUID) (*Taxonomy, error)
 	GetDescendantsOfTaxonomy(taxonomy *Taxonomy) ([]*Taxonomy, error)
 	CreateTaxonomy(taxonomy *TaxonomyInput) (*Taxonomy, error)
-	UpdateTaxonomy(uuid string, taxonomy *TaxonomyInput) (*Taxonomy, error)
-	DeleteTaxonomy(uuid string) (*Taxonomy, error)
+	UpdateTaxonomy(uuid uuid.UUID, taxonomy *TaxonomyInput) (*Taxonomy, error)
+	DeleteTaxonomy(uuid uuid.UUID) (*Taxonomy, error)
 }
 
 // UserService describes the interface of user service

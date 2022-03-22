@@ -1,12 +1,15 @@
 package db
 
-import "github.com/shopspring/decimal"
+import (
+	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
+)
 
 // SecurityTaxonomy in database
 type SecurityTaxonomy struct {
-	SecurityUUID string   `gorm:"primaryKey"`
-	TaxonomyUUID string   `gorm:"primaryKey"`
-	Taxonomy     Taxonomy `gorm:"foreignKey:taxonomy_uuid"`
+	SecurityUUID uuid.UUID `gorm:"primaryKey"`
+	TaxonomyUUID uuid.UUID `gorm:"primaryKey"`
+	Taxonomy     Taxonomy  `gorm:"foreignKey:taxonomy_uuid"`
 	Weight       decimal.Decimal
 }
 

@@ -53,7 +53,7 @@ func (s *taxonomyService) GetAllTaxonomies() ([]*model.Taxonomy, error) {
 }
 
 // GetTaxonomyByUUID returns taxonomy identified by UUID
-func (s *taxonomyService) GetTaxonomyByUUID(uuid string) (*model.Taxonomy, error) {
+func (s *taxonomyService) GetTaxonomyByUUID(uuid uuid.UUID) (*model.Taxonomy, error) {
 	var t db.Taxonomy
 	err := s.DB.Take(&t, "uuid = ?", uuid).Error
 	return s.modelFromDb(t), err
@@ -83,7 +83,7 @@ func (s *taxonomyService) CreateTaxonomy(input *model.TaxonomyInput) (*model.Tax
 	}
 
 	taxonomy := db.Taxonomy{
-		UUID: uuid.New().String(),
+		UUID: uuid.New(),
 		Name: *input.Name,
 		Code: input.Code,
 	}
@@ -115,7 +115,7 @@ func (s *taxonomyService) CreateTaxonomy(input *model.TaxonomyInput) (*model.Tax
 }
 
 // UpdateTaxonomy updates taxonomy with non-nil values
-func (s *taxonomyService) UpdateTaxonomy(uuid string, input *model.TaxonomyInput) (*model.Taxonomy, error) {
+func (s *taxonomyService) UpdateTaxonomy(uuid uuid.UUID, input *model.TaxonomyInput) (*model.Taxonomy, error) {
 	var taxonomy db.Taxonomy
 	if err := s.DB.Take(&taxonomy, "uuid = ?", uuid).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -133,14 +133,10 @@ func (s *taxonomyService) UpdateTaxonomy(uuid string, input *model.TaxonomyInput
 			return nil, fmt.Errorf("parentUuid must be different from own uuid")
 		}
 
-		if *input.ParentUUID == "" {
+		if input.ParentUUID.String() == "" {
 			taxonomy.ParentUUID = nil
 			taxonomy.RootUUID = nil
 		} else {
-			if err := s.Validate.Var(*input.ParentUUID, "uuid"); err != nil {
-				return nil, fmt.Errorf("parentUuid is not a valid uuid")
-			}
-
 			parent, err := s.GetTaxonomyByUUID(*input.ParentUUID)
 			if err != nil {
 				return nil, fmt.Errorf("parentUuid invalid")
@@ -178,7 +174,7 @@ func (s *taxonomyService) UpdateTaxonomy(uuid string, input *model.TaxonomyInput
 }
 
 // DeleteTaxonomy deletes taxonomy
-func (s *taxonomyService) DeleteTaxonomy(uuid string) (*model.Taxonomy, error) {
+func (s *taxonomyService) DeleteTaxonomy(uuid uuid.UUID) (*model.Taxonomy, error) {
 	taxonomy := db.Taxonomy{}
 	result := s.DB.Clauses(clause.Returning{}).Delete(&taxonomy, "uuid = ?", uuid)
 	if err := result.Error; err != nil {

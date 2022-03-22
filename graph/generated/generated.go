@@ -171,9 +171,9 @@ type ComplexityRoot struct {
 		Portfolio           func(childComplexity int, id int) int
 		PortfolioAccounts   func(childComplexity int, portfolioID int) int
 		PortfolioSecurities func(childComplexity int, portfolioID int) int
-		PortfolioSecurity   func(childComplexity int, portfolioID int, uuid string) int
+		PortfolioSecurity   func(childComplexity int, portfolioID int, uuid uuid.UUID) int
 		Portfolios          func(childComplexity int) int
-		Security            func(childComplexity int, uuid string) int
+		Security            func(childComplexity int, uuid uuid.UUID) int
 		Sessions            func(childComplexity int) int
 	}
 
@@ -257,8 +257,8 @@ type QueryResolver interface {
 	Portfolio(ctx context.Context, id int) (*model.Portfolio, error)
 	PortfolioAccounts(ctx context.Context, portfolioID int) ([]*model.PortfolioAccount, error)
 	PortfolioSecurities(ctx context.Context, portfolioID int) ([]*model.PortfolioSecurity, error)
-	PortfolioSecurity(ctx context.Context, portfolioID int, uuid string) (*model.PortfolioSecurity, error)
-	Security(ctx context.Context, uuid string) (*model.Security, error)
+	PortfolioSecurity(ctx context.Context, portfolioID int, uuid uuid.UUID) (*model.PortfolioSecurity, error)
+	Security(ctx context.Context, uuid uuid.UUID) (*model.Security, error)
 	Sessions(ctx context.Context) ([]*model.Session, error)
 }
 type SecurityResolver interface {
@@ -941,7 +941,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.PortfolioSecurity(childComplexity, args["portfolioId"].(int), args["uuid"].(string)), true
+		return e.complexity.Query.PortfolioSecurity(childComplexity, args["portfolioId"].(int), args["uuid"].(uuid.UUID)), true
 
 	case "Query.portfolios":
 		if e.complexity.Query.Portfolios == nil {
@@ -960,7 +960,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Security(childComplexity, args["uuid"].(string)), true
+		return e.complexity.Query.Security(childComplexity, args["uuid"].(uuid.UUID)), true
 
 	case "Query.sessions":
 		if e.complexity.Query.Sessions == nil {
@@ -1471,7 +1471,7 @@ input PortfolioTransactionUnitInput {
 }
 
 type Security {
-  uuid: String!
+  uuid: UUID!
   name: String
   isin: String
   wkn: String
@@ -1496,7 +1496,7 @@ input SecurityInput {
 }
 
 type SecurityMarket {
-  securityUuid: String!
+  securityUuid: UUID!
   marketCode: String!
   currencyCode: String!
   firstPriceDate: Date
@@ -1506,14 +1506,14 @@ type SecurityMarket {
 }
 
 type SecurityTaxonomy {
-  securityUuid: String!
-  taxonomyUuid: String!
+  securityUuid: UUID!
+  taxonomyUuid: UUID!
   weight: Decimal!
   taxonomy: Taxonomy!
 }
 
 input SecurityTaxonomyInput {
-  taxonomyUuid: String!
+  taxonomyUuid: UUID!
   weight: Decimal!
 }
 
@@ -1526,16 +1526,16 @@ type Session {
 }
 
 type Taxonomy {
-  uuid: String!
-  parentUuid: String
-  rootUuid: String
+  uuid: UUID!
+  parentUuid: UUID
+  rootUuid: UUID
   name: String!
   code: String
 }
 
 input TaxonomyInput {
-  parentUuid: String
-  rootUuid: String
+  parentUuid: UUID
+  rootUuid: UUID
   name: String
   code: String
 }
@@ -1556,9 +1556,9 @@ type Query {
 
   portfolioAccounts(portfolioId: Int!): [PortfolioAccount!]!
   portfolioSecurities(portfolioId: Int!): [PortfolioSecurity!]!
-  portfolioSecurity(portfolioId: Int!, uuid: String!): PortfolioSecurity!
+  portfolioSecurity(portfolioId: Int!, uuid: UUID!): PortfolioSecurity!
 
-  security(uuid: String!): Security!
+  security(uuid: UUID!): Security!
 
   sessions: [Session!]!
 }
@@ -1840,10 +1840,10 @@ func (ec *executionContext) field_Query_portfolioSecurity_args(ctx context.Conte
 		}
 	}
 	args["portfolioId"] = arg0
-	var arg1 string
+	var arg1 uuid.UUID
 	if tmp, ok := rawArgs["uuid"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uuid"))
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		arg1, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1870,10 +1870,10 @@ func (ec *executionContext) field_Query_portfolio_args(ctx context.Context, rawA
 func (ec *executionContext) field_Query_security_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
+	var arg0 uuid.UUID
 	if tmp, ok := rawArgs["uuid"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uuid"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -4897,7 +4897,7 @@ func (ec *executionContext) _Query_portfolioSecurity(ctx context.Context, field 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().PortfolioSecurity(rctx, args["portfolioId"].(int), args["uuid"].(string))
+		return ec.resolvers.Query().PortfolioSecurity(rctx, args["portfolioId"].(int), args["uuid"].(uuid.UUID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4939,7 +4939,7 @@ func (ec *executionContext) _Query_security(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Security(rctx, args["uuid"].(string))
+		return ec.resolvers.Query().Security(rctx, args["uuid"].(uuid.UUID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5092,9 +5092,9 @@ func (ec *executionContext) _Security_uuid(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(uuid.UUID)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Security_name(ctx context.Context, field graphql.CollectedField, obj *model.Security) (ret graphql.Marshaler) {
@@ -5456,9 +5456,9 @@ func (ec *executionContext) _SecurityMarket_securityUuid(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(uuid.UUID)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SecurityMarket_marketCode(ctx context.Context, field graphql.CollectedField, obj *model.SecurityMarket) (ret graphql.Marshaler) {
@@ -5689,9 +5689,9 @@ func (ec *executionContext) _SecurityTaxonomy_securityUuid(ctx context.Context, 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(uuid.UUID)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SecurityTaxonomy_taxonomyUuid(ctx context.Context, field graphql.CollectedField, obj *model.SecurityTaxonomy) (ret graphql.Marshaler) {
@@ -5724,9 +5724,9 @@ func (ec *executionContext) _SecurityTaxonomy_taxonomyUuid(ctx context.Context, 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(uuid.UUID)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SecurityTaxonomy_weight(ctx context.Context, field graphql.CollectedField, obj *model.SecurityTaxonomy) (ret graphql.Marshaler) {
@@ -6004,9 +6004,9 @@ func (ec *executionContext) _Taxonomy_uuid(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(uuid.UUID)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Taxonomy_parentUuid(ctx context.Context, field graphql.CollectedField, obj *model.Taxonomy) (ret graphql.Marshaler) {
@@ -6036,9 +6036,9 @@ func (ec *executionContext) _Taxonomy_parentUuid(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*uuid.UUID)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Taxonomy_rootUuid(ctx context.Context, field graphql.CollectedField, obj *model.Taxonomy) (ret graphql.Marshaler) {
@@ -6068,9 +6068,9 @@ func (ec *executionContext) _Taxonomy_rootUuid(ctx context.Context, field graphq
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*uuid.UUID)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Taxonomy_name(ctx context.Context, field graphql.CollectedField, obj *model.Taxonomy) (ret graphql.Marshaler) {
@@ -8031,7 +8031,7 @@ func (ec *executionContext) unmarshalInputSecurityTaxonomyInput(ctx context.Cont
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("taxonomyUuid"))
-			it.TaxonomyUUID, err = ec.unmarshalNString2string(ctx, v)
+			it.TaxonomyUUID, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8062,7 +8062,7 @@ func (ec *executionContext) unmarshalInputTaxonomyInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentUuid"))
-			it.ParentUUID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.ParentUUID, err = ec.unmarshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8070,7 +8070,7 @@ func (ec *executionContext) unmarshalInputTaxonomyInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rootUuid"))
-			it.RootUUID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.RootUUID, err = ec.unmarshalOUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
 			if err != nil {
 				return it, err
 			}

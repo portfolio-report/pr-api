@@ -1,10 +1,12 @@
 package db
 
+import "github.com/google/uuid"
+
 // Taxonomy in database
 type Taxonomy struct {
-	UUID        string `gorm:"primaryKey"`
-	ParentUUID  *string
-	RootUUID    *string
+	UUID        uuid.UUID `gorm:"primaryKey"`
+	ParentUUID  *uuid.UUID
+	RootUUID    *uuid.UUID
 	Name        string
 	Code        *string
 	Descendants []Taxonomy `gorm:"foreignKey:root_uuid;references:uuid"`

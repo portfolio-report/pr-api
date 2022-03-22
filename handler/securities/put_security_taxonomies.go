@@ -4,25 +4,26 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/libs"
 	"github.com/shopspring/decimal"
 )
 
 type securityTaxonomyRequest struct {
-	TaxonomyUuid string          `json:"taxonomyUuid" binding:"uuid"`
+	TaxonomyUuid uuid.UUID       `json:"taxonomyUuid"`
 	Weight       decimal.Decimal `json:"weight"`
 }
 
 // PutSecurityTaxonomies creates, updates and deletes taxonomies of security
 func (h *securitiesHandler) PutSecurityTaxonomies(c *gin.Context) {
-	securityUuid := c.Param("uuid")
-	if err := h.Validate.Var(securityUuid, "uuid"); err != nil {
+	securityUuid, err := uuid.Parse(c.Param("uuid"))
+	if err != nil {
 		libs.HandleNotFoundError(c)
 		return
 	}
-	taxonomyRootUuid := c.Param("rootUuid")
-	if err := h.Validate.Var(taxonomyRootUuid, "uuid"); err != nil {
+	taxonomyRootUuid, err := uuid.Parse(c.Param("rootUuid"))
+	if err != nil {
 		libs.HandleNotFoundError(c)
 		return
 	}

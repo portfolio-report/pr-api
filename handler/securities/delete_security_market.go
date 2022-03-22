@@ -4,14 +4,14 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/portfolio-report/pr-api/libs"
 )
 
 // DeleteSecurityMarket removes market of security
 func (h *securitiesHandler) DeleteSecurityMarket(c *gin.Context) {
-
-	uuid := c.Param("uuid")
-	if err := h.Validate.Var(uuid, "uuid"); err != nil {
+	uuid, err := uuid.Parse(c.Param("uuid"))
+	if err != nil {
 		libs.HandleNotFoundError(c)
 		return
 	}

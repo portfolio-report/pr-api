@@ -184,7 +184,7 @@ input PortfolioTransactionUnitInput {
 }
 
 type Security {
-  uuid: String!
+  uuid: UUID!
   name: String
   isin: String
   wkn: String
@@ -209,7 +209,7 @@ input SecurityInput {
 }
 
 type SecurityMarket {
-  securityUuid: String!
+  securityUuid: UUID!
   marketCode: String!
   currencyCode: String!
   firstPriceDate: Date
@@ -219,14 +219,14 @@ type SecurityMarket {
 }
 
 type SecurityTaxonomy {
-  securityUuid: String!
-  taxonomyUuid: String!
+  securityUuid: UUID!
+  taxonomyUuid: UUID!
   weight: Decimal!
   taxonomy: Taxonomy!
 }
 
 input SecurityTaxonomyInput {
-  taxonomyUuid: String!
+  taxonomyUuid: UUID!
   weight: Decimal!
 }
 
@@ -239,16 +239,16 @@ type Session {
 }
 
 type Taxonomy {
-  uuid: String!
-  parentUuid: String
-  rootUuid: String
+  uuid: UUID!
+  parentUuid: UUID
+  rootUuid: UUID
   name: String!
   code: String
 }
 
 input TaxonomyInput {
-  parentUuid: String
-  rootUuid: String
+  parentUuid: UUID
+  rootUuid: UUID
   name: String
   code: String
 }
@@ -269,9 +269,9 @@ type Query {
 
   portfolioAccounts(portfolioId: Int!): [PortfolioAccount!]!
   portfolioSecurities(portfolioId: Int!): [PortfolioSecurity!]!
-  portfolioSecurity(portfolioId: Int!, uuid: String!): PortfolioSecurity!
+  portfolioSecurity(portfolioId: Int!, uuid: UUID!): PortfolioSecurity!
 
-  security(uuid: String!): Security!
+  security(uuid: UUID!): Security!
 
   sessions: [Session!]!
 }

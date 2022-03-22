@@ -1,8 +1,10 @@
 package db
 
+import "github.com/google/uuid"
+
 // Security in database
 type Security struct {
-	UUID               string `gorm:"primaryKey"`
+	UUID               uuid.UUID `gorm:"primaryKey"`
 	Name               *string
 	Isin               *string
 	Wkn                *string

@@ -31,7 +31,7 @@ func searchSecuritiesResponseFromDB(s db.Security) searchSecuritiesResponse {
 	}
 
 	return searchSecuritiesResponse{
-		Uuid:         strings.Replace(s.UUID, "-", "", 4),
+		Uuid:         strings.Replace(s.UUID.String(), "-", "", 4),
 		Name:         s.Name,
 		Isin:         s.Isin,
 		Wkn:          s.Wkn,

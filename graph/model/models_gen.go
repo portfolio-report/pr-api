@@ -175,7 +175,7 @@ type PortfolioTransactionUnitInput struct {
 }
 
 type Security struct {
-	UUID               string              `json:"uuid"`
+	UUID               uuid.UUID           `json:"uuid"`
 	Name               *string             `json:"name"`
 	Isin               *string             `json:"isin"`
 	Wkn                *string             `json:"wkn"`
@@ -199,40 +199,40 @@ type SecurityInput struct {
 }
 
 type SecurityMarket struct {
-	SecurityUUID   string  `json:"securityUuid"`
-	MarketCode     string  `json:"marketCode"`
-	CurrencyCode   string  `json:"currencyCode"`
-	FirstPriceDate *Date   `json:"firstPriceDate"`
-	LastPriceDate  *Date   `json:"lastPriceDate"`
-	Symbol         *string `json:"symbol"`
-	UpdatePrices   *bool   `json:"updatePrices"`
+	SecurityUUID   uuid.UUID `json:"securityUuid"`
+	MarketCode     string    `json:"marketCode"`
+	CurrencyCode   string    `json:"currencyCode"`
+	FirstPriceDate *Date     `json:"firstPriceDate"`
+	LastPriceDate  *Date     `json:"lastPriceDate"`
+	Symbol         *string   `json:"symbol"`
+	UpdatePrices   *bool     `json:"updatePrices"`
 }
 
 type SecurityTaxonomy struct {
-	SecurityUUID string          `json:"securityUuid"`
-	TaxonomyUUID string          `json:"taxonomyUuid"`
+	SecurityUUID uuid.UUID       `json:"securityUuid"`
+	TaxonomyUUID uuid.UUID       `json:"taxonomyUuid"`
 	Weight       decimal.Decimal `json:"weight"`
 	Taxonomy     *Taxonomy       `json:"taxonomy"`
 }
 
 type SecurityTaxonomyInput struct {
-	TaxonomyUUID string          `json:"taxonomyUuid"`
+	TaxonomyUUID uuid.UUID       `json:"taxonomyUuid"`
 	Weight       decimal.Decimal `json:"weight"`
 }
 
 type Taxonomy struct {
-	UUID       string  `json:"uuid"`
-	ParentUUID *string `json:"parentUuid"`
-	RootUUID   *string `json:"rootUuid"`
-	Name       string  `json:"name"`
-	Code       *string `json:"code"`
+	UUID       uuid.UUID  `json:"uuid"`
+	ParentUUID *uuid.UUID `json:"parentUuid"`
+	RootUUID   *uuid.UUID `json:"rootUuid"`
+	Name       string     `json:"name"`
+	Code       *string    `json:"code"`
 }
 
 type TaxonomyInput struct {
-	ParentUUID *string `json:"parentUuid"`
-	RootUUID   *string `json:"rootUuid"`
-	Name       *string `json:"name"`
-	Code       *string `json:"code"`
+	ParentUUID *uuid.UUID `json:"parentUuid"`
+	RootUUID   *uuid.UUID `json:"rootUuid"`
+	Name       *string    `json:"name"`
+	Code       *string    `json:"code"`
 }
 
 type User struct {

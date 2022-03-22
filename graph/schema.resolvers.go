@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/portfolio-report/pr-api/graph/generated"
 	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/handler/middleware"
@@ -177,15 +178,11 @@ func (r *queryResolver) PortfolioSecurities(ctx context.Context, portfolioID int
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) PortfolioSecurity(ctx context.Context, portfolioID int, uuid string) (*model.PortfolioSecurity, error) {
+func (r *queryResolver) PortfolioSecurity(ctx context.Context, portfolioID int, uuid uuid.UUID) (*model.PortfolioSecurity, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Security(ctx context.Context, uuid string) (*model.Security, error) {
-	if err := r.Validate.Var(uuid, "LaxUuid"); err != nil {
-		return nil, errors.New("uuid is not a valid UUID string")
-	}
-
+func (r *queryResolver) Security(ctx context.Context, uuid uuid.UUID) (*model.Security, error) {
 	security, err := r.SecurityService.GetSecurityByUUID(uuid)
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
