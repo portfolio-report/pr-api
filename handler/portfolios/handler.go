@@ -4,11 +4,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/handler/middleware"
-	"gorm.io/gorm"
 )
 
 type portfoliosHandler struct {
-	*gorm.DB
 	model.SessionService
 	model.UserService
 	model.PortfolioService
@@ -17,13 +15,11 @@ type portfoliosHandler struct {
 // NewHandler creates new portfolios handler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
-	DB *gorm.DB,
 	SessionService model.SessionService,
 	UserService model.UserService,
 	PortfolioService model.PortfolioService,
 ) {
 	h := &portfoliosHandler{
-		DB:               DB,
 		SessionService:   SessionService,
 		UserService:      UserService,
 		PortfolioService: PortfolioService,

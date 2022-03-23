@@ -5,11 +5,9 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/handler/middleware"
-	"gorm.io/gorm"
 )
 
 type authHandler struct {
-	*gorm.DB
 	model.SessionService
 	model.UserService
 	*validator.Validate
@@ -18,13 +16,11 @@ type authHandler struct {
 // NewHandler creates new AuthHandler and registers routes
 func NewHandler(
 	R *gin.RouterGroup,
-	DB *gorm.DB,
 	Validate *validator.Validate,
 	SessionService model.SessionService,
 	UserService model.UserService,
 ) {
 	h := &authHandler{
-		DB:             DB,
 		SessionService: SessionService,
 		UserService:    UserService,
 		Validate:       Validate,

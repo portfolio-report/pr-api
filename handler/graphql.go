@@ -12,8 +12,6 @@ import (
 func (h *rootHandler) GraphqlHandler() gin.HandlerFunc {
 	graphHandler := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
 		Resolvers: &graph.Resolver{
-			DB:                h.DB,
-			Validate:          h.Validate,
 			UserService:       h.UserService,
 			SessionService:    h.SessionService,
 			PortfolioService:  h.PortfolioService,
