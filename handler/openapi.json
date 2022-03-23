@@ -564,42 +564,6 @@
       }
     },
     "/portfolios/{portfolioId}/securities/{securityUuid}": {
-      "get": {
-        "summary": "Gets security",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/portfolioId"
-          },
-          {
-            "$ref": "#/components/parameters/securityUuid"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Ok"
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Portfolio or security not found"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "tags": [
-          "portfolios/securities"
-        ],
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
-      },
       "put": {
         "summary": "Creates or updates security in portfolio",
         "parameters": [
@@ -719,52 +683,6 @@
       }
     },
     "/portfolios/{portfolioId}/accounts/{accountUuid}": {
-      "get": {
-        "summary": "Gets account",
-        "parameters": [
-          {
-            "name": "portfolioId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "accountUuid",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Ok"
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Portfolio or account not found"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "tags": [
-          "portfolios/accounts"
-        ],
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
-      },
       "put": {
         "summary": "Creates or updates account",
         "parameters": [
@@ -894,47 +812,6 @@
       }
     },
     "/portfolios/{portfolioId}/transactions/{transactionUuid}": {
-      "get": {
-        "summary": "Gets transaction",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/portfolioId"
-          },
-          {
-            "name": "transactionUuid",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Ok"
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Portfolio or transaction not found"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "tags": [
-          "portfolios/transactions"
-        ],
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
-      },
       "put": {
         "summary": "Creates or updates transaction",
         "parameters": [
@@ -1021,111 +898,6 @@
         },
         "tags": [
           "portfolios/transactions"
-        ],
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
-      }
-    },
-    "/portfolios/{portfolioId}/securities/{securityUuid}/prices": {
-      "patch": {
-        "summary": "Creates or updates prices of security",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/portfolioId"
-          },
-          {
-            "$ref": "#/components/parameters/securityUuid"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/PatchPortfolioSecurityPriceRequest"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Ok"
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Portfolio or security not found"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "tags": [
-          "portfolios/securities"
-        ],
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
-      },
-      "get": {
-        "summary": "Gets prices of security",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/portfolioId"
-          },
-          {
-            "$ref": "#/components/parameters/securityUuid"
-          },
-          {
-            "name": "startDate",
-            "required": false,
-            "in": "query",
-            "example": "YYYY-MM-DD",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "endDate",
-            "required": false,
-            "in": "query",
-            "example": "YYYY-MM-DD",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Ok"
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Portfolio or security not found"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "tags": [
-          "portfolios/securities"
         ],
         "security": [
           {
@@ -1697,6 +1469,16 @@
       },
       "post": {
         "summary": "Creates taxonomy",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "Created"
@@ -1744,13 +1526,23 @@
           "taxonomies"
         ]
       },
-      "patch": {
+      "put": {
         "summary": "Update taxonomy",
         "parameters": [
           {
             "$ref": "#/components/parameters/uuid"
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Ok"
