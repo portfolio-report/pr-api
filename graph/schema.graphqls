@@ -6,6 +6,7 @@ scalar Time
 scalar Date
 scalar Decimal
 scalar UUID
+scalar PortfolioAccountType
 scalar PortfolioTransactionType
 scalar PortfolioTransactionUnitType
 
@@ -51,7 +52,7 @@ input PortfolioInput {
 
 type PortfolioAccount {
   uuid: UUID!
-  type: String!
+  type: PortfolioAccountType!
   name: String!
   currencyCode: String
   referenceAccountUuid: UUID
@@ -64,7 +65,7 @@ type PortfolioAccount {
 }
 
 input PortfolioAccountInput {
-  type: String!
+  type: PortfolioAccountType!
   name: String!
   currencyCode: String
   referenceAccountUuid: UUID

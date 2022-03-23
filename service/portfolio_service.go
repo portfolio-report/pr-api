@@ -254,20 +254,20 @@ func (s *portfolioService) UpsertPortfolioAccount(
 	account.UpdatedAt = input.UpdatedAt
 
 	switch input.Type {
-	case "deposit":
+	case model.PortfolioAccountTypeDeposit:
 		if input.CurrencyCode == nil {
 			return nil, fmt.Errorf("currencyCode is missing")
 		}
 		account.CurrencyCode = input.CurrencyCode
 		account.ReferenceAccountUUID = nil
-	case "securities":
+	case model.PortfolioAccountTypeSecurities:
 		if input.ReferenceAccountUUID == nil {
 			return nil, fmt.Errorf("referenceAccountUuid is missing")
 		}
 		account.CurrencyCode = nil
 		account.ReferenceAccountUUID = input.ReferenceAccountUUID
 	default:
-		return nil, fmt.Errorf("invalid type: %s", input.Type)
+		panic("invalid type: " + input.Type.String())
 	}
 
 	if err := s.DB.Save(&account).Error; err != nil {

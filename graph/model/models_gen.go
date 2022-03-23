@@ -38,26 +38,26 @@ type Portfolio struct {
 }
 
 type PortfolioAccount struct {
-	UUID                 uuid.UUID  `json:"uuid"`
-	Type                 string     `json:"type"`
-	Name                 string     `json:"name"`
-	CurrencyCode         *string    `json:"currencyCode"`
-	ReferenceAccountUUID *uuid.UUID `json:"referenceAccountUuid"`
-	Active               bool       `json:"active"`
-	Note                 string     `json:"note"`
-	UpdatedAt            time.Time  `json:"updatedAt"`
-	Balance              string     `json:"balance"`
-	Value                string     `json:"value"`
+	UUID                 uuid.UUID            `json:"uuid"`
+	Type                 PortfolioAccountType `json:"type"`
+	Name                 string               `json:"name"`
+	CurrencyCode         *string              `json:"currencyCode"`
+	ReferenceAccountUUID *uuid.UUID           `json:"referenceAccountUuid"`
+	Active               bool                 `json:"active"`
+	Note                 string               `json:"note"`
+	UpdatedAt            time.Time            `json:"updatedAt"`
+	Balance              string               `json:"balance"`
+	Value                string               `json:"value"`
 }
 
 type PortfolioAccountInput struct {
-	Type                 string     `json:"type"`
-	Name                 string     `json:"name"`
-	CurrencyCode         *string    `json:"currencyCode"`
-	ReferenceAccountUUID *uuid.UUID `json:"referenceAccountUuid"`
-	Active               bool       `json:"active"`
-	Note                 string     `json:"note"`
-	UpdatedAt            time.Time  `json:"updatedAt"`
+	Type                 PortfolioAccountType `json:"type"`
+	Name                 string               `json:"name"`
+	CurrencyCode         *string              `json:"currencyCode"`
+	ReferenceAccountUUID *uuid.UUID           `json:"referenceAccountUuid"`
+	Active               bool                 `json:"active"`
+	Note                 string               `json:"note"`
+	UpdatedAt            time.Time            `json:"updatedAt"`
 }
 
 type PortfolioInput struct {

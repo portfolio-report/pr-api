@@ -1293,6 +1293,7 @@ scalar Time
 scalar Date
 scalar Decimal
 scalar UUID
+scalar PortfolioAccountType
 scalar PortfolioTransactionType
 scalar PortfolioTransactionUnitType
 
@@ -1338,7 +1339,7 @@ input PortfolioInput {
 
 type PortfolioAccount {
   uuid: UUID!
-  type: String!
+  type: PortfolioAccountType!
   name: String!
   currencyCode: String
   referenceAccountUuid: UUID
@@ -1351,7 +1352,7 @@ type PortfolioAccount {
 }
 
 input PortfolioAccountInput {
-  type: String!
+  type: PortfolioAccountType!
   name: String!
   currencyCode: String
   referenceAccountUuid: UUID
@@ -2942,9 +2943,9 @@ func (ec *executionContext) _PortfolioAccount_type(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(model.PortfolioAccountType)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNPortfolioAccountType2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioAccountType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PortfolioAccount_name(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioAccount) (ret graphql.Marshaler) {
@@ -7479,7 +7480,7 @@ func (ec *executionContext) unmarshalInputPortfolioAccountInput(ctx context.Cont
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			it.Type, err = ec.unmarshalNString2string(ctx, v)
+			it.Type, err = ec.unmarshalNPortfolioAccountType2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioAccountType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -10672,6 +10673,16 @@ func (ec *executionContext) marshalNPortfolioAccount2ᚖgithubᚗcomᚋportfolio
 		return graphql.Null
 	}
 	return ec._PortfolioAccount(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNPortfolioAccountType2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioAccountType(ctx context.Context, v interface{}) (model.PortfolioAccountType, error) {
+	var res model.PortfolioAccountType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNPortfolioAccountType2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioAccountType(ctx context.Context, sel ast.SelectionSet, v model.PortfolioAccountType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNPortfolioInput2githubᚗcomᚋportfolioᚑreportᚋprᚑapiᚋgraphᚋmodelᚐPortfolioInput(ctx context.Context, v interface{}) (model.PortfolioInput, error) {

@@ -71,6 +71,9 @@ models:
     fields:
       value:
         resolver: true
+  PortfolioAccountType:
+    model:
+      - github.com/portfolio-report/pr-api/graph/model.PortfolioAccountType
   PortfolioTransactionType:
     model:
       - github.com/portfolio-report/pr-api/graph/model.PortfolioTransactionType

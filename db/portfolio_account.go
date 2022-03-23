@@ -4,13 +4,14 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/portfolio-report/pr-api/graph/model"
 )
 
 // PortfolioAccount in database
 type PortfolioAccount struct {
 	PortfolioID          uint      `gorm:"primaryKey"`
 	UUID                 uuid.UUID `gorm:"primaryKey"`
-	Type                 string
+	Type                 model.PortfolioAccountType
 	Name                 string
 	CurrencyCode         *string
 	ReferenceAccountUUID *uuid.UUID
