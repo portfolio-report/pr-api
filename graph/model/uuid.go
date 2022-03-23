@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"io"
+	"strconv"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/google/uuid"
@@ -13,10 +14,7 @@ import (
 // MarshalUUIDScalar writes uuid.UUID to GraphQL
 func MarshalUUIDScalar(u uuid.UUID) graphql.Marshaler {
 	return graphql.WriterFunc(func(w io.Writer) {
-		bytes, _ := u.MarshalText()
-		w.Write([]byte{'"'})
-		w.Write(bytes)
-		w.Write([]byte{'"'})
+		fmt.Fprint(w, strconv.Quote(u.String()))
 	})
 }
 

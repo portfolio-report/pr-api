@@ -4,6 +4,7 @@ import (
 	"database/sql/driver"
 	"fmt"
 	"io"
+	"strconv"
 	"time"
 )
 
@@ -18,8 +19,7 @@ func (date Date) FromTime(t time.Time) Date {
 
 // MarshalJSON marshals into JSON
 func (date Date) MarshalJSON() ([]byte, error) {
-	string := fmt.Sprintf("\"%s\"", time.Time(date).UTC().Format("2006-01-02"))
-	return []byte(string), nil
+	return []byte(strconv.Quote(date.String())), nil
 }
 
 // UnmarshalJSON unmarshalls JSON
@@ -54,7 +54,7 @@ func (date Date) Value() (driver.Value, error) {
 
 // MarshalGQL implements the graphql.Marshaler interface
 func (date Date) MarshalGQL(w io.Writer) {
-	w.Write([]byte(`"` + date.String() + `"`))
+	fmt.Fprint(w, strconv.Quote(date.String()))
 }
 
 // UnmarshalGQL implements the graphql.Unmarshaler interface
