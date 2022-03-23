@@ -400,4 +400,14 @@ func TestTaxonomies(t *testing.T) {
 		a.Equal("Test name2", body["name"])
 		a.Equal("Test code", body["code"])
 	}
+
+	// Delete second taxonomy
+	{
+		req := httptest.NewRequest("DELETE", "/taxonomies/"+secondTaxonomyUuid, nil)
+		req.Header.Add("Authorization", "Bearer "+session.Token)
+		res := httptest.NewRecorder()
+		app.ServeHTTP(res, req)
+
+		a.Equal(200, res.Code)
+	}
 }
