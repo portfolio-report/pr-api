@@ -1536,7 +1536,7 @@ type Taxonomy {
 input TaxonomyInput {
   parentUuid: UUID
   rootUuid: UUID
-  name: String
+  name: String!
   code: String
 }
 
@@ -8078,7 +8078,7 @@ func (ec *executionContext) unmarshalInputTaxonomyInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

@@ -37,10 +37,10 @@ func NewHandler(
 		middleware.RequireUser(SessionService, UserService),
 		middleware.RequireAdmin(),
 		h.PostTaxonomy)
-	g.PATCH("/:uuid",
+	g.PUT("/:uuid",
 		middleware.RequireUser(SessionService, UserService),
 		middleware.RequireAdmin(),
-		h.PatchTaxonomy)
+		h.PutTaxonomy)
 	g.DELETE("/:uuid",
 		middleware.RequireUser(SessionService, UserService),
 		middleware.RequireAdmin(),

@@ -249,7 +249,7 @@ type Taxonomy {
 input TaxonomyInput {
   parentUuid: UUID
   rootUuid: UUID
-  name: String
+  name: String!
   code: String
 }
 

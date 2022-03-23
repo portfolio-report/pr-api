@@ -11,8 +11,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// PatchTaxonomy updates taxonomy
-func (h *taxonomiesHandler) PatchTaxonomy(c *gin.Context) {
+// PutTaxonomy updates taxonomy
+func (h *taxonomiesHandler) PutTaxonomy(c *gin.Context) {
 	uuid, err := uuid.Parse(c.Param("uuid"))
 	if err != nil {
 		libs.HandleNotFoundError(c)

@@ -78,14 +78,11 @@ func (s *taxonomyService) GetDescendantsOfTaxonomy(taxonomy *model.Taxonomy) ([]
 
 // CreateTaxonomy creates new taxonomy
 func (s *taxonomyService) CreateTaxonomy(input *model.TaxonomyInput) (*model.Taxonomy, error) {
-	if input.Name == nil {
-		return nil, fmt.Errorf("name is required")
-	}
-
 	taxonomy := db.Taxonomy{
-		UUID: uuid.New(),
-		Name: *input.Name,
-		Code: input.Code,
+		UUID:       uuid.New(),
+		Name:       input.Name,
+		Code:       input.Code,
+		ParentUUID: input.ParentUUID,
 	}
 
 	if input.ParentUUID != nil {
@@ -94,8 +91,6 @@ func (s *taxonomyService) CreateTaxonomy(input *model.TaxonomyInput) (*model.Tax
 			return nil, fmt.Errorf("parentUuid invalid")
 		}
 
-		taxonomy.ParentUUID = input.ParentUUID
-
 		if parent.RootUUID != nil {
 			taxonomy.RootUUID = parent.RootUUID
 		} else {
@@ -103,7 +98,7 @@ func (s *taxonomyService) CreateTaxonomy(input *model.TaxonomyInput) (*model.Tax
 		}
 	}
 
-	if err := s.DB.Create(&taxonomy).Error; err != nil {
+	if err := s.DB.Clauses(clause.Returning{}).Create(&taxonomy).Error; err != nil {
 		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23503" {
 			return nil, fmt.Errorf("data violates constraint " + pqErr.Constraint)
 		}
@@ -114,7 +109,7 @@ func (s *taxonomyService) CreateTaxonomy(input *model.TaxonomyInput) (*model.Tax
 	return s.modelFromDb(taxonomy), nil
 }
 
-// UpdateTaxonomy updates taxonomy with non-nil values
+// UpdateTaxonomy updates taxonomy
 func (s *taxonomyService) UpdateTaxonomy(uuid uuid.UUID, input *model.TaxonomyInput) (*model.Taxonomy, error) {
 	var taxonomy db.Taxonomy
 	if err := s.DB.Take(&taxonomy, "uuid = ?", uuid).Error; err != nil {
@@ -124,42 +119,27 @@ func (s *taxonomyService) UpdateTaxonomy(uuid uuid.UUID, input *model.TaxonomyIn
 		panic(err)
 	}
 
-	if input.Name != nil {
-		taxonomy.Name = *input.Name
-	}
+	taxonomy.Name = input.Name
+	taxonomy.Code = input.Code
+	taxonomy.ParentUUID = input.ParentUUID
 
 	if input.ParentUUID != nil {
 		if *input.ParentUUID == uuid {
 			return nil, fmt.Errorf("parentUuid must be different from own uuid")
 		}
 
-		if input.ParentUUID.String() == "" {
-			taxonomy.ParentUUID = nil
-			taxonomy.RootUUID = nil
-		} else {
-			parent, err := s.GetTaxonomyByUUID(*input.ParentUUID)
-			if err != nil {
-				return nil, fmt.Errorf("parentUuid invalid")
-			}
-
-			taxonomy.ParentUUID = input.ParentUUID
-
-			if parent.RootUUID != nil {
-				taxonomy.RootUUID = parent.RootUUID
-			} else {
-				taxonomy.RootUUID = input.ParentUUID
-			}
+		parent, err := s.GetTaxonomyByUUID(*input.ParentUUID)
+		if err != nil {
+			return nil, fmt.Errorf("parentUuid invalid")
 		}
-	}
 
-	if input.Code != nil {
-		if *input.Code == "" && taxonomy.ParentUUID == nil {
-			// Root nodes may have empty code
-			input.Code = nil
+		if parent.RootUUID != nil {
+			taxonomy.RootUUID = parent.RootUUID
 		} else {
-			// Non-root nodes must have an unique code
-			taxonomy.Code = input.Code
+			taxonomy.RootUUID = input.ParentUUID
 		}
+	} else {
+		taxonomy.RootUUID = nil
 	}
 
 	if err := s.DB.Clauses(clause.Returning{}).Save(&taxonomy).Error; err != nil {

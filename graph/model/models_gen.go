@@ -231,7 +231,7 @@ type Taxonomy struct {
 type TaxonomyInput struct {
 	ParentUUID *uuid.UUID `json:"parentUuid"`
 	RootUUID   *uuid.UUID `json:"rootUuid"`
-	Name       *string    `json:"name"`
+	Name       string     `json:"name"`
 	Code       *string    `json:"code"`
 }
 

@@ -278,10 +278,11 @@ func TestTaxonomies(t *testing.T) {
 	// Make second taxonomy child of root
 	{
 		reqBody, err := json.Marshal(gin.H{
+			"name":       "Second tax",
 			"parentUuid": rootTaxonomyUuid,
 		})
 		a.Nil(err)
-		req := httptest.NewRequest("PATCH", "/taxonomies/"+secondTaxonomyUuid, bytes.NewReader(reqBody))
+		req := httptest.NewRequest("PUT", "/taxonomies/"+secondTaxonomyUuid, bytes.NewReader(reqBody))
 		req.Header.Add("Authorization", "Bearer "+session.Token)
 		res := httptest.NewRecorder()
 		app.ServeHTTP(res, req)
@@ -318,10 +319,11 @@ func TestTaxonomies(t *testing.T) {
 	// Update root taxonomy
 	{
 		reqBody, err := json.Marshal(gin.H{
+			"name": "Test name2",
 			"code": "Test code",
 		})
 		a.Nil(err)
-		req := httptest.NewRequest("PATCH", "/taxonomies/"+rootTaxonomyUuid, bytes.NewReader(reqBody))
+		req := httptest.NewRequest("PUT", "/taxonomies/"+rootTaxonomyUuid, bytes.NewReader(reqBody))
 		req.Header.Add("Authorization", "Bearer "+session.Token)
 		res := httptest.NewRecorder()
 		app.ServeHTTP(res, req)
@@ -331,7 +333,7 @@ func TestTaxonomies(t *testing.T) {
 		var body gin.H
 		json.Unmarshal(res.Body.Bytes(), &body)
 		a.Equal(rootTaxonomyUuid, body["uuid"])
-		a.Equal("Test name", body["name"])
+		a.Equal("Test name2", body["name"])
 		a.Equal("Test code", body["code"])
 	}
 
@@ -361,26 +363,27 @@ func TestTaxonomies(t *testing.T) {
 	}
 
 	// Move second taxonomy out of root
-	// {
-	// 	reqBody, err := json.Marshal(gin.H{
-	// 		"parentUuid": "",
-	// 	})
-	// 	a.Nil(err)
-	// 	req := httptest.NewRequest("PATCH", "/taxonomies/"+secondTaxonomyUuid, bytes.NewReader(reqBody))
-	// 	req.Header.Add("Authorization", "Bearer "+session.Token)
-	// 	res := httptest.NewRecorder()
-	// 	app.ServeHTTP(res, req)
+	{
+		reqBody, err := json.Marshal(gin.H{
+			"name":       "Second tax",
+			"parentUuid": nil,
+		})
+		a.Nil(err)
+		req := httptest.NewRequest("PUT", "/taxonomies/"+secondTaxonomyUuid, bytes.NewReader(reqBody))
+		req.Header.Add("Authorization", "Bearer "+session.Token)
+		res := httptest.NewRecorder()
+		app.ServeHTTP(res, req)
 
-	// 	a.Equal(200, res.Code)
+		a.Equal(200, res.Code)
 
-	// 	var body gin.H
-	// 	json.Unmarshal(res.Body.Bytes(), &body)
-	// 	a.Equal(secondTaxonomyUuid, body["uuid"])
-	// 	a.Equal("Second tax", body["name"])
-	// 	a.Nil(body["code"])
-	// 	a.Nil(body["parentUuid"])
-	// 	a.Nil(body["rootUuid"])
-	// }
+		var body gin.H
+		json.Unmarshal(res.Body.Bytes(), &body)
+		a.Equal(secondTaxonomyUuid, body["uuid"])
+		a.Equal("Second tax", body["name"])
+		a.Nil(body["code"])
+		a.Nil(body["parentUuid"])
+		a.Nil(body["rootUuid"])
+	}
 
 	// Delete root taxonomy
 	{
@@ -394,7 +397,7 @@ func TestTaxonomies(t *testing.T) {
 		var body gin.H
 		json.Unmarshal(res.Body.Bytes(), &body)
 		a.Equal(rootTaxonomyUuid, body["uuid"])
-		a.Equal("Test name", body["name"])
+		a.Equal("Test name2", body["name"])
 		a.Equal("Test code", body["code"])
 	}
 }
