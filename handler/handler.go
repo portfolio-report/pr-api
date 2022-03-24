@@ -64,6 +64,7 @@ func NewHandler(R *gin.Engine, c *Config) {
 	g := R.Group(c.BaseURL)
 
 	g.GET("", h.GetRoot)
+	g.GET("/version", h.GetVersion)
 
 	// /graphql
 	g.POST("/graphql", middleware.Useragent, h.GraphqlHandler())
