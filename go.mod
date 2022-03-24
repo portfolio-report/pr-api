@@ -3,7 +3,7 @@ module github.com/portfolio-report/pr-api
 go 1.18
 
 require (
-	github.com/99designs/gqlgen v0.17.1
+	github.com/99designs/gqlgen v0.17.2
 	github.com/antchfx/xmlquery v1.3.10
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-playground/validator/v10 v10.10.1
