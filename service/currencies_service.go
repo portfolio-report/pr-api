@@ -113,7 +113,7 @@ func (s *currenciesService) GetExchangerate(baseCC, quoteCC string) (*model.Exch
 }
 
 // GetExchangeratePrices returns prices of exchange rate
-func (s *currenciesService) GetExchangeratePrices(er *model.Exchangerate, from *string) ([]*model.ExchangeratePrice, error) {
+func (s *currenciesService) GetExchangeratePrices(exchangerateID uint, from *string) ([]*model.ExchangeratePrice, error) {
 	if from == nil {
 		date := "0001-01-01"
 		from = &date
@@ -121,7 +121,7 @@ func (s *currenciesService) GetExchangeratePrices(er *model.Exchangerate, from *
 	var prices []db.ExchangeratePrice
 	err := s.DB.
 		Where("date >= ?", *from).
-		Where("exchangerate_id = ?", er.ID).Order("date ASC").Find(&prices).Error
+		Where("exchangerate_id = ?", exchangerateID).Order("date ASC").Find(&prices).Error
 	if err != nil {
 		panic(err)
 	}

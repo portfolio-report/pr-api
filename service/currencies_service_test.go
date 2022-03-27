@@ -89,7 +89,7 @@ func (s *CurrenciesServiceTestSuite) TestGetExchangeratePrices() {
 	s.NotNil(exchangerate)
 
 	{
-		prices, err := s.service.GetExchangeratePrices(exchangerate, nil)
+		prices, err := s.service.GetExchangeratePrices(exchangerate.ID, nil)
 		s.Nil(err)
 		s.GreaterOrEqual(len(prices), 19)
 		s.Equal("1999-01-04", prices[0].Date)
@@ -98,7 +98,7 @@ func (s *CurrenciesServiceTestSuite) TestGetExchangeratePrices() {
 
 	{
 		from := "1999-01-05"
-		prices, err := s.service.GetExchangeratePrices(exchangerate, &from)
+		prices, err := s.service.GetExchangeratePrices(exchangerate.ID, &from)
 		s.Nil(err)
 		s.GreaterOrEqual(len(prices), 19)
 		s.Equal("1999-01-05", prices[0].Date)

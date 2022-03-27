@@ -18,7 +18,7 @@ import (
 )
 
 func (r *exchangerateResolver) Prices(ctx context.Context, obj *model.Exchangerate, from *string) ([]*model.ExchangeratePrice, error) {
-	return r.CurrenciesService.GetExchangeratePrices(obj, from)
+	return r.CurrenciesService.GetExchangeratePrices(obj.ID, from)
 }
 
 func (r *mutationResolver) Register(ctx context.Context, username string, password string) (*model.Session, error) {

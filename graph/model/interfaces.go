@@ -13,7 +13,7 @@ import (
 type CurrenciesService interface {
 	GetCurrencies() ([]*Currency, error)
 	GetExchangerate(baseCC, quoteCC string) (*Exchangerate, error)
-	GetExchangeratePrices(er *Exchangerate, from *string) ([]*ExchangeratePrice, error)
+	GetExchangeratePrices(exchangerateID uint, from *string) ([]*ExchangeratePrice, error)
 	ConvertCurrencyAmount(decimal.Decimal, string, string, time.Time) (decimal.Decimal, error)
 	UpdateExchangeRates() error
 }
