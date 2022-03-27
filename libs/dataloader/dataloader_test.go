@@ -6,7 +6,6 @@ import (
 	"strings"
 	"sync"
 	"testing"
-	"time"
 
 	"github.com/portfolio-report/pr-api/libs/dataloader"
 	"github.com/stretchr/testify/require"
@@ -23,8 +22,8 @@ func GetMockedLoader(max int) (*dataloader.Dataloader[string, *testValue], *[][]
 	var mu sync.Mutex
 	var fetchCalls [][]string
 
-	loader := dataloader.New(
-		func(keys []string) ([]*testValue, []error) {
+	loader := dataloader.New(dataloader.Config[string, *testValue]{
+		Fetch: func(keys []string) ([]*testValue, []error) {
 			mu.Lock()
 			fetchCalls = append(fetchCalls, keys)
 			mu.Unlock()
@@ -41,8 +40,8 @@ func GetMockedLoader(max int) (*dataloader.Dataloader[string, *testValue], *[][]
 			}
 			return values, errors
 		},
-		2*time.Millisecond,
-		max,
+		MaxSize: max,
+	},
 	)
 	return loader, &fetchCalls
 }
@@ -170,12 +169,10 @@ func TestDataloader(t *testing.T) {
 	t.Run("number of results matches number of keys", func(t *testing.T) {
 		t.Parallel()
 		faultyLoader := dataloader.New(
-			func(keys []string) (results []string, errs []error) {
+			dataloader.Config[string, string]{Fetch: func(keys []string) (results []string, errs []error) {
 				results = make([]string, len(keys)-1)
 				return results, nil
-			},
-			16*time.Millisecond,
-			0)
+			}})
 
 		n := 10
 		futures := []func() (string, error){}

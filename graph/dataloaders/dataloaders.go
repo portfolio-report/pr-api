@@ -2,7 +2,6 @@ package dataloaders
 
 import (
 	"context"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/portfolio-report/pr-api/graph/model"
@@ -20,8 +19,8 @@ type Loaders struct {
 
 func newLoaders(ctx context.Context, userService model.UserService) *Loaders {
 	return &Loaders{
-		UserByID: dataloader.New(
-			func(keys []int) ([]*model.User, []error) {
+		UserByID: dataloader.New(dataloader.Config[int, *model.User]{
+			Fetch: func(keys []int) ([]*model.User, []error) {
 				users, _ := userService.GetByIDs(keys)
 
 				// map by id
@@ -36,7 +35,7 @@ func newLoaders(ctx context.Context, userService model.UserService) *Loaders {
 				}
 
 				return result, nil
-			}, 1*time.Millisecond, 0),
+			}}),
 	}
 }
 

@@ -11,21 +11,26 @@ import (
 // - https://github.com/vikstrous/dataloadgen
 // - https://github.com/graph-gophers/dataloader
 
-// New creates a new Dataloader given a fetch function, maxWait, and maxSize
-func New[K comparable, V any](
+type Config[K comparable, V any] struct {
 	// Fetch is a method that provides the data for the loader
-	fetch func(keys []K) ([]V, []error),
+	Fetch func(keys []K) ([]V, []error)
 
-	// maxWait is maximum time to wait before sending a batch
-	maxWait time.Duration,
+	// MaxWait is maximum time to wait before sending a batch
+	MaxWait time.Duration
 
-	// maxSize is maximum number of keys to send in one batch, 0 = not limit
-	maxSize int,
-) *Dataloader[K, V] {
+	// MaxSize is maximum number of keys to send in one batch, 0 = not limit
+	MaxSize int
+}
+
+// New creates a new Dataloader given a fetch function, maxWait, and maxSize
+func New[K comparable, V any](cfg Config[K, V]) *Dataloader[K, V] {
+	if cfg.MaxWait == 0 {
+		cfg.MaxWait = 2 * time.Millisecond
+	}
 	return &Dataloader[K, V]{
-		fetch:   fetch,
-		maxWait: maxWait,
-		maxSize: maxSize,
+		fetch:   cfg.Fetch,
+		maxWait: cfg.MaxWait,
+		maxSize: cfg.MaxSize,
 		cache:   map[K]func() (V, error){},
 	}
 }
