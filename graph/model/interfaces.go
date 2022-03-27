@@ -85,6 +85,7 @@ type TaxonomyService interface {
 type UserService interface {
 	Create(username string) (*User, error)
 	GetUserByUsername(ctx context.Context, username string) (*User, error)
+	GetByIDs(ids []int) ([]*User, error)
 	GetUserFromSession(session *Session) (*User, error)
 	UpdatePassword(ctx context.Context, user *User, password string) error
 	VerifyPassword(ctx context.Context, user *User, password string) (bool, error)

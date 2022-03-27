@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/portfolio-report/pr-api/graph/dataloaders"
 	"github.com/portfolio-report/pr-api/graph/generated"
 	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/handler/middleware"
@@ -216,7 +217,7 @@ func (r *securityTaxonomyResolver) Taxonomy(ctx context.Context, obj *model.Secu
 }
 
 func (r *sessionResolver) User(ctx context.Context, obj *model.Session) (*model.User, error) {
-	return r.UserService.GetUserFromSession(obj)
+	return dataloaders.For(ctx).UserByID.Load(int(obj.UserID))
 }
 
 // Exchangerate returns generated.ExchangerateResolver implementation.

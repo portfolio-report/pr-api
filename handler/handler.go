@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/portfolio-report/pr-api/graph/dataloaders"
 	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/handler/auth"
 	"github.com/portfolio-report/pr-api/handler/currencies"
@@ -67,7 +68,10 @@ func NewHandler(R *gin.Engine, c *Config) {
 	g.GET("/version", h.GetVersion)
 
 	// /graphql
-	g.POST("/graphql", middleware.Useragent, h.GraphqlHandler())
+	g.POST("/graphql",
+		middleware.Useragent,
+		dataloaders.Middleware(c.UserService),
+		h.GraphqlHandler())
 	g.GET("/graphql", h.PlaygroundHandler(path.Join(g.BasePath(), "graphql")))
 
 	// /doc

@@ -64,6 +64,22 @@ func (s *userService) GetUserByUsername(ctx context.Context, username string) (*
 	return s.modelFromDb(user), err
 }
 
+// GetByIDs returns users by ids
+func (s *userService) GetByIDs(ids []int) ([]*model.User, error) {
+	var users []db.User
+	err := s.DB.Find(&users, "id IN ?", ids).Error
+	if err != nil {
+		panic(err)
+	}
+
+	// map to model
+	result := make([]*model.User, len(users))
+	for i := range users {
+		result[i] = s.modelFromDb(users[i])
+	}
+	return result, nil
+}
+
 // GetUserFromSession returns user that owns session
 func (s *userService) GetUserFromSession(session *model.Session) (*model.User, error) {
 	var user db.User
