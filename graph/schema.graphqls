@@ -75,6 +75,7 @@ input PortfolioAccountInput {
 }
 
 type PortfolioSecurity {
+  portfolioId: Int!
   uuid: UUID!
   name: String!
   currencyCode: String!
@@ -94,8 +95,13 @@ type PortfolioSecurity {
   properties: [PortfolioSecurityProperty!]!
 
   # computed:
-  shares: String!
+  shares: Decimal!
   quote(currenyCode: String): String!
+}
+
+input PortfolioSecurityKey {
+  portfolioId: Int!
+  uuid: UUID!
 }
 
 input PortfolioSecurityInput {

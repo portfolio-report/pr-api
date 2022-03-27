@@ -44,6 +44,7 @@ type PortfolioService interface {
 	GetPortfolioSecuritiesOfPortfolio(portfolioId int) ([]*PortfolioSecurity, error)
 	UpsertPortfolioSecurity(portfolioId int, uuid uuid.UUID, input PortfolioSecurityInput) (*PortfolioSecurity, error)
 	DeletePortfolioSecurity(portfolioId int, uuid uuid.UUID) (*PortfolioSecurity, error)
+	CalcSecurityShares(securities []PortfolioSecurityKey) []*decimal.Decimal
 
 	GetPortfolioTransactionsOfPortfolio(portfolioId int) ([]*PortfolioTransaction, error)
 	UpsertPortfolioTransaction(portfolioId int, uuid uuid.UUID, input PortfolioTransactionInput) (*PortfolioTransaction, error)

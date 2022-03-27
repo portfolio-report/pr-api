@@ -76,6 +76,7 @@ func (*portfolioService) securityModelFromDb(s db.PortfolioSecurity) *model.Port
 	}
 
 	return &model.PortfolioSecurity{
+		PortfolioID:   int(s.PortfolioID),
 		UUID:          s.UUID,
 		Name:          s.Name,
 		CurrencyCode:  s.CurrencyCode,
@@ -407,6 +408,52 @@ func (s *portfolioService) DeletePortfolioSecurity(portfolioId int, uuid uuid.UU
 	}
 
 	return s.securityModelFromDb(security), nil
+}
+
+type resultUUIDValue struct {
+	PortfolioId int
+	UUID        uuid.UUID
+	Value       decimal.Decimal
+}
+
+// CalcSecurityShares returns number of shares in portfolio,
+// order of result corresponds to order of uuids
+func (s *portfolioService) CalcSecurityShares(securities []model.PortfolioSecurityKey) []*decimal.Decimal {
+	var result []resultUUIDValue
+
+	// map portfolioId and uuid into 2d array
+	keys := make([][]interface{}, len(securities))
+	for i := range securities {
+		keys[i] = make([]interface{}, 2)
+		keys[i][0] = securities[i].PortfolioID
+		keys[i][1] = securities[i].UUID
+	}
+
+	err := s.DB.Raw(`
+		SELECT portfolio_id, portfolio_security_uuid AS uuid, SUM(shares) AS value
+		FROM portfolios_transactions
+		WHERE (portfolio_id, portfolio_security_uuid) IN ?
+		 AND type IN ('SecuritiesOrder', 'SecuritiesTransfer')
+		GROUP BY portfolio_id, portfolio_security_uuid`, keys).
+		Find(&result).Error
+	if err != nil {
+		panic(err)
+	}
+
+	// Securities without transactions will not be present in result set
+	// map will be initialized with zeros, i.e. default value
+	sharesByKey := make(map[model.PortfolioSecurityKey]decimal.Decimal, len(result))
+	for _, r := range result {
+		sharesByKey[model.PortfolioSecurityKey{PortfolioID: r.PortfolioId, UUID: r.UUID}] = r.Value
+	}
+
+	ret := make([]*decimal.Decimal, len(securities))
+	for i, key := range securities {
+		shares := sharesByKey[key]
+		ret[i] = &shares
+	}
+
+	return ret
 }
 
 // GetPortfolioTransactionsOfPortfolio lists all transactions in portfolio

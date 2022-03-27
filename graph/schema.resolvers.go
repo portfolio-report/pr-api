@@ -13,6 +13,7 @@ import (
 	"github.com/portfolio-report/pr-api/graph/generated"
 	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/handler/middleware"
+	"github.com/shopspring/decimal"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"gorm.io/gorm"
 )
@@ -141,8 +142,9 @@ func (r *portfolioAccountResolver) Value(ctx context.Context, obj *model.Portfol
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *portfolioSecurityResolver) Shares(ctx context.Context, obj *model.PortfolioSecurity) (string, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *portfolioSecurityResolver) Shares(ctx context.Context, obj *model.PortfolioSecurity) (*decimal.Decimal, error) {
+	key := model.PortfolioSecurityKey{PortfolioID: obj.PortfolioID, UUID: obj.UUID}
+	return dataloaders.For(ctx).PortfolioSecuritySharesByUUID.Load(key)
 }
 
 func (r *queryResolver) Currencies(ctx context.Context) ([]*model.Currency, error) {
@@ -176,7 +178,12 @@ func (r *queryResolver) PortfolioAccounts(ctx context.Context, portfolioID int) 
 }
 
 func (r *queryResolver) PortfolioSecurities(ctx context.Context, portfolioID int) ([]*model.PortfolioSecurity, error) {
-	panic(fmt.Errorf("not implemented"))
+	user := middleware.UserFromContext(ctx)
+	if user == nil {
+		return nil, fmt.Errorf("Access denied")
+	}
+
+	return r.PortfolioService.GetPortfolioSecuritiesOfPortfolio(portfolioID)
 }
 
 func (r *queryResolver) PortfolioSecurity(ctx context.Context, portfolioID int, uuid uuid.UUID) (*model.PortfolioSecurity, error) {

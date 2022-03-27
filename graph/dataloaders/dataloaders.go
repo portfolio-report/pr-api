@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/portfolio-report/pr-api/graph/model"
 	"github.com/portfolio-report/pr-api/libs/dataloader"
+	"github.com/shopspring/decimal"
 )
 
 type contextKey string
@@ -14,11 +15,16 @@ const dataloaderCtxKey = contextKey("dataloaders")
 
 // Loaders holds references to dataloaders
 type Loaders struct {
-	UserByID *dataloader.Dataloader[int, *model.User]
+	UserByID                      *dataloader.Dataloader[int, *model.User]
+	PortfolioSecuritySharesByUUID *dataloader.Dataloader[model.PortfolioSecurityKey, *decimal.Decimal]
 }
 
-func newLoaders(ctx context.Context, userService model.UserService) *Loaders {
+func newLoaders(ctx context.Context, portfolioService model.PortfolioService, userService model.UserService) *Loaders {
 	return &Loaders{
+		PortfolioSecuritySharesByUUID: dataloader.New(dataloader.Config[model.PortfolioSecurityKey, *decimal.Decimal]{
+			Fetch: func(keys []model.PortfolioSecurityKey) ([]*decimal.Decimal, []error) {
+				return portfolioService.CalcSecurityShares(keys), nil
+			}}),
 		UserByID: dataloader.New(dataloader.Config[int, *model.User]{
 			Fetch: func(keys []int) ([]*model.User, []error) {
 				users, _ := userService.GetByIDs(keys)
@@ -40,10 +46,10 @@ func newLoaders(ctx context.Context, userService model.UserService) *Loaders {
 }
 
 // Middleware returns a middleware function that attaches loaders to request context
-func Middleware(userService model.UserService) gin.HandlerFunc {
+func Middleware(portfolioService model.PortfolioService, userService model.UserService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
-		loaders := newLoaders(ctx, userService)
+		loaders := newLoaders(ctx, portfolioService, userService)
 		ctx = context.WithValue(ctx, dataloaderCtxKey, loaders)
 		c.Request = c.Request.WithContext(ctx)
 	}

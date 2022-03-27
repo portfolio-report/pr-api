@@ -67,6 +67,7 @@ type PortfolioInput struct {
 }
 
 type PortfolioSecurity struct {
+	PortfolioID   int                          `json:"portfolioId"`
 	UUID          uuid.UUID                    `json:"uuid"`
 	Name          string                       `json:"name"`
 	CurrencyCode  string                       `json:"currencyCode"`
@@ -84,7 +85,7 @@ type PortfolioSecurity struct {
 	LatestFeedURL *string                      `json:"latestFeedUrl"`
 	Events        []*PortfolioSecurityEvent    `json:"events"`
 	Properties    []*PortfolioSecurityProperty `json:"properties"`
-	Shares        string                       `json:"shares"`
+	Shares        decimal.Decimal              `json:"shares"`
 	Quote         string                       `json:"quote"`
 }
 
@@ -117,6 +118,11 @@ type PortfolioSecurityInput struct {
 	LatestFeedURL *string                           `json:"latestFeedUrl"`
 	Events        []*PortfolioSecurityEventInput    `json:"events"`
 	Properties    []*PortfolioSecurityPropertyInput `json:"properties"`
+}
+
+type PortfolioSecurityKey struct {
+	PortfolioID int       `json:"portfolioId"`
+	UUID        uuid.UUID `json:"uuid"`
 }
 
 type PortfolioSecurityProperty struct {

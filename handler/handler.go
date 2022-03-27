@@ -70,7 +70,7 @@ func NewHandler(R *gin.Engine, c *Config) {
 	// /graphql
 	g.POST("/graphql",
 		middleware.Useragent,
-		dataloaders.Middleware(c.UserService),
+		dataloaders.Middleware(c.PortfolioService, c.UserService),
 		h.GraphqlHandler())
 	g.GET("/graphql", h.PlaygroundHandler(path.Join(g.BasePath(), "graphql")))
 

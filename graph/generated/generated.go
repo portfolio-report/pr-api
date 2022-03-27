@@ -121,6 +121,7 @@ type ComplexityRoot struct {
 		LatestFeedURL func(childComplexity int) int
 		Name          func(childComplexity int) int
 		Note          func(childComplexity int) int
+		PortfolioID   func(childComplexity int) int
 		Properties    func(childComplexity int) int
 		Quote         func(childComplexity int, currenyCode *string) int
 		SecurityUUID  func(childComplexity int) int
@@ -248,7 +249,7 @@ type PortfolioAccountResolver interface {
 	Value(ctx context.Context, obj *model.PortfolioAccount, currencyCode *string) (string, error)
 }
 type PortfolioSecurityResolver interface {
-	Shares(ctx context.Context, obj *model.PortfolioSecurity) (string, error)
+	Shares(ctx context.Context, obj *model.PortfolioSecurity) (*decimal.Decimal, error)
 }
 type QueryResolver interface {
 	Currencies(ctx context.Context) ([]*model.Currency, error)
@@ -660,6 +661,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PortfolioSecurity.Note(childComplexity), true
+
+	case "PortfolioSecurity.portfolioId":
+		if e.complexity.PortfolioSecurity.PortfolioID == nil {
+			break
+		}
+
+		return e.complexity.PortfolioSecurity.PortfolioID(childComplexity), true
 
 	case "PortfolioSecurity.properties":
 		if e.complexity.PortfolioSecurity.Properties == nil {
@@ -1362,6 +1370,7 @@ input PortfolioAccountInput {
 }
 
 type PortfolioSecurity {
+  portfolioId: Int!
   uuid: UUID!
   name: String!
   currencyCode: String!
@@ -1381,8 +1390,13 @@ type PortfolioSecurity {
   properties: [PortfolioSecurityProperty!]!
 
   # computed:
-  shares: String!
+  shares: Decimal!
   quote(currenyCode: String): String!
+}
+
+input PortfolioSecurityKey {
+  portfolioId: Int!
+  uuid: UUID!
 }
 
 input PortfolioSecurityInput {
@@ -3229,6 +3243,41 @@ func (ec *executionContext) _PortfolioAccount_value(ctx context.Context, field g
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PortfolioSecurity_portfolioId(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioSecurity) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PortfolioSecurity",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PortfolioID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _PortfolioSecurity_uuid(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioSecurity) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3836,9 +3885,9 @@ func (ec *executionContext) _PortfolioSecurity_shares(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*decimal.Decimal)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNDecimal2ᚖgithubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PortfolioSecurity_quote(ctx context.Context, field graphql.CollectedField, obj *model.PortfolioSecurity) (ret graphql.Marshaler) {
@@ -7759,6 +7808,37 @@ func (ec *executionContext) unmarshalInputPortfolioSecurityInput(ctx context.Con
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputPortfolioSecurityKey(ctx context.Context, obj interface{}) (model.PortfolioSecurityKey, error) {
+	var it model.PortfolioSecurityKey
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "portfolioId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("portfolioId"))
+			it.PortfolioID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "uuid":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uuid"))
+			it.UUID, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputPortfolioSecurityPropertyInput(ctx context.Context, obj interface{}) (model.PortfolioSecurityPropertyInput, error) {
 	var it model.PortfolioSecurityPropertyInput
 	asMap := map[string]interface{}{}
@@ -8636,6 +8716,16 @@ func (ec *executionContext) _PortfolioSecurity(ctx context.Context, sel ast.Sele
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("PortfolioSecurity")
+		case "portfolioId":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._PortfolioSecurity_portfolioId(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "uuid":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._PortfolioSecurity_uuid(ctx, field, obj)
@@ -10359,6 +10449,27 @@ func (ec *executionContext) unmarshalNDecimal2githubᚗcomᚋshopspringᚋdecima
 
 func (ec *executionContext) marshalNDecimal2githubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx context.Context, sel ast.SelectionSet, v decimal.Decimal) graphql.Marshaler {
 	res := model.MarshalDecimalScalar(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNDecimal2ᚖgithubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx context.Context, v interface{}) (*decimal.Decimal, error) {
+	res, err := model.UnmarshalDecimalScalar(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNDecimal2ᚖgithubᚗcomᚋshopspringᚋdecimalᚐDecimal(ctx context.Context, sel ast.SelectionSet, v *decimal.Decimal) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := model.MarshalDecimalScalar(*v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
