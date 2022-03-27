@@ -183,6 +183,14 @@ func (r *queryResolver) PortfolioSecurities(ctx context.Context, portfolioID int
 		return nil, fmt.Errorf("Access denied")
 	}
 
+	_, err := r.PortfolioService.GetPortfolioOfUserByID(user, uint(portfolioID))
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("Not found")
+		}
+		panic(err)
+	}
+
 	return r.PortfolioService.GetPortfolioSecuritiesOfPortfolio(portfolioID)
 }
 
