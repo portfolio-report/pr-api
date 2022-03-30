@@ -11,7 +11,7 @@ import (
 func (h *statsHandler) CountClientupdate(c *gin.Context) {
 	c.Header("Cache-Control", "no-cache")
 
-	timestamp := time.Now()
+	timestamp := time.Now().UTC()
 	version := c.Param("version")
 	country := h.GeoipService.GetCountryFromIp(c.ClientIP())
 	useragent := c.GetHeader("User-Agent")
