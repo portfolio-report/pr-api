@@ -11,6 +11,7 @@ import (
 
 func TestSecurities(t *testing.T) {
 	handlerConfig.DB.Model(&db.User{}).Where("username = 'testuser-e2e'").Update("is_admin", true)
+	handlerConfig.DB.Create(&db.Market{Code: "TEST", Name: "Test market"})
 
 	a := assert.New(t)
 
@@ -35,12 +36,46 @@ func TestSecurities(t *testing.T) {
 		securityUuid = body["uuid"].(string)
 	}
 
+	// Add market and prices
+	{
+		res := api("PATCH", "/securities/uuid/"+securityUuid+"/markets/TEST",
+			gin.H{"currencyCode": "EUR", "symbol": "TST"}, &session.Token)
+		a.Equal(200, res.Code)
+
+		res = api("PATCH", "/securities/uuid/"+securityUuid+"/markets/TEST",
+			gin.H{"prices": []gin.H{
+				{"date": "2020-01-01", "close": 101.01},
+				{"date": "2020-01-02", "close": 101.02},
+				{"date": "2020-01-03", "close": 0},
+			}}, &session.Token)
+		a.Equal(200, res.Code)
+
+		res = api("PATCH", "/securities/uuid/"+securityUuid+"/markets/TEST",
+			gin.H{"prices": []gin.H{
+				{"date": "2020-01-02", "close": 101.02},
+				{"date": "2020-01-03", "close": 101.03},
+				{"date": "2020-01-04", "close": 101.04},
+				{"date": "2020-01-05", "close": 101.05},
+			}}, &session.Token)
+		a.Equal(200, res.Code)
+	}
+
 	// Get security (admin)
 	{
 		body, res := jsonbody[gin.H](
 			api("GET", "/securities/"+securityUuid, nil, &session.Token))
 		a.Equal(200, res.Code)
 		a.Equal("Test name", body["name"])
+		a.NotNil(body["markets"])
+		markets := body["markets"].([]interface{})
+		a.Len(markets, 1)
+		market := markets[0].(map[string]interface{})
+		a.Equal("TEST", market["marketCode"])
+		a.Equal("EUR", market["currencyCode"])
+		a.Equal("TST", market["symbol"])
+		a.Equal("2020-01-01", market["firstPriceDate"])
+		a.Equal("2020-01-05", market["lastPriceDate"])
+		a.True(market["updatePrices"].(bool))
 	}
 
 	// Get security (public)
@@ -55,6 +90,38 @@ func TestSecurities(t *testing.T) {
 			api("GET", "/securities/uuid/"+strings.Replace(securityUuid, "-", "", 4), nil, nil))
 		a.Equal(200, res.Code)
 		a.Equal("Test name", body["name"])
+		markets := body["markets"].([]interface{})
+		a.Len(markets, 1)
+		market := markets[0].(map[string]interface{})
+		a.Equal("TEST", market["marketCode"])
+		a.Equal("EUR", market["currencyCode"])
+		a.Equal("TST", market["symbol"])
+		a.Equal("2020-01-01", market["firstPriceDate"])
+		a.Equal("2020-01-05", market["lastPriceDate"])
+	}
+
+	// Get prices (public)
+	{
+		body, res := jsonbody[gin.H](
+			api("GET", "/securities/uuid/"+strings.Replace(securityUuid, "-", "", 4)+"/markets/TEST?from=2020-01-01", nil, nil))
+		a.Equal(200, res.Code)
+		a.Equal("TEST", body["marketCode"])
+		a.Equal("EUR", body["currencyCode"])
+		a.Equal("TST", body["symbol"])
+		a.Equal("2020-01-01", body["firstPriceDate"])
+		a.Equal("2020-01-05", body["lastPriceDate"])
+		prices := body["prices"].([]interface{})
+		a.Len(prices, 5)
+		a.Equal("2020-01-01", prices[0].(map[string]interface{})["date"])
+		a.Equal(101.01, prices[0].(map[string]interface{})["close"])
+		a.Equal("2020-01-02", prices[1].(map[string]interface{})["date"])
+		a.Equal(101.02, prices[1].(map[string]interface{})["close"])
+		a.Equal("2020-01-03", prices[2].(map[string]interface{})["date"])
+		a.Equal(101.03, prices[2].(map[string]interface{})["close"])
+		a.Equal("2020-01-04", prices[3].(map[string]interface{})["date"])
+		a.Equal(101.04, prices[3].(map[string]interface{})["close"])
+		a.Equal("2020-01-05", prices[4].(map[string]interface{})["date"])
+		a.Equal(101.05, prices[4].(map[string]interface{})["close"])
 	}
 
 	// Search security (public)
@@ -127,4 +194,12 @@ func TestSecurities(t *testing.T) {
 		res = api("DELETE", "/securities/"+securityUuid, nil, &session.Token)
 		a.Equal(404, res.Code)
 	}
+
+	// Invalid calls
+	{
+		res := api("DELETE", "/securities/invalid-uuid", nil, &session.Token)
+		a.Equal(404, res.Code)
+	}
+
+	handlerConfig.DB.Delete(&db.Market{Code: "TEST"})
 }
