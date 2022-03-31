@@ -132,15 +132,12 @@ func TestTaxonomies(t *testing.T) {
 		a.Equal("Test code", body["code"])
 	}
 
-	// Delete second taxonomy
-	{
-		res := api("DELETE", "/taxonomies/"+secondTaxonomyUuid, nil, &session.Token)
-		a.Equal(200, res.Code)
-	}
-
 	// Invalid calls
 	{
 		res := api("POST", "/taxonomies/", nil, &session.Token)
+		a.Equal(400, res.Code)
+
+		res = api("POST", "/taxonomies/", gin.H{"parentUUID": "11111111-1111-1111-1111-111111111111"}, &session.Token)
 		a.Equal(400, res.Code)
 
 		res = api("GET", "/taxonomies/invalid-uuid", nil, &session.Token)
@@ -155,10 +152,26 @@ func TestTaxonomies(t *testing.T) {
 		res = api("PUT", "/taxonomies/11111111-1111-1111-1111-111111111111", gin.H{}, &session.Token)
 		a.Equal(404, res.Code)
 
+		res = api("PUT", "/taxonomies/"+secondTaxonomyUuid, nil, &session.Token)
+		a.Equal(400, res.Code)
+
+		res = api("PUT", "/taxonomies/"+secondTaxonomyUuid, gin.H{"parentUUID": "11111111-1111-1111-1111-111111111111"}, &session.Token)
+		a.Equal(400, res.Code)
+
+		res = api("PUT", "/taxonomies/"+secondTaxonomyUuid, gin.H{"parentUUID": secondTaxonomyUuid}, &session.Token)
+		a.Equal(400, res.Code)
+
 		res = api("DELETE", "/taxonomies/invalid-uuid", nil, &session.Token)
 		a.Equal(404, res.Code)
 
 		res = api("DELETE", "/taxonomies/11111111-1111-1111-1111-111111111111", nil, &session.Token)
 		a.Equal(404, res.Code)
 	}
+
+	// Delete second taxonomy
+	{
+		res := api("DELETE", "/taxonomies/"+secondTaxonomyUuid, nil, &session.Token)
+		a.Equal(200, res.Code)
+	}
+
 }
