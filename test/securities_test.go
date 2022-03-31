@@ -216,6 +216,12 @@ func TestSecurities(t *testing.T) {
 
 		res = api("PATCH", "/securities/"+securityUuid, nil, &session.Token)
 		a.Equal(400, res.Code)
+
+		res = api("PATCH", "/securities/invalid-uuid/markets/TEST", gin.H{}, &session.Token)
+		a.Equal(404, res.Code)
+
+		res = api("PATCH", "/securities/11111111-1111-1111-1111-111111111111/markets/TEST", gin.H{}, &session.Token)
+		a.Equal(404, res.Code)
 	}
 
 	// Delete security

@@ -12,7 +12,8 @@ func TestDecimalString(t *testing.T) {
 	a := assert.New(t)
 
 	d1 := DecimalString("1.23450")
-	var dn *DecimalString = nil
+	var d_nil *DecimalString = nil
+	d_invalid := DecimalString("aaa")
 
 	// MarshalJSON
 	{
@@ -20,7 +21,7 @@ func TestDecimalString(t *testing.T) {
 		a.Nil(err)
 		a.Equal("1.23450", string(b1))
 
-		bn, err := json.Marshal(dn)
+		bn, err := json.Marshal(d_nil)
 		a.Nil(err)
 		a.Equal("null", string(bn))
 	}
@@ -28,7 +29,7 @@ func TestDecimalString(t *testing.T) {
 	// String
 	{
 		a.Equal("1.23450", *d1.String())
-		a.Nil(dn.String())
+		a.Nil(d_nil.String())
 	}
 
 	// NullDecimal
@@ -37,7 +38,9 @@ func TestDecimalString(t *testing.T) {
 		a.True(nd.Valid)
 		a.True(decimal.NewFromFloat(1.2345).Equal(nd.Decimal))
 
-		a.False(dn.NullDecimal().Valid)
+		a.False(d_nil.NullDecimal().Valid)
+
+		a.Panics(func() { d_invalid.NullDecimal() })
 	}
 
 }

@@ -61,7 +61,7 @@ func TestStats(t *testing.T) {
 	// GET all updates
 	{
 		body, res := jsonbody[gin.H](
-			api("GET", "/stats/?version=test-version", nil, &session.Token))
+			api("GET", "/stats/?version=test-version&descending=true", nil, &session.Token))
 		a.Equal(http.StatusOK, res.Code)
 		a.NotNil(body["entries"])
 		a.NotNil(body["params"])
@@ -82,6 +82,10 @@ func TestStats(t *testing.T) {
 		age := time.Now().Sub(timestamp)
 		a.Positive(age)
 		a.Less(age, 1*time.Second)
+
+		// invalid request
+		res = api("GET", "/stats/?sort=invalid", nil, &session.Token)
+		a.Equal(400, res.Code)
 	}
 
 	// DELETE update
@@ -89,5 +93,9 @@ func TestStats(t *testing.T) {
 		res := api("DELETE", "/stats/"+strconv.Itoa(id), nil, &session.Token)
 		a.Equal(http.StatusNoContent, res.Code)
 		a.Equal(0, res.Body.Len())
+
+		// invalid request
+		res = api("DELETE", "/stats/aaa", nil, &session.Token)
+		a.Equal(404, res.Code)
 	}
 }
