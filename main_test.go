@@ -23,8 +23,11 @@ var handlerConfig *handler.Config
 var user *model.User
 var session *model.Session
 
-func req(method, target string, body io.Reader) *httptest.ResponseRecorder {
+func api(method, target string, body io.Reader, token *string) *httptest.ResponseRecorder {
 	req := httptest.NewRequest(method, target, body)
+	if token != nil {
+		req.Header.Add("Authorization", "Bearer "+*token)
+	}
 	res := httptest.NewRecorder()
 	app.ServeHTTP(res, req)
 	return res
@@ -65,11 +68,11 @@ func TestMain(m *testing.M) {
 func TestCors(t *testing.T) {
 	a := assert.New(t)
 
-	res := req("GET", "/", nil)
+	res := api("GET", "/", nil, nil)
 	a.Equal(http.StatusOK, res.Code)
 	a.Equal("*", res.Header().Get("Access-Control-Allow-Origin"))
 
-	res = req("OPTIONS", "/", nil)
+	res = api("OPTIONS", "/", nil, nil)
 	a.Equal(http.StatusNoContent, res.Code)
 	a.Equal("*", res.Header().Get("Access-Control-Allow-Origin"))
 	a.Equal(0, res.Body.Len(), "Body is empty")
@@ -78,14 +81,14 @@ func TestCors(t *testing.T) {
 func Test404(t *testing.T) {
 	a := assert.New(t)
 
-	res := req("GET", "/does-not-exist", nil)
+	res := api("GET", "/does-not-exist", nil, nil)
 	a.Equal(404, res.Code, "HTTP code is 404")
 	var body map[string]interface{}
 	json.Unmarshal(res.Body.Bytes(), &body)
 	a.Equal(404., body["statusCode"], "statusCode in JSON response is 404")
 }
 
-func TestAuth(t *testing.T) {
+func TestAuthRequired(t *testing.T) {
 	testCases := []struct {
 		method string
 		url    string
@@ -122,7 +125,7 @@ func TestAuth(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.method+" "+tc.url, func(t *testing.T) {
-			res := req(tc.method, tc.url, nil)
+			res := api(tc.method, tc.url, nil, nil)
 			assert.Equal(t, 401, res.Code, "Forbidden without Authorization header")
 
 			req := httptest.NewRequest(tc.method, tc.url, nil)
@@ -416,20 +419,20 @@ func TestTaxonomies(t *testing.T) {
 
 func TestStats(t *testing.T) {
 	handlerConfig.DB.Model(&db.User{}).Where("username = 'testuser-e2e'").Update("is_admin", true)
-	handlerConfig.DB.Debug().Delete(&db.Clientupdate{}, "version = 'test-version'")
+	handlerConfig.DB.Delete(&db.Clientupdate{}, "version = 'test-version'")
 
 	a := assert.New(t)
 
 	// HEAD request
 	{
-		res := req("HEAD", "/stats/update/name.abuchen.portfolio/test-version", nil)
+		res := api("HEAD", "/stats/update/name.abuchen.portfolio/test-version", nil, nil)
 		a.Equal(http.StatusOK, res.Code)
 		a.Equal(res.Body.Len(), 0)
 	}
 
 	// GET /updates
 	{
-		res := req("GET", "/stats/updates", nil)
+		res := api("GET", "/stats/updates", nil, nil)
 		a.Equal(http.StatusOK, res.Code)
 		var body []gin.H
 		err := json.Unmarshal(res.Body.Bytes(), &body)
@@ -455,7 +458,7 @@ func TestStats(t *testing.T) {
 
 	// GET /update/test-version
 	{
-		res := req("GET", "/stats/updates/test-version", nil)
+		res := api("GET", "/stats/updates/test-version", nil, nil)
 		a.Equal(http.StatusOK, res.Code)
 		var body gin.H
 		err := json.Unmarshal(res.Body.Bytes(), &body)
@@ -506,6 +509,101 @@ func TestStats(t *testing.T) {
 
 		a.Equal(http.StatusNoContent, res.Code)
 		a.Equal(0, res.Body.Len())
+	}
+}
+
+func TestAuth(t *testing.T) {
+	handlerConfig.DB.Delete(&db.User{}, "username = 'testuser-e2e-auth'")
+
+	a := assert.New(t)
+
+	var token string
+
+	// Register user
+	{
+		reqBody, err := json.Marshal(map[string]string{"username": "testuser-e2e-auth", "password": "password"})
+		a.Nil(err)
+		res := api("POST", "/auth/register", bytes.NewReader(reqBody), nil)
+
+		a.Equal(http.StatusCreated, res.Code)
+		var body map[string]string
+		json.Unmarshal(res.Body.Bytes(), &body)
+		a.Len(body["token"], 36)
+		token = body["token"]
+	}
+
+	// Register existing user
+	{
+		reqBody, err := json.Marshal(map[string]string{"username": "testuser-e2e-auth", "password": "password"})
+		a.Nil(err)
+		res := api("POST", "/auth/register", bytes.NewReader(reqBody), nil)
+
+		a.Equal(http.StatusBadRequest, res.Code)
+	}
+
+	// Get user details
+	{
+		res := api("GET", "/auth/users/me", nil, &token)
+		a.Equal(http.StatusOK, res.Code)
+	}
+
+	// Log out user
+	{
+		res := api("POST", "/auth/logout", nil, &token)
+		a.Equal(http.StatusNoContent, res.Code)
+	}
+
+	// Log in user
+	{
+		reqBody, err := json.Marshal(map[string]string{"username": "testuser-e2e-auth", "password": "password"})
+		a.Nil(err)
+		res := api("POST", "/auth/login", bytes.NewReader(reqBody), nil)
+		a.Equal(http.StatusCreated, res.Code)
+
+		var body map[string]string
+		json.Unmarshal(res.Body.Bytes(), &body)
+		a.Len(body["token"], 36)
+
+		token = body["token"]
+	}
+
+	// Change password
+	{
+		reqBody, err := json.Marshal(map[string]string{"oldPassword": "password", "newPassword": "better_password"})
+		a.Nil(err)
+		res := api("POST", "/auth/users/me/password", bytes.NewReader(reqBody), &token)
+		a.Equal(http.StatusCreated, res.Code)
+	}
+
+	// Invalid log in
+	{
+		reqBody, err := json.Marshal(map[string]string{"username": "testuser-e2e-auth", "password": "password"})
+		a.Nil(err)
+		res := api("POST", "/auth/login", bytes.NewReader(reqBody), nil)
+		a.Equal(http.StatusUnauthorized, res.Code)
+
+		reqBody, err = json.Marshal(map[string]string{"username": "testuser-e2e-auth-wrong", "password": "password"})
+		a.Nil(err)
+		res = api("POST", "/auth/login", bytes.NewReader(reqBody), nil)
+		a.Equal(http.StatusUnauthorized, res.Code)
+	}
+
+	// List sessions
+	{
+		res := api("GET", "/auth/sessions", nil, &token)
+		a.Equal(http.StatusOK, res.Code)
+
+		var body []map[string]string
+		json.Unmarshal(res.Body.Bytes(), &body)
+
+		a.Len(body, 1)
+		a.Equal(token, body[0]["token"])
+	}
+
+	// Delete user
+	{
+		res := api("DELETE", "/auth/users/me", nil, &token)
+		a.Equal(http.StatusNoContent, res.Code)
 	}
 
 }
