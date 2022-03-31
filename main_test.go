@@ -23,14 +23,35 @@ var handlerConfig *handler.Config
 var user *model.User
 var session *model.Session
 
-func api(method, target string, body io.Reader, token *string) *httptest.ResponseRecorder {
-	req := httptest.NewRequest(method, target, body)
+func api(method, target string, body any, token *string) *httptest.ResponseRecorder {
+	var bodyReader io.Reader
+	if body != nil {
+		bodyBytes, err := json.Marshal(body)
+		if err != nil {
+			panic(err)
+		}
+
+		bodyReader = bytes.NewReader(bodyBytes)
+	} else {
+		bodyReader = nil
+	}
+
+	req := httptest.NewRequest(method, target, bodyReader)
 	if token != nil {
 		req.Header.Add("Authorization", "Bearer "+*token)
 	}
 	res := httptest.NewRecorder()
 	app.ServeHTTP(res, req)
 	return res
+}
+
+func jsonbody[T any](res *httptest.ResponseRecorder) (T, *httptest.ResponseRecorder) {
+	var body T
+	err := json.Unmarshal(res.Body.Bytes(), &body)
+	if err != nil {
+		panic(err)
+	}
+	return body, res
 }
 
 func TestMain(m *testing.M) {
@@ -81,10 +102,9 @@ func TestCors(t *testing.T) {
 func Test404(t *testing.T) {
 	a := assert.New(t)
 
-	res := api("GET", "/does-not-exist", nil, nil)
+	body, res := jsonbody[map[string]interface{}](
+		api("GET", "/does-not-exist", nil, nil))
 	a.Equal(404, res.Code, "HTTP code is 404")
-	var body map[string]interface{}
-	json.Unmarshal(res.Body.Bytes(), &body)
 	a.Equal(404., body["statusCode"], "statusCode in JSON response is 404")
 }
 
@@ -128,10 +148,8 @@ func TestAuthRequired(t *testing.T) {
 			res := api(tc.method, tc.url, nil, nil)
 			assert.Equal(t, 401, res.Code, "Forbidden without Authorization header")
 
-			req := httptest.NewRequest(tc.method, tc.url, nil)
-			req.Header.Add("Authorization", "Bearer d050be73-442e-42e2-96ab-f048527f41e2")
-			res = httptest.NewRecorder()
-			app.ServeHTTP(res, req)
+			invalidToken := "d050be73-442e-42e2-96ab-f048527f41e2"
+			res = api(tc.method, tc.url, nil, &invalidToken)
 			assert.Equal(t, 401, res.Code, "Forbidden with invalid Authorization header")
 		})
 	}
@@ -156,11 +174,7 @@ func TestAdminAuth(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.method+" "+tc.url, func(t *testing.T) {
-			req := httptest.NewRequest(tc.method, tc.url, nil)
-			req.Header.Add("Authorization", "Bearer "+session.Token)
-			res := httptest.NewRecorder()
-			app.ServeHTTP(res, req)
-
+			res := api(tc.method, tc.url, nil, &session.Token)
 			assert.Equal(t, 401, res.Code, "Forbidden without admin privileges")
 		})
 	}
@@ -175,19 +189,12 @@ func TestSecurities(t *testing.T) {
 
 	// Create security
 	{
-		reqBody, err := json.Marshal(gin.H{
+		reqBody := gin.H{
 			"name": "Test name",
-		})
-		a.Nil(err)
-		req := httptest.NewRequest("POST", "/securities/", bytes.NewReader(reqBody))
-		req.Header.Add("Authorization", "Bearer "+session.Token)
-		res := httptest.NewRecorder()
-		app.ServeHTTP(res, req)
-
+		}
+		body, res := jsonbody[gin.H](
+			api("POST", "/securities/", reqBody, &session.Token))
 		a.Equal(201, res.Code)
-
-		var body gin.H
-		json.Unmarshal(res.Body.Bytes(), &body)
 		a.Equal("Test name", body["name"])
 
 		securityUuid = body["uuid"].(string)
@@ -195,19 +202,12 @@ func TestSecurities(t *testing.T) {
 
 	// Update security
 	{
-		reqBody, err := json.Marshal(gin.H{
+		reqBody := gin.H{
 			"securityType": "Test type",
-		})
-		a.Nil(err)
-		req := httptest.NewRequest("PATCH", "/securities/"+securityUuid, bytes.NewReader(reqBody))
-		req.Header.Add("Authorization", "Bearer "+session.Token)
-		res := httptest.NewRecorder()
-		app.ServeHTTP(res, req)
-
+		}
+		body, res := jsonbody[gin.H](
+			api("PATCH", "/securities/"+securityUuid, reqBody, &session.Token))
 		a.Equal(200, res.Code)
-
-		var body gin.H
-		json.Unmarshal(res.Body.Bytes(), &body)
 		a.Equal(securityUuid, body["uuid"])
 		a.Equal("Test name", body["name"])
 		a.Equal("Test type", body["securityType"])
@@ -215,15 +215,9 @@ func TestSecurities(t *testing.T) {
 
 	// Delete security
 	{
-		req := httptest.NewRequest("DELETE", "/securities/"+securityUuid, nil)
-		req.Header.Add("Authorization", "Bearer "+session.Token)
-		res := httptest.NewRecorder()
-		app.ServeHTTP(res, req)
-
+		body, res := jsonbody[gin.H](
+			api("DELETE", "/securities/"+securityUuid, nil, &session.Token))
 		a.Equal(200, res.Code)
-
-		var body gin.H
-		json.Unmarshal(res.Body.Bytes(), &body)
 		a.Equal(securityUuid, body["uuid"])
 		a.Equal("Test name", body["name"])
 		a.Equal("Test type", body["securityType"])
@@ -240,19 +234,12 @@ func TestTaxonomies(t *testing.T) {
 
 	// Create root taxonomy
 	{
-		reqBody, err := json.Marshal(gin.H{
+		reqBody := gin.H{
 			"name": "Test name",
-		})
-		a.Nil(err)
-		req := httptest.NewRequest("POST", "/taxonomies/", bytes.NewReader(reqBody))
-		req.Header.Add("Authorization", "Bearer "+session.Token)
-		res := httptest.NewRecorder()
-		app.ServeHTTP(res, req)
-
+		}
+		body, res := jsonbody[gin.H](
+			api("POST", "/taxonomies/", reqBody, &session.Token))
 		a.Equal(201, res.Code)
-
-		var body gin.H
-		json.Unmarshal(res.Body.Bytes(), &body)
 		a.Equal("Test name", body["name"])
 		a.Nil(body["code"])
 
@@ -261,19 +248,12 @@ func TestTaxonomies(t *testing.T) {
 
 	// Create second taxonomy
 	{
-		reqBody, err := json.Marshal(gin.H{
+		reqBody := gin.H{
 			"name": "Second tax",
-		})
-		a.Nil(err)
-		req := httptest.NewRequest("POST", "/taxonomies/", bytes.NewReader(reqBody))
-		req.Header.Add("Authorization", "Bearer "+session.Token)
-		res := httptest.NewRecorder()
-		app.ServeHTTP(res, req)
-
+		}
+		body, res := jsonbody[gin.H](
+			api("POST", "/taxonomies/", reqBody, &session.Token))
 		a.Equal(201, res.Code)
-
-		var body gin.H
-		json.Unmarshal(res.Body.Bytes(), &body)
 		a.Equal("Second tax", body["name"])
 		a.Nil(body["code"])
 
@@ -282,20 +262,13 @@ func TestTaxonomies(t *testing.T) {
 
 	// Make second taxonomy child of root
 	{
-		reqBody, err := json.Marshal(gin.H{
+		reqBody := gin.H{
 			"name":       "Second tax",
 			"parentUuid": rootTaxonomyUuid,
-		})
-		a.Nil(err)
-		req := httptest.NewRequest("PUT", "/taxonomies/"+secondTaxonomyUuid, bytes.NewReader(reqBody))
-		req.Header.Add("Authorization", "Bearer "+session.Token)
-		res := httptest.NewRecorder()
-		app.ServeHTTP(res, req)
-
+		}
+		body, res := jsonbody[gin.H](
+			api("PUT", "/taxonomies/"+secondTaxonomyUuid, reqBody, &session.Token))
 		a.Equal(200, res.Code)
-
-		var body gin.H
-		json.Unmarshal(res.Body.Bytes(), &body)
 		a.Equal(secondTaxonomyUuid, body["uuid"])
 		a.Equal("Second tax", body["name"])
 		a.Nil(body["code"])
@@ -305,15 +278,9 @@ func TestTaxonomies(t *testing.T) {
 
 	// Get root taxonomy
 	{
-		req := httptest.NewRequest("GET", "/taxonomies/"+rootTaxonomyUuid, nil)
-		req.Header.Add("Authorization", "Bearer "+session.Token)
-		res := httptest.NewRecorder()
-		app.ServeHTTP(res, req)
-
+		body, res := jsonbody[gin.H](
+			api("GET", "/taxonomies/"+rootTaxonomyUuid, nil, &session.Token))
 		a.Equal(200, res.Code)
-
-		var body gin.H
-		json.Unmarshal(res.Body.Bytes(), &body)
 		a.Equal(rootTaxonomyUuid, body["uuid"])
 		a.Equal("Test name", body["name"])
 		a.Nil(body["code"])
@@ -323,20 +290,13 @@ func TestTaxonomies(t *testing.T) {
 
 	// Update root taxonomy
 	{
-		reqBody, err := json.Marshal(gin.H{
+		reqBody := gin.H{
 			"name": "Test name2",
 			"code": "Test code",
-		})
-		a.Nil(err)
-		req := httptest.NewRequest("PUT", "/taxonomies/"+rootTaxonomyUuid, bytes.NewReader(reqBody))
-		req.Header.Add("Authorization", "Bearer "+session.Token)
-		res := httptest.NewRecorder()
-		app.ServeHTTP(res, req)
-
+		}
+		body, res := jsonbody[gin.H](
+			api("PUT", "/taxonomies/"+rootTaxonomyUuid, reqBody, &session.Token))
 		a.Equal(200, res.Code)
-
-		var body gin.H
-		json.Unmarshal(res.Body.Bytes(), &body)
 		a.Equal(rootTaxonomyUuid, body["uuid"])
 		a.Equal("Test name2", body["name"])
 		a.Equal("Test code", body["code"])
@@ -344,15 +304,10 @@ func TestTaxonomies(t *testing.T) {
 
 	// Get all taxonomies
 	{
-		req := httptest.NewRequest("GET", "/taxonomies/", nil)
-		req.Header.Add("Authorization", "Bearer "+session.Token)
-		res := httptest.NewRecorder()
-		app.ServeHTTP(res, req)
-
+		body, res := jsonbody[[]gin.H](
+			api("GET", "/taxonomies/", nil, &session.Token))
 		a.Equal(200, res.Code)
 
-		var body []gin.H
-		json.Unmarshal(res.Body.Bytes(), &body)
 		rootFound := false
 		secondFound := false
 		for _, tax := range body {
@@ -369,20 +324,13 @@ func TestTaxonomies(t *testing.T) {
 
 	// Move second taxonomy out of root
 	{
-		reqBody, err := json.Marshal(gin.H{
+		reqBody := gin.H{
 			"name":       "Second tax",
 			"parentUuid": nil,
-		})
-		a.Nil(err)
-		req := httptest.NewRequest("PUT", "/taxonomies/"+secondTaxonomyUuid, bytes.NewReader(reqBody))
-		req.Header.Add("Authorization", "Bearer "+session.Token)
-		res := httptest.NewRecorder()
-		app.ServeHTTP(res, req)
-
+		}
+		body, res := jsonbody[gin.H](
+			api("PUT", "/taxonomies/"+secondTaxonomyUuid, reqBody, &session.Token))
 		a.Equal(200, res.Code)
-
-		var body gin.H
-		json.Unmarshal(res.Body.Bytes(), &body)
 		a.Equal(secondTaxonomyUuid, body["uuid"])
 		a.Equal("Second tax", body["name"])
 		a.Nil(body["code"])
@@ -392,15 +340,9 @@ func TestTaxonomies(t *testing.T) {
 
 	// Delete root taxonomy
 	{
-		req := httptest.NewRequest("DELETE", "/taxonomies/"+rootTaxonomyUuid, nil)
-		req.Header.Add("Authorization", "Bearer "+session.Token)
-		res := httptest.NewRecorder()
-		app.ServeHTTP(res, req)
-
+		body, res := jsonbody[gin.H](
+			api("DELETE", "/taxonomies/"+rootTaxonomyUuid, nil, &session.Token))
 		a.Equal(200, res.Code)
-
-		var body gin.H
-		json.Unmarshal(res.Body.Bytes(), &body)
 		a.Equal(rootTaxonomyUuid, body["uuid"])
 		a.Equal("Test name2", body["name"])
 		a.Equal("Test code", body["code"])
@@ -408,11 +350,7 @@ func TestTaxonomies(t *testing.T) {
 
 	// Delete second taxonomy
 	{
-		req := httptest.NewRequest("DELETE", "/taxonomies/"+secondTaxonomyUuid, nil)
-		req.Header.Add("Authorization", "Bearer "+session.Token)
-		res := httptest.NewRecorder()
-		app.ServeHTTP(res, req)
-
+		res := api("DELETE", "/taxonomies/"+secondTaxonomyUuid, nil, &session.Token)
 		a.Equal(200, res.Code)
 	}
 }
@@ -432,11 +370,9 @@ func TestStats(t *testing.T) {
 
 	// GET /updates
 	{
-		res := api("GET", "/stats/updates", nil, nil)
+		body, res := jsonbody[[]gin.H](
+			api("GET", "/stats/updates", nil, nil))
 		a.Equal(http.StatusOK, res.Code)
-		var body []gin.H
-		err := json.Unmarshal(res.Body.Bytes(), &body)
-		a.Nil(err)
 		a.GreaterOrEqual(len(body), 1)
 
 		found := false
@@ -444,7 +380,7 @@ func TestStats(t *testing.T) {
 			if b["version"] == "test-version" {
 				found = true
 				a.Equal(b["count"], 1.)
-				_, err = time.Parse("2006-01-02T15:04:05Z07:00", b["firstUpdate"].(string))
+				_, err := time.Parse("2006-01-02T15:04:05Z07:00", b["firstUpdate"].(string))
 				a.Nil(err)
 				timestamp, err := time.Parse("2006-01-02T15:04:05Z07:00", b["lastUpdate"].(string))
 				a.Nil(err)
@@ -458,11 +394,9 @@ func TestStats(t *testing.T) {
 
 	// GET /update/test-version
 	{
-		res := api("GET", "/stats/updates/test-version", nil, nil)
+		body, res := jsonbody[gin.H](
+			api("GET", "/stats/updates/test-version", nil, nil))
 		a.Equal(http.StatusOK, res.Code)
-		var body gin.H
-		err := json.Unmarshal(res.Body.Bytes(), &body)
-		a.Nil(err)
 		a.NotNil(body["byDate"])
 		a.NotNil(body["byCountry"])
 	}
@@ -470,15 +404,9 @@ func TestStats(t *testing.T) {
 	var id int
 	// GET all updates
 	{
-		req := httptest.NewRequest("GET", "/stats/?version=test-version", nil)
-		req.Header.Add("Authorization", "Bearer "+session.Token)
-		res := httptest.NewRecorder()
-		app.ServeHTTP(res, req)
-
+		body, res := jsonbody[gin.H](
+			api("GET", "/stats/?version=test-version", nil, &session.Token))
 		a.Equal(http.StatusOK, res.Code)
-		var body gin.H
-		err := json.Unmarshal(res.Body.Bytes(), &body)
-		a.Nil(err)
 		a.NotNil(body["entries"])
 		a.NotNil(body["params"])
 
@@ -502,11 +430,7 @@ func TestStats(t *testing.T) {
 
 	// DELETE update
 	{
-		req := httptest.NewRequest("DELETE", "/stats/"+strconv.Itoa(id), nil)
-		req.Header.Add("Authorization", "Bearer "+session.Token)
-		res := httptest.NewRecorder()
-		app.ServeHTTP(res, req)
-
+		res := api("DELETE", "/stats/"+strconv.Itoa(id), nil, &session.Token)
 		a.Equal(http.StatusNoContent, res.Code)
 		a.Equal(0, res.Body.Len())
 	}
@@ -521,22 +445,18 @@ func TestAuth(t *testing.T) {
 
 	// Register user
 	{
-		reqBody, err := json.Marshal(map[string]string{"username": "testuser-e2e-auth", "password": "password"})
-		a.Nil(err)
-		res := api("POST", "/auth/register", bytes.NewReader(reqBody), nil)
-
+		reqBody := map[string]string{"username": "testuser-e2e-auth", "password": "password"}
+		body, res := jsonbody[map[string]string](
+			api("POST", "/auth/register", reqBody, nil))
 		a.Equal(http.StatusCreated, res.Code)
-		var body map[string]string
-		json.Unmarshal(res.Body.Bytes(), &body)
 		a.Len(body["token"], 36)
 		token = body["token"]
 	}
 
 	// Register existing user
 	{
-		reqBody, err := json.Marshal(map[string]string{"username": "testuser-e2e-auth", "password": "password"})
-		a.Nil(err)
-		res := api("POST", "/auth/register", bytes.NewReader(reqBody), nil)
+		reqBody := map[string]string{"username": "testuser-e2e-auth", "password": "password"}
+		res := api("POST", "/auth/register", reqBody, nil)
 
 		a.Equal(http.StatusBadRequest, res.Code)
 	}
@@ -555,13 +475,9 @@ func TestAuth(t *testing.T) {
 
 	// Log in user
 	{
-		reqBody, err := json.Marshal(map[string]string{"username": "testuser-e2e-auth", "password": "password"})
-		a.Nil(err)
-		res := api("POST", "/auth/login", bytes.NewReader(reqBody), nil)
+		reqBody := map[string]string{"username": "testuser-e2e-auth", "password": "password"}
+		body, res := jsonbody[map[string]string](api("POST", "/auth/login", reqBody, nil))
 		a.Equal(http.StatusCreated, res.Code)
-
-		var body map[string]string
-		json.Unmarshal(res.Body.Bytes(), &body)
 		a.Len(body["token"], 36)
 
 		token = body["token"]
@@ -569,32 +485,26 @@ func TestAuth(t *testing.T) {
 
 	// Change password
 	{
-		reqBody, err := json.Marshal(map[string]string{"oldPassword": "password", "newPassword": "better_password"})
-		a.Nil(err)
-		res := api("POST", "/auth/users/me/password", bytes.NewReader(reqBody), &token)
+		reqBody := map[string]string{"oldPassword": "password", "newPassword": "better_password"}
+		res := api("POST", "/auth/users/me/password", reqBody, &token)
 		a.Equal(http.StatusCreated, res.Code)
 	}
 
 	// Invalid log in
 	{
-		reqBody, err := json.Marshal(map[string]string{"username": "testuser-e2e-auth", "password": "password"})
-		a.Nil(err)
-		res := api("POST", "/auth/login", bytes.NewReader(reqBody), nil)
+		reqBody := map[string]string{"username": "testuser-e2e-auth", "password": "password"}
+		res := api("POST", "/auth/login", reqBody, nil)
 		a.Equal(http.StatusUnauthorized, res.Code)
 
-		reqBody, err = json.Marshal(map[string]string{"username": "testuser-e2e-auth-wrong", "password": "password"})
-		a.Nil(err)
-		res = api("POST", "/auth/login", bytes.NewReader(reqBody), nil)
+		reqBody = map[string]string{"username": "testuser-e2e-auth-wrong", "password": "password"}
+		res = api("POST", "/auth/login", reqBody, nil)
 		a.Equal(http.StatusUnauthorized, res.Code)
 	}
 
 	// List sessions
 	{
-		res := api("GET", "/auth/sessions", nil, &token)
+		body, res := jsonbody[[]map[string]string](api("GET", "/auth/sessions", nil, &token))
 		a.Equal(http.StatusOK, res.Code)
-
-		var body []map[string]string
-		json.Unmarshal(res.Body.Bytes(), &body)
 
 		a.Len(body, 1)
 		a.Equal(token, body[0]["token"])
