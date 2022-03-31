@@ -137,4 +137,28 @@ func TestTaxonomies(t *testing.T) {
 		res := api("DELETE", "/taxonomies/"+secondTaxonomyUuid, nil, &session.Token)
 		a.Equal(200, res.Code)
 	}
+
+	// Invalid calls
+	{
+		res := api("POST", "/taxonomies/", nil, &session.Token)
+		a.Equal(400, res.Code)
+
+		res = api("GET", "/taxonomies/invalid-uuid", nil, &session.Token)
+		a.Equal(404, res.Code)
+
+		res = api("GET", "/taxonomies/11111111-1111-1111-1111-111111111111", nil, &session.Token)
+		a.Equal(404, res.Code)
+
+		res = api("PUT", "/taxonomies/invalid-uuid", nil, &session.Token)
+		a.Equal(404, res.Code)
+
+		res = api("PUT", "/taxonomies/11111111-1111-1111-1111-111111111111", gin.H{}, &session.Token)
+		a.Equal(404, res.Code)
+
+		res = api("DELETE", "/taxonomies/invalid-uuid", nil, &session.Token)
+		a.Equal(404, res.Code)
+
+		res = api("DELETE", "/taxonomies/11111111-1111-1111-1111-111111111111", nil, &session.Token)
+		a.Equal(404, res.Code)
+	}
 }
