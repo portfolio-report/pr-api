@@ -17,12 +17,6 @@ func TestSecurities(t *testing.T) {
 
 	var securityUuid string
 
-	// Invalid create
-	{
-		res := api("POST", "/securities/", nil, &session.Token)
-		a.Equal(400, res.Code)
-	}
-
 	// Create security
 	{
 		reqBody := gin.H{
@@ -182,6 +176,48 @@ func TestSecurities(t *testing.T) {
 		a.Equal(400, res.Code)
 	}
 
+	// Invalid calls
+	{
+		res := api("GET", "/securities/uuid/invalid-uuid", nil, nil)
+		a.Equal(404, res.Code)
+
+		res = api("GET", "/securities/uuid/11111111-1111-1111-1111-111111111111", nil, nil)
+		a.Equal(404, res.Code)
+
+		res = api("GET", "/securities/uuid/invalid-uuid/markets/TEST", nil, nil)
+		a.Equal(404, res.Code)
+
+		res = api("GET", "/securities/uuid/11111111-1111-1111-1111-111111111111/markets/TEST", nil, nil)
+		a.Equal(404, res.Code)
+
+		res = api("GET", "/securities/uuid/"+securityUuid+"/markets/TEST?from=not-a-date", nil, nil)
+		a.Equal(400, res.Code)
+
+		res = api("GET", "/securities/invalid-uuid", nil, &session.Token)
+		a.Equal(404, res.Code)
+
+		res = api("GET", "/securities/11111111-1111-1111-1111-111111111111", nil, &session.Token)
+		a.Equal(404, res.Code)
+
+		res = api("GET", "/securities/invalid-uuid", nil, &session.Token)
+		a.Equal(404, res.Code)
+
+		res = api("GET", "/securities/11111111-1111-1111-1111-111111111111", nil, &session.Token)
+		a.Equal(404, res.Code)
+
+		res = api("POST", "/securities/", nil, &session.Token)
+		a.Equal(400, res.Code)
+
+		res = api("PATCH", "/securities/invalid-uuid", nil, &session.Token)
+		a.Equal(404, res.Code)
+
+		res = api("PATCH", "/securities/11111111-1111-1111-1111-111111111111", gin.H{}, &session.Token)
+		a.Equal(404, res.Code)
+
+		res = api("PATCH", "/securities/"+securityUuid, nil, &session.Token)
+		a.Equal(400, res.Code)
+	}
+
 	// Delete security
 	{
 		body, res := jsonbody[gin.H](
@@ -192,12 +228,6 @@ func TestSecurities(t *testing.T) {
 		a.Equal("Test type", body["securityType"])
 
 		res = api("DELETE", "/securities/"+securityUuid, nil, &session.Token)
-		a.Equal(404, res.Code)
-	}
-
-	// Invalid calls
-	{
-		res := api("DELETE", "/securities/invalid-uuid", nil, &session.Token)
 		a.Equal(404, res.Code)
 	}
 
