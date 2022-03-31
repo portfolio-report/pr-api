@@ -19,6 +19,8 @@ func (h *securitiesHandler) GetSecurityPrices(c *gin.Context) {
 		return
 	}
 
+	marketCode := c.Param("marketCode")
+
 	from := c.Query("from")
 	if from == "" {
 		from = time.Now().AddDate(0, 0, -14).Format("2006-01-02")
@@ -33,7 +35,7 @@ func (h *securitiesHandler) GetSecurityPrices(c *gin.Context) {
 	var prices []db.SecurityMarketPrice
 
 	err := h.DB.
-		Where("market_code = 'XETR' AND security_uuid = ?", uuid).
+		Where("market_code = ? AND security_uuid = ?", marketCode, uuid).
 		Take(&market).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		libs.HandleNotFoundError(c)

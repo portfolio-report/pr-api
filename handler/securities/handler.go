@@ -38,7 +38,7 @@ func NewHandler(
 	// public:
 	g.GET("/search/:searchTerm", h.SearchSecurities)
 	g.GET("/uuid/:uuid", h.GetSecurityPublic)
-	g.GET("/uuid/:uuid/markets/XETR", h.GetSecurityPrices)
+	g.GET("/uuid/:uuid/markets/:marketCode", h.GetSecurityPrices)
 
 	// admin:
 	g.GET("/",
