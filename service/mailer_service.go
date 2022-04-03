@@ -51,13 +51,16 @@ func (s *mailerService) SendContactMail(senderEmail string, senderName string, s
 	}
 
 	msg := []byte("To: " + s.RecipientEmail + "\r\n" +
-		"From: \"" + senderName + "\" <" + senderEmail + ">\r\n" +
+		"From: " + senderName + " via Portfolio Report <" + s.RecipientEmail + ">\r\n" +
+		"Reply-To: " + senderName + " <" + senderEmail + ">\r\n" +
 		"Subject: " + subject + "\r\n" +
+		"Content-Type: text/plain; charset=UTF-8\r\n" +
 		"X-Remote-IP: " + ip + "\r\n" +
 		"\r\n" +
 		message + "\r\n")
 
-	err := smtp.SendMail(s.Host+":"+s.Port, auth, senderEmail, []string{s.RecipientEmail}, msg)
+	// Use recipient email as recipient and envelope sender!
+	err := smtp.SendMail(s.Host+":"+s.Port, auth, s.RecipientEmail, []string{s.RecipientEmail}, msg)
 
 	if err != nil {
 		return fmt.Errorf("could not send email (host: %s): %w", s.Host, err)

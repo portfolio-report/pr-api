@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/portfolio-report/pr-api/libs"
@@ -29,10 +30,18 @@ func (h *rootHandler) Contact(c *gin.Context) {
 		panic(errors.New("could not send email, not configured"))
 	}
 
+	// Sanitize input
+	request.Subject = strings.ReplaceAll(request.Subject, "\n", "")
+	request.Subject = strings.ReplaceAll(request.Subject, "\r", "")
+	request.Name = strings.ReplaceAll(request.Name, "\n", "")
+	request.Name = strings.ReplaceAll(request.Name, "\r", "")
+	request.Email = strings.ReplaceAll(request.Email, "\n", "")
+	request.Email = strings.ReplaceAll(request.Email, "\r", "")
+
 	err := h.MailerService.SendContactMail(
 		request.Email,
 		request.Name,
-		request.Subject+" (via Portfolio Report)",
+		request.Subject,
 		request.Message,
 		c.ClientIP())
 	if err != nil {
