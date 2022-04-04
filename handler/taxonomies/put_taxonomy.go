@@ -32,6 +32,7 @@ func (h *taxonomiesHandler) PutTaxonomy(c *gin.Context) {
 			return
 		}
 		libs.HandleBadRequestError(c, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, taxonomy)
