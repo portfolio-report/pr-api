@@ -113,7 +113,7 @@ input PortfolioSecurityInput {
   active: Boolean!
   note: String!
   securityUuid: UUID
-  updatedAt: Time!
+  updatedAt: Time
   calendar: String
   feed: String
   feedUrl: String
@@ -168,7 +168,7 @@ input PortfolioTransactionInput {
   shares: Decimal
   portfolioSecurityUuid: UUID
   note: String!
-  updatedAt: Time!
+  updatedAt: Time
   units: [PortfolioTransactionUnitInput!]!
 }
 

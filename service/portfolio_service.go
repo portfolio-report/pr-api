@@ -352,7 +352,6 @@ func (s *portfolioService) UpsertPortfolioSecurity(
 	security.Active = input.Active
 	security.Note = input.Note
 	security.SecurityUUID = input.SecurityUUID
-	security.UpdatedAt = input.UpdatedAt
 	security.Calendar = input.Calendar
 	security.Feed = input.Feed
 	security.FeedUrl = input.FeedURL
@@ -383,6 +382,10 @@ func (s *portfolioService) UpsertPortfolioSecurity(
 		}
 
 		panic(err)
+	}
+
+	if input.UpdatedAt != nil {
+		s.DB.Model(&security).UpdateColumn("updated_at", *input.UpdatedAt)
 	}
 
 	return s.securityModelFromDb(security), nil
@@ -496,7 +499,6 @@ func (s *portfolioService) UpsertPortfolioTransaction(
 	transaction.Datetime = input.Datetime
 	transaction.Note = input.Note
 	transaction.Shares = input.Shares
-	transaction.UpdatedAt = input.UpdatedAt
 	transaction.AccountUUID = input.AccountUUID
 	transaction.PartnerTransactionUUID = input.PartnerTransactionUUID
 	transaction.PortfolioSecurityUUID = input.PortfolioSecurityUUID
@@ -516,6 +518,10 @@ func (s *portfolioService) UpsertPortfolioTransaction(
 		}
 
 		panic(err)
+	}
+
+	if input.UpdatedAt != nil {
+		s.DB.Model(&transaction).UpdateColumn("updated_at", *input.UpdatedAt)
 	}
 
 	transaction.Units = units

@@ -110,7 +110,7 @@ type PortfolioSecurityInput struct {
 	Active        bool                              `json:"active"`
 	Note          string                            `json:"note"`
 	SecurityUUID  *uuid.UUID                        `json:"securityUuid"`
-	UpdatedAt     time.Time                         `json:"updatedAt"`
+	UpdatedAt     *time.Time                        `json:"updatedAt"`
 	Calendar      *string                           `json:"calendar"`
 	Feed          *string                           `json:"feed"`
 	FeedURL       *string                           `json:"feedUrl"`
@@ -158,7 +158,7 @@ type PortfolioTransactionInput struct {
 	Shares                 *decimal.Decimal                 `json:"shares"`
 	PortfolioSecurityUUID  *uuid.UUID                       `json:"portfolioSecurityUuid"`
 	Note                   string                           `json:"note"`
-	UpdatedAt              time.Time                        `json:"updatedAt"`
+	UpdatedAt              *time.Time                       `json:"updatedAt"`
 	Units                  []*PortfolioTransactionUnitInput `json:"units"`
 }
 

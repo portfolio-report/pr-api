@@ -1408,7 +1408,7 @@ input PortfolioSecurityInput {
   active: Boolean!
   note: String!
   securityUuid: UUID
-  updatedAt: Time!
+  updatedAt: Time
   calendar: String
   feed: String
   feedUrl: String
@@ -1463,7 +1463,7 @@ input PortfolioTransactionInput {
   shares: Decimal
   portfolioSecurityUuid: UUID
   note: String!
-  updatedAt: Time!
+  updatedAt: Time
   units: [PortfolioTransactionUnitInput!]!
 }
 
@@ -7742,7 +7742,7 @@ func (ec *executionContext) unmarshalInputPortfolioSecurityInput(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
-			it.UpdatedAt, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			it.UpdatedAt, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7947,7 +7947,7 @@ func (ec *executionContext) unmarshalInputPortfolioTransactionInput(ctx context.
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
-			it.UpdatedAt, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			it.UpdatedAt, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
