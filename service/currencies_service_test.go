@@ -42,8 +42,7 @@ func TestCurrenciesService(t *testing.T) {
 }
 
 func (s *CurrenciesServiceTestSuite) TestGetCurrencies() {
-	currencies, err := s.service.GetCurrencies()
-	s.Nil(err)
+	currencies := s.service.GetCurrencies()
 	s.Len(currencies, 35)
 
 	foundEUR := false

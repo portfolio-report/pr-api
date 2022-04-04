@@ -84,7 +84,7 @@ func (*currenciesService) exchangeratePricesModelFromDb(p []db.ExchangeratePrice
 }
 
 // GetCurrencies lists currencies with exchange rates
-func (s *currenciesService) GetCurrencies() ([]*model.Currency, error) {
+func (s *currenciesService) GetCurrencies() []*model.Currency {
 	var currencies []db.Currency
 	if err := s.DB.
 		Preload("ExchangeratesBase").Preload("ExchangeratesQuote").
@@ -97,7 +97,7 @@ func (s *currenciesService) GetCurrencies() ([]*model.Currency, error) {
 		response[i] = s.modelFromDb(currencies[i])
 	}
 
-	return response, nil
+	return response
 }
 
 // GetExchangerate returns exchange rate identified by base and quote currency code

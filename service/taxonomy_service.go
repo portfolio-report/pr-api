@@ -38,7 +38,7 @@ func (*taxonomyService) modelFromDb(t db.Taxonomy) *model.Taxonomy {
 }
 
 // GetAllTaxonomies returns all taxonomies
-func (s *taxonomyService) GetAllTaxonomies() ([]*model.Taxonomy, error) {
+func (s *taxonomyService) GetAllTaxonomies() []*model.Taxonomy {
 	var taxonomies []db.Taxonomy
 	if err := s.DB.Find(&taxonomies).Error; err != nil {
 		panic(err)
@@ -49,7 +49,7 @@ func (s *taxonomyService) GetAllTaxonomies() ([]*model.Taxonomy, error) {
 		ret = append(ret, s.modelFromDb(t))
 	}
 
-	return ret, nil
+	return ret
 }
 
 // GetTaxonomyByUUID returns taxonomy identified by UUID
@@ -61,7 +61,7 @@ func (s *taxonomyService) GetTaxonomyByUUID(uuid uuid.UUID) (*model.Taxonomy, er
 
 // GetDescendantsOfTaxonomy returns all descendants of taxonomy,
 // i.e. children, children of children, etc.
-func (s *taxonomyService) GetDescendantsOfTaxonomy(taxonomy *model.Taxonomy) ([]*model.Taxonomy, error) {
+func (s *taxonomyService) GetDescendantsOfTaxonomy(taxonomy *model.Taxonomy) []*model.Taxonomy {
 	var taxonomies []db.Taxonomy
 	err := s.DB.Find(&taxonomies, "root_uuid = ?", taxonomy.UUID).Error
 	if err != nil {
@@ -73,7 +73,7 @@ func (s *taxonomyService) GetDescendantsOfTaxonomy(taxonomy *model.Taxonomy) ([]
 		ret = append(ret, s.modelFromDb(t))
 	}
 
-	return ret, nil
+	return ret
 }
 
 // CreateTaxonomy creates new taxonomy

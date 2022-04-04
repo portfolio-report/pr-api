@@ -10,8 +10,6 @@ import (
 // GetTransactions lists all transactions in portfolio
 func (h *portfoliosHandler) GetTransactions(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
-
-	transactions, _ := h.PortfolioService.GetPortfolioTransactionsOfPortfolio(portfolioId)
-
+	transactions := h.PortfolioService.GetPortfolioTransactionsOfPortfolio(portfolioId)
 	c.JSON(http.StatusOK, transactions)
 }

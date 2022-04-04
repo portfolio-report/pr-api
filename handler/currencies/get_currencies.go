@@ -8,9 +8,6 @@ import (
 
 // GetCurrencies returns all currencies with their exchange rates
 func (h *currenciesHandler) GetCurrencies(c *gin.Context) {
-	currencies, err := h.CurrenciesService.GetCurrencies()
-	if err != nil {
-		panic(err)
-	}
+	currencies := h.CurrenciesService.GetCurrencies()
 	c.JSON(http.StatusOK, currencies)
 }

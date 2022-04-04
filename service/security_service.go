@@ -29,13 +29,13 @@ func (s *securityService) GetSecurityByUUID(uuid uuid.UUID) (*model.Security, er
 }
 
 // GetEventsOfSecurity returns all events of security
-func (s *securityService) GetEventsOfSecurity(security *model.Security) ([]*model.Event, error) {
+func (s *securityService) GetEventsOfSecurity(security *model.Security) []*model.Event {
 	var events []db.Event
 	err := s.DB.Find(&events, "security_uuid = ?", security.UUID).Error
 	if err != nil {
 		panic(err)
 	}
-	return s.eventsModelFromDb(events), nil
+	return s.eventsModelFromDb(events)
 }
 
 // CreateSecurity create security

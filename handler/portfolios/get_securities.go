@@ -10,8 +10,6 @@ import (
 // GetSecurities lists all securities in portfolio
 func (h *portfoliosHandler) GetSecurities(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
-
-	securities, _ := h.PortfolioService.GetPortfolioSecuritiesOfPortfolio(portfolioId)
-
+	securities := h.PortfolioService.GetPortfolioSecuritiesOfPortfolio(portfolioId)
 	c.JSON(http.StatusOK, securities)
 }

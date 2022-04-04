@@ -125,7 +125,7 @@ func (*portfolioService) transactionModelFromDb(t db.PortfolioTransaction) *mode
 }
 
 // GetAllOfUser returns all portfolios of user
-func (s *portfolioService) GetAllOfUser(user *model.User) ([]*model.Portfolio, error) {
+func (s *portfolioService) GetAllOfUser(user *model.User) []*model.Portfolio {
 	var portfolios []db.Portfolio
 	err := s.DB.Find(&portfolios, "user_id = ?", user.ID).Error
 	if err != nil {
@@ -136,7 +136,7 @@ func (s *portfolioService) GetAllOfUser(user *model.User) ([]*model.Portfolio, e
 	for _, p := range portfolios {
 		response = append(response, s.modelFromDb(p))
 	}
-	return response, nil
+	return response
 }
 
 // GetPortfolioOfUserByID returns single portfolio of user
@@ -208,7 +208,7 @@ func (s *portfolioService) UpdatePortfolio(ID uint, req *model.PortfolioInput) (
 }
 
 // DeletePortfolio removes portfolio
-func (s *portfolioService) DeletePortfolio(ID uint) (*model.Portfolio, error) {
+func (s *portfolioService) DeletePortfolio(ID uint) *model.Portfolio {
 	portfolio := db.Portfolio{
 		ID: ID,
 	}
@@ -216,11 +216,11 @@ func (s *portfolioService) DeletePortfolio(ID uint) (*model.Portfolio, error) {
 	if err != nil {
 		panic(err)
 	}
-	return s.modelFromDb(portfolio), nil
+	return s.modelFromDb(portfolio)
 }
 
 // GetPortfolioAccountsOfPortfolio lists all account in portfolio
-func (s *portfolioService) GetPortfolioAccountsOfPortfolio(portfolioId int) ([]*model.PortfolioAccount, error) {
+func (s *portfolioService) GetPortfolioAccountsOfPortfolio(portfolioId int) []*model.PortfolioAccount {
 	var accounts []db.PortfolioAccount
 	err := s.DB.Where("portfolio_id = ?", portfolioId).Find(&accounts).Error
 	if err != nil {
@@ -232,7 +232,7 @@ func (s *portfolioService) GetPortfolioAccountsOfPortfolio(portfolioId int) ([]*
 		response[i] = s.accountModelFromDb(accounts[i])
 	}
 
-	return response, nil
+	return response
 }
 
 // UpsertPortfolioAccount creates or updates portfolio account
@@ -316,7 +316,7 @@ func (s *portfolioService) DeletePortfolioAccount(portfolioId int, uuid uuid.UUI
 }
 
 // GetPortfolioSecuritiesOfPortfolio lists all securities in portfolio
-func (s *portfolioService) GetPortfolioSecuritiesOfPortfolio(portfolioId int) ([]*model.PortfolioSecurity, error) {
+func (s *portfolioService) GetPortfolioSecuritiesOfPortfolio(portfolioId int) []*model.PortfolioSecurity {
 	var securities []db.PortfolioSecurity
 	err := s.DB.Where("portfolio_id = ?", portfolioId).Find(&securities).Error
 	if err != nil {
@@ -328,7 +328,7 @@ func (s *portfolioService) GetPortfolioSecuritiesOfPortfolio(portfolioId int) ([
 		response[i] = s.securityModelFromDb(securities[i])
 	}
 
-	return response, nil
+	return response
 }
 
 // UpsertPortfolioSecurity creates or updates portfolio security
@@ -463,7 +463,7 @@ func (s *portfolioService) CalcSecurityShares(securities []model.PortfolioSecuri
 }
 
 // GetPortfolioTransactionsOfPortfolio lists all transactions in portfolio
-func (s *portfolioService) GetPortfolioTransactionsOfPortfolio(portfolioId int) ([]*model.PortfolioTransaction, error) {
+func (s *portfolioService) GetPortfolioTransactionsOfPortfolio(portfolioId int) []*model.PortfolioTransaction {
 	var transactions []db.PortfolioTransaction
 	err := s.DB.
 		Preload("Units").
@@ -478,7 +478,7 @@ func (s *portfolioService) GetPortfolioTransactionsOfPortfolio(portfolioId int) 
 		response[i] = s.transactionModelFromDb(transactions[i])
 	}
 
-	return response, nil
+	return response
 }
 
 // UpsertPortfolioTransaction creates or updates portfolio transaction

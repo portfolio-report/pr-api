@@ -58,15 +58,13 @@ func (s *SessionServiceTestSuite) TestGetAllOfUser() {
 	err := s.db.Delete(&db.Session{}, "user_id = ?", s.dbUser.ID).Error
 	s.Nil(err)
 
-	sessions, err := s.service.GetAllOfUser(s.user)
-	s.Nil(err)
+	sessions := s.service.GetAllOfUser(s.user)
 	s.Len(sessions, 0)
 
 	session, err := s.service.CreateSession(s.user, "some note")
 	s.Nil(err)
 
-	sessions, err = s.service.GetAllOfUser(s.user)
-	s.Nil(err)
+	sessions = s.service.GetAllOfUser(s.user)
 	s.Len(sessions, 1)
 	s.Equal(session, sessions[0])
 }

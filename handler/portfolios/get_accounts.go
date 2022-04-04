@@ -10,8 +10,6 @@ import (
 // GetAccounts lists all accounts in portfolio
 func (h *portfoliosHandler) GetAccounts(c *gin.Context) {
 	portfolioId := middleware.PortfolioFromContext(c).ID
-
-	accounts, _ := h.PortfolioService.GetPortfolioAccountsOfPortfolio(portfolioId)
-
+	accounts := h.PortfolioService.GetPortfolioAccountsOfPortfolio(portfolioId)
 	c.JSON(http.StatusOK, accounts)
 }

@@ -43,7 +43,7 @@ func (*sessionService) modelFromDb(s db.Session) *model.Session {
 }
 
 // GetAllOfUser returns all sessions of user
-func (s *sessionService) GetAllOfUser(user *model.User) ([]*model.Session, error) {
+func (s *sessionService) GetAllOfUser(user *model.User) []*model.Session {
 	var sessions []db.Session
 	err := s.DB.Find(&sessions, "user_id = ?", user.ID).Error
 	if err != nil {
@@ -54,7 +54,7 @@ func (s *sessionService) GetAllOfUser(user *model.User) ([]*model.Session, error
 	for _, session := range sessions {
 		response = append(response, s.modelFromDb(session))
 	}
-	return response, nil
+	return response
 }
 
 // CreateSession creates new session for user

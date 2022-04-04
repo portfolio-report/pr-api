@@ -22,10 +22,7 @@ func (h *taxonomiesHandler) GetTaxonomy(c *gin.Context) {
 		return
 	}
 
-	descendants, err := h.TaxonomyService.GetDescendantsOfTaxonomy(taxonomy)
-	if err != nil {
-		panic(err)
-	}
+	descendants := h.TaxonomyService.GetDescendantsOfTaxonomy(taxonomy)
 
 	c.JSON(http.StatusOK, gin.H{
 		"uuid":        taxonomy.UUID,

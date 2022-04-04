@@ -10,9 +10,6 @@ import (
 // GetPortfolios lists all portfolios of current user
 func (h *portfoliosHandler) GetPortfolios(c *gin.Context) {
 	user := middleware.UserFromContext(c.Request.Context())
-	portfolios, err := h.PortfolioService.GetAllOfUser(user)
-	if err != nil {
-		panic(err)
-	}
+	portfolios := h.PortfolioService.GetAllOfUser(user)
 	c.JSON(http.StatusOK, portfolios)
 }

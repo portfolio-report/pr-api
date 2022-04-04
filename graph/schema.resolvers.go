@@ -135,7 +135,7 @@ func (r *mutationResolver) DeletePortfolio(ctx context.Context, id int) (*model.
 		panic(err)
 	}
 
-	return r.PortfolioService.DeletePortfolio(uint(id))
+	return r.PortfolioService.DeletePortfolio(uint(id)), nil
 }
 
 func (r *portfolioAccountResolver) Value(ctx context.Context, obj *model.PortfolioAccount, currencyCode *string) (string, error) {
@@ -148,7 +148,7 @@ func (r *portfolioSecurityResolver) Shares(ctx context.Context, obj *model.Portf
 }
 
 func (r *queryResolver) Currencies(ctx context.Context) ([]*model.Currency, error) {
-	return r.CurrenciesService.GetCurrencies()
+	return r.CurrenciesService.GetCurrencies(), nil
 }
 
 func (r *queryResolver) Exchangerate(ctx context.Context, baseCurrencyCode string, quoteCurrencyCode string) (*model.Exchangerate, error) {
@@ -161,7 +161,7 @@ func (r *queryResolver) Portfolios(ctx context.Context) ([]*model.Portfolio, err
 		return nil, fmt.Errorf("Access denied")
 	}
 
-	return r.PortfolioService.GetAllOfUser(user)
+	return r.PortfolioService.GetAllOfUser(user), nil
 }
 
 func (r *queryResolver) Portfolio(ctx context.Context, id int) (*model.Portfolio, error) {
@@ -191,7 +191,7 @@ func (r *queryResolver) PortfolioSecurities(ctx context.Context, portfolioID int
 		panic(err)
 	}
 
-	return r.PortfolioService.GetPortfolioSecuritiesOfPortfolio(portfolioID)
+	return r.PortfolioService.GetPortfolioSecuritiesOfPortfolio(portfolioID), nil
 }
 
 func (r *queryResolver) PortfolioSecurity(ctx context.Context, portfolioID int, uuid uuid.UUID) (*model.PortfolioSecurity, error) {
@@ -216,7 +216,7 @@ func (r *queryResolver) Sessions(ctx context.Context) ([]*model.Session, error) 
 		return nil, fmt.Errorf("Access denied")
 	}
 
-	return r.SessionService.GetAllOfUser(user)
+	return r.SessionService.GetAllOfUser(user), nil
 }
 
 func (r *securityResolver) SecurityTaxonomies(ctx context.Context, obj *model.Security) ([]*model.SecurityTaxonomy, error) {
@@ -224,7 +224,7 @@ func (r *securityResolver) SecurityTaxonomies(ctx context.Context, obj *model.Se
 }
 
 func (r *securityResolver) Events(ctx context.Context, obj *model.Security) ([]*model.Event, error) {
-	return r.SecurityService.GetEventsOfSecurity(obj)
+	return r.SecurityService.GetEventsOfSecurity(obj), nil
 }
 
 func (r *securityTaxonomyResolver) Taxonomy(ctx context.Context, obj *model.SecurityTaxonomy) (*model.Taxonomy, error) {

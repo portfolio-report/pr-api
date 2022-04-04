@@ -99,8 +99,7 @@ func (s *SecurityServiceTestSuite) TestGetEventsOfSecurity() {
 	security := model.Security{UUID: dbSecurity.UUID}
 
 	{
-		events, err := s.service.GetEventsOfSecurity(&security)
-		s.Nil(err)
+		events := s.service.GetEventsOfSecurity(&security)
 		s.Len(events, 0)
 	}
 }
