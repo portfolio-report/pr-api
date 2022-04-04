@@ -28,6 +28,7 @@ func (h *portfoliosHandler) PutAccount(c *gin.Context) {
 	account, err := h.PortfolioService.UpsertPortfolioAccount(portfolioId, uuid, req)
 	if err != nil {
 		libs.HandleBadRequestError(c, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, account)
