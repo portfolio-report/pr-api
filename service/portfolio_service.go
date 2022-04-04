@@ -252,7 +252,6 @@ func (s *portfolioService) UpsertPortfolioAccount(
 	account.Name = input.Name
 	account.Active = input.Active
 	account.Note = input.Note
-	account.UpdatedAt = input.UpdatedAt
 
 	switch input.Type {
 	case model.PortfolioAccountTypeDeposit:
@@ -277,6 +276,10 @@ func (s *portfolioService) UpsertPortfolioAccount(
 		}
 
 		panic(err)
+	}
+
+	if input.UpdatedAt != nil {
+		s.DB.Model(&account).UpdateColumn("updated_at", *input.UpdatedAt)
 	}
 
 	return s.accountModelFromDb(account), nil

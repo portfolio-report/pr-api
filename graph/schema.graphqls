@@ -71,7 +71,7 @@ input PortfolioAccountInput {
   referenceAccountUuid: UUID
   active: Boolean!
   note: String!
-  updatedAt: Time!
+  updatedAt: Time
 }
 
 type PortfolioSecurity {

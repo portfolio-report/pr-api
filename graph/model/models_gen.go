@@ -57,7 +57,7 @@ type PortfolioAccountInput struct {
 	ReferenceAccountUUID *uuid.UUID           `json:"referenceAccountUuid"`
 	Active               bool                 `json:"active"`
 	Note                 string               `json:"note"`
-	UpdatedAt            time.Time            `json:"updatedAt"`
+	UpdatedAt            *time.Time           `json:"updatedAt"`
 }
 
 type PortfolioInput struct {
