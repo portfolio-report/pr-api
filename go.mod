@@ -15,7 +15,7 @@ require (
 	github.com/shopspring/decimal v1.3.1
 	github.com/vektah/gqlparser/v2 v2.4.1
 	gorm.io/datatypes v1.0.6
-	gorm.io/driver/postgres v1.3.1
+	gorm.io/driver/postgres v1.3.4
 	gorm.io/gorm v1.23.3
 )
 
