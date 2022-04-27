@@ -41,7 +41,7 @@ func setupCron(cs model.CurrenciesService) {
 	go func() {
 		// Run once after 5min, then every 2hours
 		time.Sleep(5 * time.Minute)
-		for true {
+		for {
 			updateExchangeRates()
 			time.Sleep(2 * time.Hour)
 		}
@@ -101,6 +101,7 @@ func InitializeService(cfg *service.Config, db *gorm.DB) *handler.Config {
 		SecurityService:   securityService,
 		TaxonomyService:   taxonomyService,
 		BaseURL:           "",
+		CacheMaxAge:       cfg.CacheMaxAge,
 		DB:                db,
 		Validate:          validate,
 	}

@@ -13,6 +13,7 @@ import (
 type Config struct {
 	Db                    db.Config
 	MailerTransport       string
+	CacheMaxAge           time.Duration
 	ContactRecipientEmail string
 	SessionTimeout        time.Duration
 	Ip2locToken           string
@@ -46,6 +47,9 @@ func ReadConfig() *Config {
 		defaultAtoi(os.Getenv("DATABASE_CONN_MAX_LIFE"), 5*60), // 5mins
 	) * time.Second
 
+	c.CacheMaxAge = time.Duration(
+		defaultAtoi(os.Getenv("CACHE_MAX_AGE"), 10*60), // 10min
+	) * time.Second
 	c.SessionTimeout = time.Duration(
 		defaultAtoi(os.Getenv("SESSION_TIMEOUT"), 15*60), // 15min
 	) * time.Second

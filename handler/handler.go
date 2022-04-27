@@ -2,6 +2,7 @@ package handler
 
 import (
 	"path"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -27,7 +28,8 @@ type Config struct {
 	model.TaxonomyService
 	model.MailerService
 	model.GeoipService
-	BaseURL string
+	BaseURL     string
+	CacheMaxAge time.Duration
 	*gorm.DB
 	*validator.Validate
 }
@@ -90,7 +92,7 @@ func NewHandler(R *gin.Engine, c *Config) {
 	g.POST("/contact", h.Contact)
 
 	// /securities
-	securities.NewHandler(g, c.DB, c.Validate, c.UserService, c.SecurityService, c.SessionService)
+	securities.NewHandler(g, c.DB, c.Validate, c.CacheMaxAge, c.UserService, c.SecurityService, c.SessionService)
 
 	// /portfolios
 	portfolios.NewHandler(g, c.SessionService, c.UserService, c.PortfolioService)

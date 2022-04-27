@@ -79,6 +79,9 @@ Optional parameters will use default value if not set.
 # Mode of gin gonic (debug, test or release)
 GIN_MODE="release"
 
+# Maximum age (in seconds) of cached responses
+CACHE_MAX_AGE=600
+
 # Maximum number of open database connections
 DATABASE_MAX_OPEN_CONN=25
 

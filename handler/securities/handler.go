@@ -1,6 +1,10 @@
 package securities
 
 import (
+	"time"
+
+	cache "github.com/chenyahui/gin-cache"
+	"github.com/chenyahui/gin-cache/persist"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/portfolio-report/pr-api/graph/model"
@@ -21,6 +25,7 @@ func NewHandler(
 	R *gin.RouterGroup,
 	DB *gorm.DB,
 	Validate *validator.Validate,
+	cacheMaxAge time.Duration,
 	UserService model.UserService,
 	SecurityService model.SecurityService,
 	SessionService model.SessionService,
@@ -35,10 +40,19 @@ func NewHandler(
 
 	g := R.Group("/securities")
 
+	memoryStore := persist.NewMemoryStore(cacheMaxAge)
+
+	var cacheMiddleware gin.HandlerFunc
+	if cacheMaxAge != 0 {
+		cacheMiddleware = cache.CacheByRequestURI(memoryStore, cacheMaxAge)
+	} else {
+		cacheMiddleware = func(c *gin.Context) {}
+	}
+
 	// public:
 	g.GET("/search/:searchTerm", h.SearchSecurities)
-	g.GET("/uuid/:uuid", h.GetSecurityPublic)
-	g.GET("/uuid/:uuid/markets/:marketCode", h.GetSecurityPrices)
+	g.GET("/uuid/:uuid", cacheMiddleware, h.GetSecurityPublic)
+	g.GET("/uuid/:uuid/markets/:marketCode", cacheMiddleware, h.GetSecurityPrices)
 
 	// admin:
 	g.GET("/",
