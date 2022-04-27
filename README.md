@@ -19,16 +19,13 @@ Please use the [discussion forum](https://forum.portfolio-performance.info/) to 
   - Use a [cloud service](https://www.postgresql.org/support/professional_hosting/)
 - Clone this repo
 
-### Install and run
+### Run
 ```bash
-# Download dependencies
-$ go mod download
-
 # Set `DATABASE_URL` environment variable or `.env`
 $ DATABASE_URL="postgresql://user:password@host:5432/database?sslmode=disable"
 
 # Start
-$ go run main.go
+$ go run .
 ```
 
 The backend provides a SwaggerUI for the REST API on `/doc` and a GraphQL playground on `/graphql`.
