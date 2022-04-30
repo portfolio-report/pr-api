@@ -3,7 +3,7 @@ module github.com/portfolio-report/pr-api
 go 1.18
 
 require (
-	github.com/99designs/gqlgen v0.17.3
+	github.com/99designs/gqlgen v0.17.5
 	github.com/antchfx/xmlquery v1.3.10
 	github.com/chenyahui/gin-cache v1.6.1
 	github.com/gin-gonic/gin v1.7.7
@@ -26,12 +26,12 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/go-redis/redis/v8 v8.11.4 // indirect
-	github.com/matryer/moq v0.2.3 // indirect
+	github.com/matryer/moq v0.2.7 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/urfave/cli/v2 v2.3.0 // indirect
-	golang.org/x/mod v0.5.1 // indirect
+	github.com/urfave/cli/v2 v2.4.0 // indirect
+	golang.org/x/mod v0.6.0-dev.0.20220106191415-9b9b3d81d5e3 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/tools v0.1.9 // indirect
+	golang.org/x/tools v0.1.10 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 )
 
@@ -73,7 +73,7 @@ require (
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
 	golang.org/x/sys v0.0.0-20220227234510-4e6760a101f9 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	google.golang.org/protobuf v1.27.1 // indirect
+	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	gorm.io/driver/mysql v1.3.2 // indirect
