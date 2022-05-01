@@ -54,7 +54,7 @@ jobs:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
       with:
         files: ./coverage.txt
         verbose: true
