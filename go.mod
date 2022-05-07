@@ -7,7 +7,7 @@ require (
 	github.com/antchfx/xmlquery v1.3.10
 	github.com/chenyahui/gin-cache v1.7.0
 	github.com/gin-gonic/gin v1.7.7
-	github.com/go-playground/validator/v10 v10.10.1
+	github.com/go-playground/validator/v10 v10.11.0
 	github.com/google/uuid v1.3.0
 	github.com/ip2location/ip2location-go v8.3.0+incompatible
 	github.com/joho/godotenv v1.4.0
