@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/99designs/gqlgen v0.17.5
 	github.com/antchfx/xmlquery v1.3.10
-	github.com/chenyahui/gin-cache v1.6.1
+	github.com/chenyahui/gin-cache v1.7.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-playground/validator/v10 v10.10.1
 	github.com/google/uuid v1.3.0
