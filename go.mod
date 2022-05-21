@@ -11,7 +11,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/ip2location/ip2location-go v8.3.0+incompatible
 	github.com/joho/godotenv v1.4.0
-	github.com/lib/pq v1.10.5
+	github.com/lib/pq v1.10.6
 	github.com/portfolio-report/swaggerui v0.1.0
 	github.com/shopspring/decimal v1.3.1
 	github.com/vektah/gqlparser/v2 v2.4.2
