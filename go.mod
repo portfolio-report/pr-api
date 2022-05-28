@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/99designs/gqlgen v0.17.5
-	github.com/antchfx/xmlquery v1.3.10
+	github.com/antchfx/xmlquery v1.3.11
 	github.com/chenyahui/gin-cache v1.7.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-playground/validator/v10 v10.11.0
@@ -37,7 +37,7 @@ require (
 
 require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect
-	github.com/antchfx/xpath v1.2.0 // indirect
+	github.com/antchfx/xpath v1.2.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
