@@ -14,7 +14,7 @@ require (
 	github.com/lib/pq v1.10.6
 	github.com/portfolio-report/swaggerui v0.1.0
 	github.com/shopspring/decimal v1.3.1
-	github.com/vektah/gqlparser/v2 v2.4.2
+	github.com/vektah/gqlparser/v2 v2.4.4
 	gorm.io/datatypes v1.0.6
 	gorm.io/driver/postgres v1.3.5
 	gorm.io/gorm v1.23.5
