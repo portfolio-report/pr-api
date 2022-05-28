@@ -3,7 +3,7 @@ module github.com/portfolio-report/pr-api
 go 1.18
 
 require (
-	github.com/99designs/gqlgen v0.17.5
+	github.com/99designs/gqlgen v0.17.9
 	github.com/antchfx/xmlquery v1.3.11
 	github.com/chenyahui/gin-cache v1.7.0
 	github.com/gin-gonic/gin v1.7.7
@@ -28,7 +28,8 @@ require (
 	github.com/go-redis/redis/v8 v8.11.4 // indirect
 	github.com/matryer/moq v0.2.7 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/urfave/cli/v2 v2.4.0 // indirect
+	github.com/urfave/cli/v2 v2.8.1 // indirect
+	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20220106191415-9b9b3d81d5e3 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/tools v0.1.10 // indirect
