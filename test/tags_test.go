@@ -71,6 +71,37 @@ func TestTags(t *testing.T) {
 		}
 	}
 
+	// Remove first security
+	{
+		reqBody := gin.H{
+			"securities": []gin.H{{"uuid": securityUuids[1]}},
+		}
+		body, res := jsonbody[gin.H](
+			api("PUT", "/tags/foo", reqBody, &session.Token))
+		a.Equal(200, res.Code)
+		a.Equal("foo", body["name"])
+
+		securities := body["securities"].([]interface{})
+		a.Len(body["securities"], 1)
+
+		security := securities[0].(map[string]interface{})
+		a.Equal(securityUuids[1], security["uuid"])
+	}
+
+	// Get updated tag
+	{
+		body, res := jsonbody[gin.H](
+			api("GET", "/tags/foo", nil, &session.Token))
+		a.Equal(200, res.Code)
+		a.Equal("foo", body["name"])
+
+		securities := body["securities"].([]interface{})
+		a.Len(body["securities"], 1)
+
+		security := securities[0].(map[string]interface{})
+		a.Equal(securityUuids[1], security["uuid"])
+	}
+
 	// Invalid calls
 	{
 		res := api("PUT", "/tags/foo", nil, &session.Token)
