@@ -57,6 +57,15 @@ func (h *securitiesHandler) GetSecurityPublic(c *gin.Context) {
 		panic(err)
 	}
 
+	var securityTags []db.SecurityTag
+	if err = h.DB.Find(&securityTags, "security_uuid = ?", uuid).Error; err != nil {
+		panic(err)
+	}
+	tags := make([]string, len(securityTags))
+	for i := range securityTags {
+		tags[i] = securityTags[i].TagName
+	}
+
 	eventsResp := []model.Event{}
 	for _, e := range events {
 		eventsResp = append(eventsResp, model.Event{
@@ -100,5 +109,6 @@ func (h *securitiesHandler) GetSecurityPublic(c *gin.Context) {
 		"markets":            marketsResp,
 		"events":             eventsResp,
 		"securityTaxonomies": taxonomiesResp,
+		"tags":               tags,
 	})
 }

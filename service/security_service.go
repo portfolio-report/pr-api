@@ -1,7 +1,11 @@
 package service
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"github.com/portfolio-report/pr-api/db"
 	"github.com/portfolio-report/pr-api/graph/model"
 	"gorm.io/gorm"
@@ -26,6 +30,29 @@ func (s *securityService) GetSecurityByUUID(uuid uuid.UUID) (*model.Security, er
 		return nil, err
 	}
 	return s.modelFromDb(security), nil
+}
+
+// GetSecuritiesByTag returns securities associated with tag
+func (s *securityService) GetSecuritiesByTag(tag string) []*model.Security {
+	var dbTag db.Tag
+	if err := s.DB.Take(&dbTag, "name = ?", tag).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return []*model.Security{}
+		}
+		panic(err)
+	}
+
+	var dbSecurities []db.Security
+	if err := s.DB.Model(&dbTag).Association("Securities").Find(&dbSecurities); err != nil {
+		panic(err)
+	}
+
+	securities := make([]*model.Security, len(dbSecurities))
+	for i := range dbSecurities {
+		securities[i] = s.modelFromDb(dbSecurities[i])
+	}
+
+	return securities
 }
 
 // GetEventsOfSecurity returns all events of security
@@ -154,6 +181,57 @@ func (s *securityService) UpdateSecurityTaxonomies(
 	}
 
 	return s.securityTaxonomiesModelFromDb(upsert), nil
+}
+
+// UpsertTag creates/updates tag
+func (s *securityService) UpsertTag(name string, securityUuids []uuid.UUID) ([]*model.Security, error) {
+
+	// Get or create tag
+	var tag db.Tag
+	if err := s.DB.FirstOrCreate(&tag, db.Tag{Name: name}).Error; err != nil {
+		panic(err)
+	}
+
+	// Delete removed associations
+	if err := s.DB.Delete(&db.SecurityTag{}, "security_uuid NOT IN ?", securityUuids).Error; err != nil {
+		panic(err)
+	}
+
+	// Create new associations
+	upsert := make([]db.SecurityTag, len(securityUuids))
+	for i := range securityUuids {
+		upsert[i].TagName = name
+		upsert[i].SecurityUUID = securityUuids[i]
+	}
+	if len(upsert) > 0 {
+		if err := s.DB.Clauses(clause.OnConflict{DoNothing: true}).Create(&upsert).Error; err != nil {
+			if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23503" {
+				return nil, fmt.Errorf("data violates constraint " + pqErr.Constraint)
+			}
+
+			panic(err)
+		}
+	}
+
+	// Get associated securities
+	var dbSecurities []db.Security
+	if err := s.DB.Model(&tag).Association("Securities").Find(&dbSecurities); err != nil {
+		panic(err)
+	}
+
+	securities := make([]*model.Security, len(dbSecurities))
+	for i := range dbSecurities {
+		securities[i] = s.modelFromDb(dbSecurities[i])
+	}
+
+	return securities, nil
+}
+
+// DeleteTag removes tag
+func (s *securityService) DeleteTag(name string) {
+	if err := s.DB.Delete(&db.Tag{Name: name}).Error; err != nil {
+		panic(err)
+	}
 }
 
 // eventsModelFromDb converts list of events from database into model

@@ -1596,6 +1596,97 @@
           }
         ]
       }
+    },
+    "/tags/{name}": {
+      "get": {
+        "summary": "Gets single tag with all securities",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "tags"
+        ]
+      },
+      "put": {
+        "summary": "Update tag",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/name"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "tags"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Deletes tag",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "tags"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -1608,6 +1699,14 @@
     "parameters": {
       "marketCode": {
         "name": "marketCode",
+        "required": true,
+        "in": "path",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "name": {
+        "name": "name",
         "required": true,
         "in": "path",
         "schema": {

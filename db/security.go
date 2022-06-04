@@ -15,6 +15,7 @@ type Security struct {
 	SecurityMarkets    []SecurityMarket   `gorm:"foreignKey:security_uuid;references:uuid"`
 	Events             []Event            `gorm:"foreignKey:security_uuid;references:uuid"`
 	SecurityTaxonomies []SecurityTaxonomy `gorm:"foreignKey:security_uuid;references:uuid"`
+	Tags               []Tag              `gorm:"many2many:securities_tags"`
 }
 
 // TableName defines name of table in database

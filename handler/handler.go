@@ -14,6 +14,7 @@ import (
 	"github.com/portfolio-report/pr-api/handler/portfolios"
 	"github.com/portfolio-report/pr-api/handler/securities"
 	"github.com/portfolio-report/pr-api/handler/stats"
+	"github.com/portfolio-report/pr-api/handler/tags"
 	"github.com/portfolio-report/pr-api/handler/taxonomies"
 	"gorm.io/gorm"
 )
@@ -96,6 +97,9 @@ func NewHandler(R *gin.Engine, c *Config) {
 
 	// /portfolios
 	portfolios.NewHandler(g, c.SessionService, c.UserService, c.PortfolioService)
+
+	// tags
+	tags.NewHandler(g, c.Validate, c.UserService, c.SessionService, c.SecurityService)
 
 	// /taxonomies
 	taxonomies.NewHandler(g, c.Validate, c.UserService, c.SessionService, c.TaxonomyService)

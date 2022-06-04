@@ -63,6 +63,8 @@ func TestAuthRequired(t *testing.T) {
 		{"PATCH", "/securities/uuid/42/markets/42"},
 		{"DELETE", "/securities/uuid/42/markets/42"},
 		{"PUT", "/securities/uuid/42/taxonomies/42"},
+		{"PUT", "/tags/42"},
+		{"DELETE", "/tags/42"},
 	}
 
 	for _, tc := range testCases {
@@ -92,6 +94,8 @@ func TestAdminAuth(t *testing.T) {
 		{"PATCH", "/securities/uuid/42/markets/42"},
 		{"DELETE", "/securities/uuid/42/markets/42"},
 		{"PUT", "/securities/uuid/42/taxonomies/42"},
+		{"PUT", "/tags/42"},
+		{"DELETE", "/tags/42"},
 	}
 
 	for _, tc := range testCases {
