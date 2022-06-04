@@ -75,13 +75,13 @@ func (s *UserServiceTestSuite) TestUserLifecycle() {
 		s.Greater(user.ID, 0)
 	}
 
-	// Get non-existent user
+	// Get nonexistent user
 	{
 		_, err := s.service.GetUserByUsername(context.TODO(), "unknown-user")
 		s.ErrorIs(err, gorm.ErrRecordNotFound)
 	}
 
-	// Verify non-existent password
+	// Verify nonexistent password
 	{
 		ok, err := s.service.VerifyPassword(context.TODO(), user, "testpassword")
 		s.Nil(err)

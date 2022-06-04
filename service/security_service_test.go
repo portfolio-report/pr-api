@@ -54,7 +54,7 @@ func (s *SecurityServiceTestSuite) TestSecurityLifecycle() {
 		s.NotNil(security)
 	}
 
-	// Get non-existent security
+	// Get nonexistent security
 	{
 		_, err := s.service.GetSecurityByUUID(uuid.MustParse("952df501-1e22-4693-a208-0c013cb1b415"))
 		s.ErrorIs(err, gorm.ErrRecordNotFound)
@@ -85,7 +85,7 @@ func (s *SecurityServiceTestSuite) TestSecurityLifecycle() {
 		s.Nil(err)
 	}
 
-	// Delete non-existent security
+	// Delete nonexistent security
 	{
 		_, err := s.service.DeleteSecurity(emptySec.UUID)
 		s.ErrorIs(err, model.ErrNotFound)
