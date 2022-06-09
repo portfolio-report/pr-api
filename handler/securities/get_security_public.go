@@ -58,12 +58,12 @@ func (h *securitiesHandler) GetSecurityPublic(c *gin.Context) {
 	}
 
 	var securityTags []db.SecurityTag
-	if err = h.DB.Find(&securityTags, "security_uuid = ?", uuid).Error; err != nil {
+	if err = h.DB.Preload("Tag").Find(&securityTags, "security_uuid = ?", uuid).Error; err != nil {
 		panic(err)
 	}
 	tags := make([]string, len(securityTags))
 	for i := range securityTags {
-		tags[i] = securityTags[i].TagName
+		tags[i] = securityTags[i].Tag.Name
 	}
 
 	eventsResp := []model.Event{}

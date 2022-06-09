@@ -1,8 +1,11 @@
 package db
 
+import "github.com/google/uuid"
+
 // Tag in database
 type Tag struct {
-	Name       string     `gorm:"primaryKey"`
+	UUID       uuid.UUID `gorm:"primaryKey"`
+	Name       string
 	Securities []Security `gorm:"many2many:securities_tags"`
 }
 

@@ -188,19 +188,22 @@ func (s *securityService) UpsertTag(name string, securityUuids []uuid.UUID) ([]*
 
 	// Get or create tag
 	var tag db.Tag
-	if err := s.DB.FirstOrCreate(&tag, db.Tag{Name: name}).Error; err != nil {
+	if err := s.DB.
+		Where(db.Tag{Name: name}).
+		Attrs(db.Tag{UUID: uuid.New()}).
+		FirstOrCreate(&tag, db.Tag{Name: name}).Error; err != nil {
 		panic(err)
 	}
 
 	// Delete removed associations
-	if err := s.DB.Delete(&db.SecurityTag{}, "security_uuid NOT IN ?", securityUuids).Error; err != nil {
+	if err := s.DB.Delete(&db.SecurityTag{}, "tag_uuid = ? AND security_uuid NOT IN ?", tag.UUID, securityUuids).Error; err != nil {
 		panic(err)
 	}
 
 	// Create new associations
 	upsert := make([]db.SecurityTag, len(securityUuids))
 	for i := range securityUuids {
-		upsert[i].TagName = name
+		upsert[i].TagUUID = tag.UUID
 		upsert[i].SecurityUUID = securityUuids[i]
 	}
 	if len(upsert) > 0 {
@@ -229,7 +232,7 @@ func (s *securityService) UpsertTag(name string, securityUuids []uuid.UUID) ([]*
 
 // DeleteTag removes tag
 func (s *securityService) DeleteTag(name string) {
-	if err := s.DB.Delete(&db.Tag{Name: name}).Error; err != nil {
+	if err := s.DB.Where(db.Tag{Name: name}).Delete(&db.Tag{}).Error; err != nil {
 		panic(err)
 	}
 }
