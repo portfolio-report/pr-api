@@ -6,7 +6,7 @@ require (
 	github.com/99designs/gqlgen v0.17.9
 	github.com/antchfx/xmlquery v1.3.11
 	github.com/chenyahui/gin-cache v1.7.0
-	github.com/gin-gonic/gin v1.8.0
+	github.com/gin-gonic/gin v1.8.1
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/google/uuid v1.3.0
 	github.com/ip2location/ip2location-go v8.3.0+incompatible
