@@ -22,12 +22,18 @@ type searchSecuritiesResponse struct {
 	SymbolXnys   *string                          `json:"symbolXnys"`
 	SecurityType *string                          `json:"securityType"`
 	Markets      []searchSecuritiesResponseMarket `json:"markets"`
+	Tags         []string                         `json:"tags"`
 }
 
 func searchSecuritiesResponseFromDB(s db.Security) searchSecuritiesResponse {
 	securityMarkets := []searchSecuritiesResponseMarket{}
 	for _, mDb := range s.SecurityMarkets {
 		securityMarkets = append(securityMarkets, searchSecuritiesResponseMarketFromDB(mDb))
+	}
+
+	tags := []string{}
+	for _, t := range s.Tags {
+		tags = append(tags, t.Name)
 	}
 
 	return searchSecuritiesResponse{
@@ -40,6 +46,7 @@ func searchSecuritiesResponseFromDB(s db.Security) searchSecuritiesResponse {
 		SymbolXnys:   s.SymbolXnys,
 		SecurityType: s.SecurityType,
 		Markets:      securityMarkets,
+		Tags:         tags,
 	}
 }
 
@@ -72,7 +79,7 @@ func (h *securitiesHandler) SearchSecurities(c *gin.Context) {
 	}
 
 	var securities []db.Security
-	query := h.DB.Preload("SecurityMarkets")
+	query := h.DB.Preload("SecurityMarkets").Preload("Tags")
 
 	if securityType != "" {
 		query = query.Where("security_type = ?", securityType)

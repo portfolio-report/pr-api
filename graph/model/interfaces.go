@@ -54,12 +54,15 @@ type PortfolioService interface {
 // SecurityService describes the interface of security service
 type SecurityService interface {
 	GetSecurityByUUID(uuid uuid.UUID) (*Security, error)
+	GetSecuritiesByTag(tag string) []*Security
 	GetEventsOfSecurity(security *Security) []*Event
 	CreateSecurity(input *SecurityInput) (*Security, error)
 	UpdateSecurity(uuid uuid.UUID, input *SecurityInput) (*Security, error)
 	DeleteSecurity(uuid uuid.UUID) (*Security, error)
 	DeleteSecurityMarket(securityUuid uuid.UUID, marketCode string) (*SecurityMarket, error)
 	UpdateSecurityTaxonomies(securityUuid, rootTaxonomyUuid uuid.UUID, inputs []*SecurityTaxonomyInput) ([]*SecurityTaxonomy, error)
+	UpsertTag(name string, securityUuids []uuid.UUID) ([]*Security, error)
+	DeleteTag(name string)
 }
 
 // SessionService describes the interface of session service
