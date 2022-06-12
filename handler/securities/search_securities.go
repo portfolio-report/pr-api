@@ -1,14 +1,18 @@
 package securities
 
 import (
+	"errors"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/portfolio-report/pr-api/db"
 	"github.com/portfolio-report/pr-api/graph/model"
+	"github.com/portfolio-report/pr-api/libs/tokenize"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -70,8 +74,13 @@ func searchSecuritiesResponseMarketFromDB(s db.SecurityMarket) searchSecuritiesR
 
 // SearchSecurities lists securities matching the search query
 func (h *securitiesHandler) SearchSecurities(c *gin.Context) {
-	searchTerm := strings.ToUpper(c.Param("searchTerm"))
+	searchTerm := c.Param("searchTerm")
 	securityType := c.Query("securityType")
+
+	searchTokensRaw := tokenize.SplitByWhitespace(searchTerm)
+	searchTokens, searchKeyValues := tokenize.ParseKeyValue(searchTokensRaw)
+
+	searchTerm = strings.ToUpper(strings.Join(searchTokens, " "))
 
 	maxResults, err := strconv.Atoi(os.Getenv("SECURITIES_SEARCH_MAX_RESULTS"))
 	if err != nil {
@@ -85,11 +94,45 @@ func (h *securitiesHandler) SearchSecurities(c *gin.Context) {
 		query = query.Where("security_type = ?", securityType)
 	}
 
-	query = query.Where("isin = ? OR wkn = ? OR symbol_xfra = ? OR symbol_xnas = ? OR symbol_xnys = ? OR name % ?", searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm)
-	query = query.Clauses(clause.OrderBy{
-		Expression: clause.Expr{SQL: "name <-> ?", Vars: []interface{}{searchTerm}, WithoutParentheses: true},
-	})
-	if err := query.Limit(maxResults).Find(&securities).Error; err != nil {
+	// Filter securities by key value pairs, if given
+	for _, kv := range searchKeyValues {
+		if strings.ToLower(kv[0]) == "tag" {
+			var tag db.Tag
+			var securityUuids []uuid.UUID
+
+			if err := h.DB.Preload("Securities").Take(&tag, "LOWER(name) = LOWER(?)", kv[1]).Error; err != nil {
+				if errors.Is(err, gorm.ErrRecordNotFound) {
+					securityUuids = []uuid.UUID{}
+				} else {
+					panic(err)
+				}
+			} else {
+				securityUuids = make([]uuid.UUID, len(tag.Securities))
+				for i := range tag.Securities {
+					securityUuids[i] = tag.Securities[i].UUID
+
+				}
+			}
+
+			query = query.Where("uuid IN ?", securityUuids)
+			maxResults = 0
+		} else {
+			// ignore unknown tags
+		}
+	}
+
+	if len(searchTerm) > 0 {
+		query = query.Where("isin = ? OR wkn = ? OR symbol_xfra = ? OR symbol_xnas = ? OR symbol_xnys = ? OR name % ?", searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm)
+		query = query.Clauses(clause.OrderBy{
+			Expression: clause.Expr{SQL: "name <-> ?", Vars: []interface{}{searchTerm}, WithoutParentheses: true},
+		})
+	}
+
+	if maxResults != 0 {
+		query = query.Limit(maxResults)
+	}
+
+	if err := query.Find(&securities).Error; err != nil {
 		panic(err)
 	}
 
