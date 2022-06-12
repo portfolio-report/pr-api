@@ -35,7 +35,7 @@ func (s *securityService) GetSecurityByUUID(uuid uuid.UUID) (*model.Security, er
 // GetSecuritiesByTag returns securities associated with tag
 func (s *securityService) GetSecuritiesByTag(tag string) []*model.Security {
 	var dbTag db.Tag
-	if err := s.DB.Take(&dbTag, "name = ?", tag).Error; err != nil {
+	if err := s.DB.Take(&dbTag, "LOWER(name) = LOWER(?)", tag).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return []*model.Security{}
 		}
@@ -189,7 +189,7 @@ func (s *securityService) UpsertTag(name string, securityUuids []uuid.UUID) ([]*
 	// Get or create tag
 	var tag db.Tag
 	if err := s.DB.
-		Where(db.Tag{Name: name}).
+		Where("LOWER(name) = LOWER(?)", name).
 		Attrs(db.Tag{UUID: uuid.New()}).
 		FirstOrCreate(&tag, db.Tag{Name: name}).Error; err != nil {
 		panic(err)
@@ -232,7 +232,7 @@ func (s *securityService) UpsertTag(name string, securityUuids []uuid.UUID) ([]*
 
 // DeleteTag removes tag
 func (s *securityService) DeleteTag(name string) {
-	if err := s.DB.Where(db.Tag{Name: name}).Delete(&db.Tag{}).Error; err != nil {
+	if err := s.DB.Where("LOWER(name) = LOWER(?)", name).Delete(&db.Tag{}).Error; err != nil {
 		panic(err)
 	}
 }
