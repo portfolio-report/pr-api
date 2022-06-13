@@ -31,8 +31,6 @@ func (h *securitiesHandler) GetSecurities(c *gin.Context) {
 	}
 
 	switch q.Sort {
-	case "":
-		q.Sort = "name"
 	case "symbolXfra":
 		q.Sort = "symbol_xfra"
 	case "symbolXnas":
@@ -64,7 +62,12 @@ func (h *securitiesHandler) GetSecurities(c *gin.Context) {
 		panic(err)
 	}
 
-	order := q.Sort
+	order := "name"
+	for _, col := range []string{"name", "isin", "wkn", "symbol_xfra", "symbol_xnas", "symbol_xnys"} {
+		if q.Sort == col {
+			order = col
+		}
+	}
 	if q.Desc {
 		order += " desc"
 	}
