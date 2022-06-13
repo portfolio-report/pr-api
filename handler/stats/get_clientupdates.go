@@ -28,10 +28,6 @@ func (h *statsHandler) GetClientupdates(c *gin.Context) {
 		q.Limit = 10
 	}
 
-	if q.Sort == "" {
-		q.Sort = "timestamp"
-	}
-
 	query := h.DB
 
 	if q.Version != "" {
@@ -43,7 +39,12 @@ func (h *statsHandler) GetClientupdates(c *gin.Context) {
 		panic(err)
 	}
 
-	order := q.Sort
+	order := "timestamp"
+	for _, col := range []string{"id", "timestamp", "version", "country", "useragent"} {
+		if q.Sort == col {
+			order = col
+		}
+	}
 	if q.Descending {
 		order += " desc"
 	}
