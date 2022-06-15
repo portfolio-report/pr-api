@@ -87,5 +87,9 @@ func NewHandler(
 		middleware.RequireUser(SessionService, UserService),
 		middleware.RequireAdmin(),
 		h.PutSecurityTaxonomies)
+	g.GET("/maintenance/gaps",
+		middleware.RequireUser(SessionService, UserService),
+		middleware.RequireAdmin(),
+		h.GetGaps)
 
 }

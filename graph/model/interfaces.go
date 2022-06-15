@@ -63,6 +63,7 @@ type SecurityService interface {
 	UpdateSecurityTaxonomies(securityUuid, rootTaxonomyUuid uuid.UUID, inputs []*SecurityTaxonomyInput) ([]*SecurityTaxonomy, error)
 	UpsertTag(name string, securityUuids []uuid.UUID) ([]*Security, error)
 	DeleteTag(name string)
+	FindGapsInPrices(minDuration, maxResults int) []map[string]interface{}
 }
 
 // SessionService describes the interface of session service

@@ -1345,6 +1345,48 @@
         ]
       }
     },
+    "/securities/maintenance/gaps": {
+      "get": {
+        "summary": "Gets gaps in security prices",
+        "parameters": [
+          {
+            "name": "minDuration",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "maxResults",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
     "/stats/updates": {
       "get": {
         "summary": "Gets statistics on updates of all versions",

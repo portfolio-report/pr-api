@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -235,6 +236,39 @@ func (s *securityService) DeleteTag(name string) {
 	if err := s.DB.Where("LOWER(name) = LOWER(?)", name).Delete(&db.Tag{}).Error; err != nil {
 		panic(err)
 	}
+}
+
+// FindGapsInPrices finds gaps in price time series
+func (s *securityService) FindGapsInPrices(minDuration, maxResults int) []map[string]interface{} {
+	type gap struct {
+		SecurityUUID uuid.UUID  `json:"securityUuid"`
+		MarketCode   string     `json:"marketCode"`
+		FromDate     model.Date `json:"fromDate"`
+		ToDate       model.Date `json:"toDate"`
+		Duration     int        `json:"duration"`
+	}
+
+	var gaps []gap
+	s.DB.Raw(`
+		SELECT
+	 		m.security_uuid, m.market_code, p.from_date, p.to_date, p.to_date - p.from_date + 1 AS duration
+		FROM
+			(SELECT
+				security_market_id,
+				date + 1 AS from_date,
+				LEAD(date, 1) OVER (PARTITION BY security_market_id ORDER BY date) - 1 AS to_date
+			FROM securities_markets_prices) p
+		LEFT JOIN securities_markets m ON (m.id = p.security_market_id)
+		WHERE to_date - from_date + 1 >= ?
+		LIMIT ?`,
+		minDuration, maxResults).Scan(&gaps)
+
+	// Convert structs to maps
+	var maps []map[string]interface{}
+	bytes, _ := json.Marshal(gaps)
+	json.Unmarshal(bytes, &maps)
+
+	return maps
 }
 
 // eventsModelFromDb converts list of events from database into model
