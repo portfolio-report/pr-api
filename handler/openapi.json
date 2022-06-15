@@ -912,7 +912,7 @@
         "parameters": [
           {
             "name": "limit",
-            "required": true,
+            "required": false,
             "in": "query",
             "schema": {
               "type": "string"
@@ -920,7 +920,7 @@
           },
           {
             "name": "skip",
-            "required": true,
+            "required": false,
             "in": "query",
             "schema": {
               "type": "string"
@@ -928,7 +928,7 @@
           },
           {
             "name": "sort",
-            "required": true,
+            "required": false,
             "in": "query",
             "schema": {
               "type": "string"
@@ -936,7 +936,7 @@
           },
           {
             "name": "desc",
-            "required": true,
+            "required": false,
             "in": "query",
             "schema": {
               "type": "string"
@@ -944,7 +944,7 @@
           },
           {
             "name": "search",
-            "required": true,
+            "required": false,
             "in": "query",
             "schema": {
               "type": "string"
@@ -952,7 +952,7 @@
           },
           {
             "name": "securityType",
-            "required": true,
+            "required": false,
             "in": "query",
             "schema": {
               "type": "string"
