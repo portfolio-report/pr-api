@@ -14,7 +14,7 @@ type convertRequest struct {
 	SourceCurrencyCode string          `json:"sourceCurrencyCode" binding:"required"`
 	TargetCurrencyCode string          `json:"targetCurrencyCode" binding:"required"`
 	SourceAmount       decimal.Decimal `json:"sourceAmount"`
-	Date               *model.Date     `json:"date" binding:"omitempty,DateYYYY-MM-DD"`
+	Date               *model.Date     `json:"date"`
 }
 
 // Convert converts amount between currencies
