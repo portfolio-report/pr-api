@@ -357,6 +357,7 @@ func (s *portfolioService) UpsertPortfolioSecurity(
 	security.FeedUrl = input.FeedURL
 	security.LatestFeed = input.LatestFeed
 	security.LatestFeedUrl = input.LatestFeedURL
+	security.Attributes, _ = json.Marshal([]any{})
 	for _, e := range input.Events {
 		if e.Type != "STOCK_SPLIT" && e.Type != "Note" && e.Type != "DIVIDEND_PAYMENT" {
 			return nil, fmt.Errorf("event type %s is not supported", e.Type)
