@@ -368,7 +368,7 @@ func (s *portfolioService) UpsertPortfolioSecurity(
 	}
 	for _, p := range input.Properties {
 		if p.Type != "MARKET" && p.Type != "FEED" {
-			return nil, fmt.Errorf("propertey type %s is not supported", p.Type)
+			return nil, fmt.Errorf("property type %s is not supported", p.Type)
 		}
 	}
 	security.Properties, err = json.Marshal(input.Properties)
