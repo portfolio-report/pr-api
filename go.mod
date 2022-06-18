@@ -3,7 +3,7 @@ module github.com/portfolio-report/pr-api
 go 1.18
 
 require (
-	github.com/99designs/gqlgen v0.17.9
+	github.com/99designs/gqlgen v0.17.10
 	github.com/antchfx/xmlquery v1.3.11
 	github.com/chenyahui/gin-cache v1.7.0
 	github.com/gin-gonic/gin v1.8.1
@@ -14,7 +14,7 @@ require (
 	github.com/lib/pq v1.10.6
 	github.com/portfolio-report/swaggerui v0.1.0
 	github.com/shopspring/decimal v1.3.1
-	github.com/vektah/gqlparser/v2 v2.4.4
+	github.com/vektah/gqlparser/v2 v2.4.5
 	gorm.io/datatypes v1.0.6
 	gorm.io/driver/postgres v1.3.7
 	gorm.io/gorm v1.23.6
