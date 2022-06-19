@@ -1,6 +1,9 @@
 package db
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"gorm.io/datatypes"
+)
 
 // Security in database
 type Security struct {
@@ -12,6 +15,7 @@ type Security struct {
 	SymbolXnas         *string
 	SymbolXnys         *string
 	SecurityType       *string
+	Extras             datatypes.JSON
 	SecurityMarkets    []SecurityMarket   `gorm:"foreignKey:security_uuid;references:uuid"`
 	Events             []Event            `gorm:"foreignKey:security_uuid;references:uuid"`
 	SecurityTaxonomies []SecurityTaxonomy `gorm:"foreignKey:security_uuid;references:uuid"`
