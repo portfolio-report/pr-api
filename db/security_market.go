@@ -1,6 +1,9 @@
 package db
 
-import "github.com/portfolio-report/pr-api/graph/model"
+import (
+	"github.com/portfolio-report/pr-api/graph/model"
+	"gorm.io/datatypes"
+)
 
 // SecurityMarket in database
 type SecurityMarket struct {
@@ -12,6 +15,7 @@ type SecurityMarket struct {
 	LastPriceDate  *model.Date
 	Symbol         *string
 	UpdatePrices   bool
+	Extras         datatypes.JSON
 }
 
 // TableName defines name of table in database
