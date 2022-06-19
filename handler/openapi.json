@@ -1120,6 +1120,53 @@
         ]
       }
     },
+    "/securities/uuid/{uuid}/logo": {
+      "post": {
+        "summary": "Updates logo of security",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties":
+                  { "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "securities"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
     "/securities/uuid/{uuid}/markets/{marketCode}": {
       "patch": {
         "summary": "Creates/updates market and prices",
