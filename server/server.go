@@ -76,7 +76,7 @@ func InitializeService(cfg *service.Config, db *gorm.DB) *handler.Config {
 	userService := service.NewUserService(db)
 	sessionService := service.NewSessionService(db, validate, cfg.SessionTimeout)
 	portfolioService := service.NewPortfolioService(db)
-	securityService := service.NewSecurityService(db)
+	securityService := service.NewSecurityService(cfg, db)
 	taxonomyService := service.NewTaxonomyService(db, validate)
 	mailerService, err := service.NewMailerService(cfg.MailerTransport, cfg.ContactRecipientEmail, validate)
 	if err != nil {

@@ -189,6 +189,7 @@ type Security struct {
 	SymbolXfra         *string             `json:"symbolXfra"`
 	SymbolXnas         *string             `json:"symbolXnas"`
 	SymbolXnys         *string             `json:"symbolXnys"`
+	LogoURL            *string             `json:"logoUrl"`
 	SecurityMarkets    []*SecurityMarket   `json:"securityMarkets"`
 	SecurityTaxonomies []*SecurityTaxonomy `json:"securityTaxonomies"`
 	Events             []*Event            `json:"events"`
@@ -202,6 +203,7 @@ type SecurityInput struct {
 	SymbolXfra   *string `json:"symbolXfra"`
 	SymbolXnas   *string `json:"symbolXnas"`
 	SymbolXnys   *string `json:"symbolXnys"`
+	LogoURL      *string `json:"logoUrl"`
 }
 
 type SecurityMarket struct {

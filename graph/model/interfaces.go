@@ -2,11 +2,13 @@ package model
 
 import (
 	"context"
+	"io"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
+	"gorm.io/datatypes"
 )
 
 // CurrenciesService describes the interface of currencies service
@@ -59,11 +61,13 @@ type SecurityService interface {
 	CreateSecurity(input *SecurityInput) (*Security, error)
 	UpdateSecurity(uuid uuid.UUID, input *SecurityInput) (*Security, error)
 	DeleteSecurity(uuid uuid.UUID) (*Security, error)
+	UpdateLogo(uuid uuid.UUID, logo io.Reader, extension string) (string, error)
 	DeleteSecurityMarket(securityUuid uuid.UUID, marketCode string) (*SecurityMarket, error)
 	UpdateSecurityTaxonomies(securityUuid, rootTaxonomyUuid uuid.UUID, inputs []*SecurityTaxonomyInput) ([]*SecurityTaxonomy, error)
 	UpsertTag(name string, securityUuids []uuid.UUID) ([]*Security, error)
 	DeleteTag(name string)
 	FindGapsInPrices(minDuration, maxResults int) []map[string]interface{}
+	LogoUrlFromExtras(extrasJson datatypes.JSON) *string
 }
 
 // SessionService describes the interface of session service

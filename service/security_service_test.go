@@ -21,11 +21,13 @@ type SecurityServiceTestSuite struct {
 func (s *SecurityServiceTestSuite) SetupSuite() {
 	godotenv.Load("../.env")
 
+	c := ReadConfig()
+
 	var err error
-	s.db, err = db.InitDb(ReadConfig().Db)
+	s.db, err = db.InitDb(c.Db)
 	s.Nil(err)
 
-	service := NewSecurityService(s.db)
+	service := NewSecurityService(c, s.db)
 	var ok bool
 	s.service, ok = service.(*securityService)
 	s.True(ok)

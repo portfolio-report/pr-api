@@ -1,26 +1,48 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/portfolio-report/pr-api/db"
 	"github.com/portfolio-report/pr-api/graph/model"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 type securityService struct {
-	DB *gorm.DB
+	DB            *gorm.DB
+	s3client      s3.Client
+	logoBucket    string
+	logoBucketURL string
 }
 
 // NewSecurityService creates and returns new security service
-func NewSecurityService(db *gorm.DB) model.SecurityService {
+func NewSecurityService(c *Config, db *gorm.DB) model.SecurityService {
+
+	// Create S3 client
+	creds := credentials.NewStaticCredentialsProvider(c.AwsAccessKeyID, c.AwsSecretAccessKey, "")
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithCredentialsProvider(creds), config.WithRegion(c.AwsRegion))
+	if err != nil {
+		panic(err)
+	}
+	s3client := s3.NewFromConfig(cfg)
+
 	return &securityService{
-		DB: db,
+		DB:            db,
+		s3client:      *s3client,
+		logoBucket:    c.AwsLogoBucket,
+		logoBucketURL: c.AwsLogoBucketURL,
 	}
 }
 
@@ -119,6 +141,50 @@ func (s *securityService) DeleteSecurity(uuid uuid.UUID) (*model.Security, error
 		return nil, model.ErrNotFound
 	}
 	return s.modelFromDb(security), nil
+}
+
+// UpdateLogo updates logo of security
+func (s *securityService) UpdateLogo(securityUuid uuid.UUID, logo io.Reader, extension string) (string, error) {
+	var security db.Security
+	if err := s.DB.Take(&security, "uuid = ?", securityUuid).Error; err != nil {
+		return "", err
+	}
+
+	oldLogoPath := s.logoUrlRelFromExtras(security.Extras)
+
+	// Create random file name
+	logoUuid := uuid.New()
+	logoPath := logoUuid.String() + extension
+	logoAbsPath := s.logoBucketURL + logoPath
+
+	// Upload file to S3
+	_, err := s.s3client.PutObject(context.TODO(), &s3.PutObjectInput{
+		Bucket: aws.String(s.logoBucket),
+		Key:    aws.String(logoPath),
+		Body:   logo,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	// Update security with new URL
+	err = s.DB.Exec(`UPDATE securities SET extras = (jsonb_set(extras,'{"logoUrl"}', to_jsonb($1::text), true)) WHERE uuid=$2`, logoPath, securityUuid).Error
+	if err != nil {
+		panic(err)
+	}
+
+	// Delete old logo from S3
+	if oldLogoPath != nil {
+		_, err = s.s3client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+			Bucket: aws.String(s.logoBucket),
+			Key:    oldLogoPath,
+		})
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	return logoAbsPath, nil
 }
 
 // DeleteSecurityMarket removes market of security
@@ -322,4 +388,26 @@ func (*securityService) modelFromDb(s db.Security) *model.Security {
 		SymbolXnas:   s.SymbolXnas,
 		SymbolXnys:   s.SymbolXnys,
 	}
+}
+
+// logoUrlRelFromExtras returns relative URL of logo
+func (s *securityService) logoUrlRelFromExtras(extrasJson datatypes.JSON) *string {
+	var extras struct {
+		LogoURL *string `json:"logoUrl"`
+	}
+	err := json.Unmarshal(extrasJson, &extras)
+	if err != nil {
+		panic(err)
+	}
+	return extras.LogoURL
+}
+
+// LogoUrlFromExtras returns absolute URL of logo
+func (s *securityService) LogoUrlFromExtras(extrasJson datatypes.JSON) *string {
+	logoUrl := s.logoUrlRelFromExtras(extrasJson)
+	if logoUrl != nil {
+		logoUrl := s.logoBucketURL + *logoUrl
+		return &logoUrl
+	}
+	return nil
 }

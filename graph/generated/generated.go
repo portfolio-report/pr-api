@@ -182,6 +182,7 @@ type ComplexityRoot struct {
 	Security struct {
 		Events             func(childComplexity int) int
 		Isin               func(childComplexity int) int
+		LogoURL            func(childComplexity int) int
 		Name               func(childComplexity int) int
 		SecurityMarkets    func(childComplexity int) int
 		SecurityTaxonomies func(childComplexity int) int
@@ -992,6 +993,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Security.Isin(childComplexity), true
 
+	case "Security.logoUrl":
+		if e.complexity.Security.LogoURL == nil {
+			break
+		}
+
+		return e.complexity.Security.LogoURL(childComplexity), true
+
 	case "Security.name":
 		if e.complexity.Security.Name == nil {
 			break
@@ -1510,6 +1518,7 @@ type Security {
   symbolXfra: String
   symbolXnas: String
   symbolXnys: String
+  logoUrl: String
 
   securityMarkets: [SecurityMarket!]!
   securityTaxonomies: [SecurityTaxonomy!]!
@@ -1524,6 +1533,7 @@ input SecurityInput {
   symbolXfra: String
   symbolXnas: String
   symbolXnys: String
+  logoUrl: String
 }
 
 type SecurityMarket {
@@ -6152,6 +6162,8 @@ func (ec *executionContext) fieldContext_Query_security(ctx context.Context, fie
 				return ec.fieldContext_Security_symbolXnas(ctx, field)
 			case "symbolXnys":
 				return ec.fieldContext_Security_symbolXnys(ctx, field)
+			case "logoUrl":
+				return ec.fieldContext_Security_logoUrl(ctx, field)
 			case "securityMarkets":
 				return ec.fieldContext_Security_securityMarkets(ctx, field)
 			case "securityTaxonomies":
@@ -6680,6 +6692,47 @@ func (ec *executionContext) _Security_symbolXnys(ctx context.Context, field grap
 }
 
 func (ec *executionContext) fieldContext_Security_symbolXnys(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Security",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Security_logoUrl(ctx context.Context, field graphql.CollectedField, obj *model.Security) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Security_logoUrl(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LogoURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Security_logoUrl(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Security",
 		Field:      field,
@@ -10313,6 +10366,14 @@ func (ec *executionContext) unmarshalInputSecurityInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
+		case "logoUrl":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("logoUrl"))
+			it.LogoURL, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -11507,6 +11568,10 @@ func (ec *executionContext) _Security(ctx context.Context, sel ast.SelectionSet,
 		case "symbolXnys":
 
 			out.Values[i] = ec._Security_symbolXnys(ctx, field, obj)
+
+		case "logoUrl":
+
+			out.Values[i] = ec._Security_logoUrl(ctx, field, obj)
 
 		case "securityMarkets":
 

@@ -97,6 +97,8 @@ func (h *securitiesHandler) GetSecurityPublic(c *gin.Context) {
 		})
 	}
 
+	logoUrl := h.SecurityService.LogoUrlFromExtras(security.Extras)
+
 	c.JSON(http.StatusOK, gin.H{
 		"uuid":               strings.Replace(security.UUID.String(), "-", "", 4),
 		"name":               security.Name,
@@ -110,5 +112,6 @@ func (h *securitiesHandler) GetSecurityPublic(c *gin.Context) {
 		"events":             eventsResp,
 		"securityTaxonomies": taxonomiesResp,
 		"tags":               tags,
+		"logoUrl":            logoUrl,
 	})
 }
