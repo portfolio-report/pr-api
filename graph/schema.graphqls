@@ -199,6 +199,7 @@ type Security {
   symbolXfra: String
   symbolXnas: String
   symbolXnys: String
+  logoUrl: String
 
   securityMarkets: [SecurityMarket!]!
   securityTaxonomies: [SecurityTaxonomy!]!
@@ -213,6 +214,7 @@ input SecurityInput {
   symbolXfra: String
   symbolXnas: String
   symbolXnys: String
+  logoUrl: String
 }
 
 type SecurityMarket {

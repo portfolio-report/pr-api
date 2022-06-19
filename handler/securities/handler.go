@@ -75,6 +75,10 @@ func NewHandler(
 		middleware.RequireUser(SessionService, UserService),
 		middleware.RequireAdmin(),
 		h.DeleteSecurity)
+	g.POST("/uuid/:uuid/logo",
+		middleware.RequireUser(SessionService, UserService),
+		middleware.RequireAdmin(),
+		h.UpdateLogo)
 	g.PATCH("/uuid/:uuid/markets/:marketCode",
 		middleware.RequireUser(SessionService, UserService),
 		middleware.RequireAdmin(),

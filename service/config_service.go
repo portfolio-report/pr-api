@@ -18,6 +18,11 @@ type Config struct {
 	SessionTimeout        time.Duration
 	Ip2locToken           string
 	SearchMaxResults      int
+	AwsAccessKeyID        string
+	AwsSecretAccessKey    string
+	AwsRegion             string
+	AwsLogoBucket         string
+	AwsLogoBucketURL      string
 }
 
 func defaultAtoi(s string, def int) int {
@@ -56,6 +61,12 @@ func ReadConfig() *Config {
 
 	c.Ip2locToken = os.Getenv("IP2LOCATION_TOKEN")
 	c.SearchMaxResults = defaultAtoi(os.Getenv("SECURITIES_SEARCH_MAX_RESULTS"), 10)
+
+	c.AwsAccessKeyID = os.Getenv("AWS_ACCESS_KEY_ID")
+	c.AwsSecretAccessKey = os.Getenv("AWS_SECRET_ACCESS_KEY")
+	c.AwsRegion = os.Getenv("AWS_REGION")
+	c.AwsLogoBucket = os.Getenv("AWS_LOGO_BUCKET")
+	c.AwsLogoBucketURL = os.Getenv("AWS_LOGO_BUCKET_URL")
 
 	return &c
 }
