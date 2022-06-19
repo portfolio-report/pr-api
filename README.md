@@ -70,6 +70,17 @@ MAILER_TRANSPORT="smtp://username:password@smtp.example.com:587/"
 
 # Token to download GeoIP database from www.ip2location.com
 IP2LOCATION_TOKEN="..."
+
+# Credentials and region of AWS account 
+AWS_ACCESS_KEY_ID="..."
+AWS_SECRET_ACCESS_KEY="..."
+AWS_REGION="..."
+
+# Name of S3 bucket to store logos of securities
+AWS_LOGO_BUCKET="..."
+
+# URL prefix to build absolute URL of logos
+AWS_LOGO_BUCKET_URL="..."
 ```
 
 ### Optional parameters
