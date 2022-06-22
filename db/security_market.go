@@ -15,7 +15,7 @@ type SecurityMarket struct {
 	LastPriceDate  *model.Date
 	Symbol         *string
 	UpdatePrices   bool
-	Extras         datatypes.JSON
+	Extras         datatypes.JSON `gorm:"default:'{}'"`
 }
 
 // TableName defines name of table in database
