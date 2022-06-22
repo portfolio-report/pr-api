@@ -15,7 +15,7 @@ type Security struct {
 	SymbolXnas         *string
 	SymbolXnys         *string
 	SecurityType       *string
-	Extras             datatypes.JSON
+	Extras             datatypes.JSON     `gorm:"default:'{}'"`
 	SecurityMarkets    []SecurityMarket   `gorm:"foreignKey:security_uuid;references:uuid"`
 	Events             []Event            `gorm:"foreignKey:security_uuid;references:uuid"`
 	SecurityTaxonomies []SecurityTaxonomy `gorm:"foreignKey:security_uuid;references:uuid"`
