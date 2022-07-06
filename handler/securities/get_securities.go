@@ -107,6 +107,8 @@ func (h *securitiesHandler) GetSecurities(c *gin.Context) {
 			}
 		}
 
+		logoUrl := h.SecurityService.LogoUrlFromExtras(s.Extras)
+
 		entries = append(entries, gin.H{
 			"uuid":         s.UUID,
 			"name":         s.Name,
@@ -118,6 +120,7 @@ func (h *securitiesHandler) GetSecurities(c *gin.Context) {
 			"securityType": s.SecurityType,
 			"markets":      markets,
 			"events":       events,
+			"logoUrl":      logoUrl,
 		})
 	}
 

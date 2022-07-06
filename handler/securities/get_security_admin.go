@@ -66,6 +66,8 @@ func (h *securitiesHandler) GetSecurityAdmin(c *gin.Context) {
 		})
 	}
 
+	logoUrl := h.SecurityService.LogoUrlFromExtras(s.Extras)
+
 	c.JSON(http.StatusOK, gin.H{
 		"uuid":               s.UUID,
 		"name":               s.Name,
@@ -78,5 +80,6 @@ func (h *securitiesHandler) GetSecurityAdmin(c *gin.Context) {
 		"markets":            markets,
 		"events":             events,
 		"securityTaxonomies": taxonomies,
+		"logoUrl":            logoUrl,
 	})
 }
