@@ -187,6 +187,35 @@ func (s *securityService) UpdateLogo(securityUuid uuid.UUID, logo io.Reader, ext
 	return logoAbsPath, nil
 }
 
+// DeleteLogo removes logo of security
+func (s *securityService) DeleteLogo(securityUuid uuid.UUID) error {
+	var security db.Security
+	if err := s.DB.Take(&security, "uuid = ?", securityUuid).Error; err != nil {
+		return err
+	}
+
+	logoPath := s.logoUrlRelFromExtras(security.Extras)
+
+	// Set logoUrl to null
+	err := s.DB.Exec(`UPDATE securities SET extras = (jsonb_set(extras,'{"logoUrl"}', 'null', true)) WHERE uuid=$1`, securityUuid).Error
+	if err != nil {
+		panic(err)
+	}
+
+	// Delete logo from S3
+	if logoPath != nil {
+		_, err = s.s3client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+			Bucket: aws.String(s.logoBucket),
+			Key:    logoPath,
+		})
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	return nil
+}
+
 // DeleteSecurityMarket removes market of security
 func (s *securityService) DeleteSecurityMarket(securityUuid uuid.UUID, marketCode string) (*model.SecurityMarket, error) {
 	var market db.SecurityMarket

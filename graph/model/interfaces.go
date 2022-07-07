@@ -62,6 +62,7 @@ type SecurityService interface {
 	UpdateSecurity(uuid uuid.UUID, input *SecurityInput) (*Security, error)
 	DeleteSecurity(uuid uuid.UUID) (*Security, error)
 	UpdateLogo(uuid uuid.UUID, logo io.Reader, extension string) (string, error)
+	DeleteLogo(uuid uuid.UUID) error
 	DeleteSecurityMarket(securityUuid uuid.UUID, marketCode string) (*SecurityMarket, error)
 	UpdateSecurityTaxonomies(securityUuid, rootTaxonomyUuid uuid.UUID, inputs []*SecurityTaxonomyInput) ([]*SecurityTaxonomy, error)
 	UpsertTag(name string, securityUuids []uuid.UUID) ([]*Security, error)
