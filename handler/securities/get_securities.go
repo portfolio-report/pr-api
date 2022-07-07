@@ -13,7 +13,7 @@ func (h *securitiesHandler) GetSecurities(c *gin.Context) {
 	type Query struct {
 		Limit        int    `form:"limit"`
 		Skip         int    `form:"skip"`
-		Sort         string `form:"sort" binding:"omitempty,oneof=name isin wkn symbolXfra symbolXnas symbolXnys"`
+		Sort         string `form:"sort" binding:"omitempty,oneof=uuid name isin wkn symbolXfra symbolXnas symbolXnys"`
 		Desc         bool   `form:"desc"`
 		Search       string `form:"search"`
 		SecurityType string `form:"securityType"`
@@ -63,7 +63,7 @@ func (h *securitiesHandler) GetSecurities(c *gin.Context) {
 	}
 
 	order := "name"
-	for _, col := range []string{"name", "isin", "wkn", "symbol_xfra", "symbol_xnas", "symbol_xnys"} {
+	for _, col := range []string{"uuid", "name", "isin", "wkn", "symbol_xfra", "symbol_xnas", "symbol_xnys"} {
 		if q.Sort == col {
 			order = col
 		}
