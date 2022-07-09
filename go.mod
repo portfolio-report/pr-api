@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/99designs/gqlgen v0.17.12
 	github.com/antchfx/xmlquery v1.3.11
-	github.com/aws/aws-sdk-go-v2 v1.16.5
+	github.com/aws/aws-sdk-go-v2 v1.16.7
 	github.com/aws/aws-sdk-go-v2/config v1.15.11
 	github.com/aws/aws-sdk-go-v2/credentials v1.12.6
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.26.11
@@ -38,7 +38,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.13.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.7 // indirect
-	github.com/aws/smithy-go v1.11.3 // indirect
+	github.com/aws/smithy-go v1.12.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
