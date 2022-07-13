@@ -27,6 +27,7 @@ func TestNewMailerService(t *testing.T) {
 		{"smtp://localhost:587", "info@example.com", "", "", "localhost", "587", false},
 		{"smtp://username:password@example.com:587", "info@example.com", "username", "password", "example.com", "587", false},
 		{"smtp://username:password@example.com", "info@example.com", "username", "password", "example.com", "25", false},
+		{"smtp://localpart@example.com:password@example.com", "info@example.com", "localpart@example.com", "password", "example.com", "25", false},
 	}
 	for _, tc := range tests {
 		t.Run(tc.config+" "+tc.recipientEmail, func(t *testing.T) {

@@ -24,7 +24,7 @@ func NewMailerService(config string, recipientEmail string, validate *validator.
 		return nil, errors.New("no valid email address for recipient")
 	}
 
-	mailerTransportRegex := regexp.MustCompile(`^smtp://(([a-zA-Z0-9+\-@]+):([^:@]+)@)?([a-zA-Z0-9\-.]*)(:([0-9]+))?$`)
+	mailerTransportRegex := regexp.MustCompile(`^smtp://(([a-zA-Z0-9+\-@.]+):([^:@]+)@)?([a-zA-Z0-9\-.]*)(:([0-9]+))?$`)
 	matches := mailerTransportRegex.FindStringSubmatch(config)
 	if matches == nil {
 		return nil, errors.New("could not parse configuration string")
